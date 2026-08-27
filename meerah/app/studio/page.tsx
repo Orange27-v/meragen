@@ -255,9 +255,9 @@ export default function StudioPage() {
                   </div>
                   <div className="tabular" style={{ fontWeight: 600 }}>{pack.credits.toLocaleString()} credits</div>
                   {pack.bonusCredits > 0 && (
-                    <div style={{ color: 'var(--marigold)', fontSize: '.85rem', fontWeight: 600 }}>
+                    <span className="badge badge-accent" style={{ marginTop: '.35rem', alignSelf: 'flex-start' }}>
                       +{pack.bonusCredits.toLocaleString()} free
-                    </div>
+                    </span>
                   )}
                 </button>
               ))}
@@ -310,13 +310,13 @@ export default function StudioPage() {
                       style={{
                         padding: '.75rem', textAlign: 'left', cursor: 'pointer', font: 'inherit',
                         borderRadius: 2,
-                        border: `1px solid ${active ? 'var(--marigold)' : 'var(--line)'}`,
-                        background: active ? 'rgba(255,176,32,.08)' : 'var(--ink-deep)',
+                        border: `1px solid ${active ? 'var(--obsidian)' : 'var(--line)'}`,
+                        background: active ? 'var(--ink-deep)' : 'var(--ink-deep)',
                         color: 'var(--chalk)', opacity: affordable ? 1 : 0.5,
                       }}>
                       <div style={{ fontWeight: 700 }}>{tier.label}</div>
                       <div className="muted" style={{ fontSize: '.78rem' }}>{tier.spec}</div>
-                      <div className="tabular" style={{ marginTop: '.35rem', color: 'var(--marigold)', fontWeight: 700 }}>
+                      <div className="tabular" style={{ marginTop: '.35rem', color: 'var(--chalk)', fontWeight: 600 }}>
                         {tier.credits.toLocaleString()} credits
                         <span className="muted" style={{ fontWeight: 400 }}> · ₦{tier.naira.toLocaleString()}</span>
                       </div>
@@ -337,7 +337,7 @@ export default function StudioPage() {
               {!canAfford && (
                 <span className="muted" style={{ fontSize: '.9rem' }}>
                   Not enough credits — <button type="button" onClick={() => setShowPacks(true)}
-                    style={{ background: 'none', border: 0, color: 'var(--marigold)', font: 'inherit', cursor: 'pointer', padding: 0 }}>
+                    style={{ background: 'none', border: 0, color: 'var(--chalk)', font: 'inherit', cursor: 'pointer', padding: 0 }}>
                     top up
                   </button>
                 </span>

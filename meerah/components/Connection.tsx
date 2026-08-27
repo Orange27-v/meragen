@@ -36,7 +36,7 @@ export default function Connection() {
     <div role="status" style={{
       position: 'fixed', insetInline: 0, bottom: 0, zIndex: 100,
       padding: '.7rem 1rem', textAlign: 'center',
-      background: 'var(--danger)', color: '#17110A',
+      background: 'var(--danger)', color: 'var(--snow)',
       fontSize: '.85rem', fontWeight: 700,
     }}>
       No connection. Anything already generating is safe — it will appear when you are back online.

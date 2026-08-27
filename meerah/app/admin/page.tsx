@@ -66,8 +66,8 @@ export default function AdminPage() {
                 style={{
                   padding: '.45rem .8rem', borderRadius: 2, font: 'inherit', fontSize: '.8rem', fontWeight: 600,
                   cursor: 'pointer',
-                  border: `1px solid ${days === option ? 'var(--marigold)' : 'var(--line)'}`,
-                  background: days === option ? 'rgba(255,176,32,.08)' : 'transparent',
+                  border: `1px solid ${days === option ? 'var(--obsidian)' : 'var(--line)'}`,
+                  background: days === option ? 'var(--ink-deep)' : 'transparent',
                   color: days === option ? 'var(--chalk)' : 'var(--muted)',
                 }}>
                 {option}d
@@ -124,7 +124,7 @@ export default function AdminPage() {
                     <div style={{ height: 6, background: 'var(--ink-deep)', borderRadius: 3 }}>
                       <div style={{
                         width: `${(model.runs / maxRuns) * 100}%`, height: '100%',
-                        background: '#C2820A', borderRadius: 3,
+                        background: 'var(--ember)', borderRadius: 3,
                       }} />
                     </div>
                   </div>
@@ -151,7 +151,7 @@ export default function AdminPage() {
         {/* A table view exists, so nothing is available only as a picture. */}
         <div>
           <button type="button" onClick={() => setShowTable((v) => !v)}
-            style={{ background: 'none', border: 0, padding: 0, font: 'inherit', fontSize: '.85rem', color: 'var(--marigold)', cursor: 'pointer', textDecoration: 'underline' }}>
+            style={{ background: 'none', border: 0, padding: 0, font: 'inherit', fontSize: '.85rem', color: 'var(--chalk)', cursor: 'pointer', textDecoration: 'underline' }}>
             {showTable ? 'Hide the table' : 'Show the numbers as a table'}
           </button>
 
@@ -186,7 +186,7 @@ const cell = { padding: '.45rem .5rem', borderBottom: '1px solid var(--line)' } 
 
 const TONES = {
   good:  { colour: '#28A56C', mark: '●' },
-  watch: { colour: '#C2820A', mark: '▲' },
+  watch: { colour: 'var(--ember)', mark: '▲' },
   bad:   { colour: '#D14634', mark: '■' },
 } as const;
 

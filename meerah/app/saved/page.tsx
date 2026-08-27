@@ -107,8 +107,8 @@ export default function SavedPage() {
               style={{
                 padding: '.5rem .9rem', borderRadius: 2, font: 'inherit', fontWeight: 600, fontSize: '.85rem',
                 cursor: 'pointer',
-                border: `1px solid ${kind === option.id ? 'var(--marigold)' : 'var(--line)'}`,
-                background: kind === option.id ? 'rgba(255,176,32,.08)' : 'transparent',
+                border: `1px solid ${kind === option.id ? 'var(--obsidian)' : 'var(--line)'}`,
+                background: kind === option.id ? 'var(--ink-deep)' : 'transparent',
                 color: kind === option.id ? 'var(--chalk)' : 'var(--muted)',
               }}>
               {option.label}

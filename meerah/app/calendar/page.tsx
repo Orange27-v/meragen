@@ -236,7 +236,7 @@ export default function CalendarPage() {
               Post Planner renews {plan.renewsAt ? new Date(plan.renewsAt).toLocaleDateString() : 'monthly'} for{' '}
               {plan.monthlyCredits} credits.{' '}
               <button type="button" onClick={() => void act(() => api.planner.unsubscribe())}
-                style={{ background: 'none', border: 0, padding: 0, font: 'inherit', color: 'var(--marigold)', cursor: 'pointer', textDecoration: 'underline' }}>
+                style={{ background: 'none', border: 0, padding: 0, font: 'inherit', color: 'var(--chalk)', cursor: 'pointer', textDecoration: 'underline' }}>
                 Turn it off
               </button>
             </p>

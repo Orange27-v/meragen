@@ -1,15 +1,70 @@
-/* Meerah — adire indigo + aso-oke marigold. Same tokens as the landing page. */
+/* ---------------------------------------------------------------------------
+   Meerah — built on the Awesomic style reference.
+
+   Editorial zinc grid with confetti-orange punctuation: a near-monochrome
+   neutral scale carries the whole interface, hairline 1px borders replace
+   shadows as the elevation tool, and one vivid orange appears only on badges.
+
+   Three rules the system insists on, kept here:
+     · no second accent colour — the palette is 99% achromatic
+     · no drop shadows on cards — 1px #ececee hairlines instead
+     · no sharp corners — 12px is the smallest radius on any container
+   --------------------------------------------------------------------------- */
+
 :root {
-  --ink: #131A3A;
-  --ink-deep: #0B0F26;
-  --surface: #1B2450;
-  --surface-hi: #232E63;
-  --chalk: #F4F1E8;
-  --muted: #9BA2CC;
-  --marigold: #FFB020;
-  --danger: #FF6B5A;
-  --ok: #4ADE9B;
-  --line: rgba(244, 241, 232, 0.10);
+  /* --- Zinc scale ------------------------------------------------------- */
+  --obsidian: #09090b;   /* primary actions, display headlines, deepest ink */
+  --graphite: #18181b;   /* body ink */
+  --slate:    #27272a;   /* dark feature surfaces */
+  --iron:     #3f3f46;   /* muted labels, outlined-button text */
+  --steel:    #52525b;   /* supporting metadata */
+  --fog:      #71717a;   /* helper text */
+  --ash:      #a1a1aa;   /* placeholders, disabled */
+  --mist:     #d4d4d8;   /* secondary fills */
+  --cloud:    #ececee;   /* the border colour */
+  --paper:    #f4f4f5;   /* canvas */
+  --snow:     #ffffff;   /* cards, inputs */
+  --ember:    #ff5a00;   /* badges only — never body text, links or large fills */
+
+  /* --- Roles. Components reference these, never the scale above. --------- */
+  --ink:        var(--paper);     /* page canvas */
+  --ink-deep:   #fafafa;          /* slightly recessed surfaces */
+  --surface:    var(--snow);      /* cards sitting on the canvas */
+  --surface-hi: var(--cloud);     /* hover and heavier borders */
+  --chalk:      var(--obsidian);  /* primary text */
+  --muted:      var(--steel);     /* secondary text */
+  --line:       var(--cloud);     /* the 1px hairline that replaces shadow */
+  --action:     var(--obsidian);  /* filled CTA — the system's key control */
+  --marigold:   var(--ember);     /* accent, badges only */
+
+  /* Status sits outside the accent, and is deliberately restrained to match
+     the neutral register rather than shouting over it. */
+  --ok:     #15803d;
+  --danger: #b91c1c;
+
+  /* --- Type. One family for every role, 10px badge to 64px display. ------ */
+  --font: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --text-caption:    12px;
+  --text-body:       15px;
+  --text-body-lg:    18px;
+  --text-subheading: 20px;
+  --text-heading-sm: 32px;
+  --text-heading:    40px;
+  --text-heading-lg: 56px;
+  --text-display:    64px;
+
+  /* --- Geometry. Three radii repeat everywhere. ------------------------- */
+  --radius-tag:    12px;
+  --radius-button: 14px;
+  --radius-card:   36px;
+  --radius-pill:   10000px;
+
+  --shell:       1200px;
+  --section-gap: 80px;
+  --card-pad:    28px;
+  --pad:         clamp(1.25rem, 5vw, 2.5rem);
+  --measure:     65ch;
 }
 
 * { box-sizing: border-box; }
@@ -17,89 +72,158 @@
 body {
   margin: 0;
   background: var(--ink);
-  color: var(--chalk);
-  font-family: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  line-height: 1.6;
+  color: var(--graphite);
+  font-family: var(--font);
+  font-size: var(--text-body);
+  line-height: 1.45;
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3 { margin: 0; text-wrap: balance; }
+h1, h2, h3, h4 { margin: 0; text-wrap: balance; color: var(--chalk); }
 p { margin: 0; }
-a { color: var(--marigold); }
+a { color: var(--chalk); }
 
+/* Display headlines. One family, bold weight — the weight is what makes the
+   editorial typography read as authoritative, so never below 600. */
 .display {
-  font-family: "Anton", Impact, sans-serif;
-  font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 0.01em;
-  line-height: 0.95;
+  font-family: var(--font);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
 }
 
-.shell { max-width: 1080px; margin-inline: auto; padding: 0 clamp(1.25rem, 4vw, 2.5rem); }
+.shell { max-width: var(--shell); margin-inline: auto; padding-inline: var(--pad); }
 
+/* --- Buttons ---------------------------------------------------------------
+   The dark filled CTA is the single most important interactive element. Its
+   depth comes from an inset highlight and a hairline ring, not a drop shadow. */
 .btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
-  padding: .8rem 1.3rem; border-radius: 2px; border: 1px solid transparent;
-  font: inherit; font-weight: 700; font-size: .9rem; letter-spacing: .02em;
-  cursor: pointer; text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: 12px 16px;
+  border-radius: var(--radius-button);
+  border: 1px solid transparent;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
   transition: background .16s, border-color .16s, opacity .16s;
 }
-.btn-primary { background: var(--marigold); color: #17110A; }
-.btn-primary:hover:not(:disabled) { background: #FFC24D; }
-.btn-ghost { border-color: var(--line); color: var(--chalk); background: transparent; }
-.btn-ghost:hover:not(:disabled) { border-color: var(--marigold); }
+.btn-primary {
+  background: var(--action);
+  color: var(--snow);
+  border-color: #2c2e34;
+  box-shadow:
+    inset 0 0.5px 0 0 rgba(255, 255, 255, 0.5),
+    inset 0 9px 14px -5px rgba(117, 123, 133, 0.4),
+    0 4px 6px 0 rgba(0, 0, 0, 0.14);
+}
+.btn-primary:hover:not(:disabled) { background: var(--graphite); }
+.btn-ghost {
+  background: var(--snow);
+  color: var(--iron);
+  border-color: var(--line);
+}
+.btn-ghost:hover:not(:disabled) { border-color: var(--iron); }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
 .btn-block { width: 100%; }
+.btn-lg { padding: 16px 24px; font-size: 16px; }
 
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--obsidian);
+  outline-offset: 2px;
+}
+
+/* --- Inputs ----------------------------------------------------------------- */
 input, textarea, select {
-  width: 100%; padding: .8rem 1rem; border-radius: 2px;
-  background: var(--ink-deep); border: 1px solid var(--line); color: var(--chalk);
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--radius-button);
+  background: var(--snow);
+  border: 1px solid var(--line);
+  color: var(--graphite);
   font: inherit;
+  font-size: 14px;
 }
-input:focus, textarea:focus, select:focus {
-  outline: 2px solid var(--marigold); outline-offset: 1px; border-color: transparent;
+input:focus, textarea:focus, select:focus { border-color: var(--iron); outline: none; }
+input::placeholder, textarea::placeholder { color: var(--ash); }
+
+label {
+  display: block;
+  font-size: var(--text-caption);
+  font-weight: 500;
+  color: var(--iron);
+  margin-bottom: 6px;
 }
-label { display: block; font-size: .78rem; font-weight: 600; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--muted); margin-bottom: .45rem; }
+.field { margin-bottom: 20px; }
 
-.field { margin-bottom: 1.1rem; }
-
+/* --- Cards. Hairline border, never a shadow. -------------------------------- */
 .card {
-  background: var(--surface); border: 1px solid var(--line);
-  border-radius: 4px; padding: clamp(1.25rem, 3vw, 1.75rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: var(--card-pad);
 }
+
+/* --- Badges and pills -------------------------------------------------------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: var(--radius-tag);
+  font-size: 13px;
+  font-weight: 400;
+  border: 1px solid var(--line);
+  color: var(--graphite);
+  background: transparent;
+}
+/* The sole chromatic badge, reserved for credentials and emphasis. */
+.badge-accent { background: var(--ember); color: var(--snow); border-color: transparent; }
 
 .alert {
-  padding: .8rem 1rem; border-radius: 2px; font-size: .9rem;
-  border-left: 3px solid var(--danger); background: rgba(255, 107, 90, .1);
-  color: var(--chalk); margin-bottom: 1rem;
+  padding: 12px 16px;
+  border-radius: var(--radius-button);
+  font-size: 14px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--danger);
+  background: var(--snow);
+  color: var(--graphite);
+  margin-bottom: 16px;
 }
-.alert-ok { border-left-color: var(--ok); background: rgba(74, 222, 155, .1); }
+.alert-ok { border-left-color: var(--ok); }
 
 .muted { color: var(--muted); }
 .tabular { font-variant-numeric: tabular-nums; }
 
-.topbar {
-  border-bottom: 1px solid var(--line);
-  background: var(--ink-deep);
-}
-.topbar-in { display: flex; align-items: center; gap: 1.5rem; height: 66px; }
+/* --- Navigation. Sticky, white, no border — floats on the canvas. ------------ */
+.topbar { background: var(--snow); border-bottom: 1px solid var(--line); }
+.topbar-in { display: flex; align-items: center; gap: 24px; height: 68px; }
+
 .wordmark {
-  font-family: "Anton", Impact, sans-serif; font-size: 1.3rem; letter-spacing: .1em;
-  text-transform: uppercase; text-decoration: none; color: var(--chalk);
-  display: flex; align-items: center; gap: .5rem;
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  color: var(--chalk);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-.mark { width: 14px; height: 14px; background: var(--marigold);
-  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); flex: none; }
-
-.balance {
-  margin-left: auto; display: flex; align-items: baseline; gap: .5rem;
-  font-variant-numeric: tabular-nums;
+.mark {
+  width: 14px; height: 14px;
+  background: var(--ember);
+  border-radius: 4px;
+  flex: none;
 }
-.balance b { font-family: "Anton", Impact, sans-serif; font-size: 1.25rem; font-weight: 400; }
 
-.auth-wrap { min-height: 100dvh; display: grid; place-items: center; padding: 2rem 1.25rem; }
-.auth-card { width: 100%; max-width: 400px; }
+.balance { margin-left: auto; display: flex; align-items: baseline; gap: 8px; font-variant-numeric: tabular-nums; }
+.balance b { font-size: var(--text-subheading); font-weight: 600; color: var(--chalk); }
+
+.auth-wrap { min-height: 100dvh; display: grid; place-items: center; padding: 48px var(--pad); }
+.auth-card { width: 100%; max-width: 420px; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }

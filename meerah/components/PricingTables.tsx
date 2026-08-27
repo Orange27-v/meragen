@@ -41,7 +41,7 @@ export default function PricingTables() {
   return (
     <>
       <section style={{ marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}>
-        <h2 className="display" style={{ fontSize: 'var(--step-2)', marginBottom: '1rem' }}>What things cost</h2>
+        <h2 className="display" style={{ fontSize: 'var(--text-heading-sm)', marginBottom: '1rem' }}>What things cost</h2>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 460 }}>
             <thead>
@@ -50,8 +50,7 @@ export default function PricingTables() {
                   <th key={head || i} style={{
                     textAlign: i > 1 ? 'right' : 'left', padding: '.7rem .5rem',
                     borderBottom: '1px solid var(--line)', color: 'var(--muted)',
-                    fontSize: 'var(--step--1)', letterSpacing: '.12em', textTransform: 'uppercase',
-                    fontWeight: 600,
+                    fontSize: 'var(--text-caption)', fontWeight: 500,
                   }}>{head}</th>
                 ))}
               </tr>
@@ -60,9 +59,9 @@ export default function PricingTables() {
               {[...videos, ...others].map((tier) => (
                 <tr key={tier.tierId}>
                   <td style={cell()}><b>{tier.label}</b></td>
-                  <td style={cell({ color: 'var(--muted)', fontSize: 'var(--step--1)' })}>{tier.spec}</td>
+                  <td style={cell({ color: 'var(--muted)', fontSize: 'var(--text-caption)' })}>{tier.spec}</td>
                   <td style={cell({ align: 'right' })} className="tabular">{tier.credits.toLocaleString()}</td>
-                  <td style={cell({ align: 'right', color: 'var(--marigold)', weight: 700 })} className="tabular">
+                  <td style={cell({ align: 'right', weight: 600 })} className="tabular">
                     ₦{tier.naira.toLocaleString()}
                   </td>
                 </tr>
@@ -70,14 +69,14 @@ export default function PricingTables() {
             </tbody>
           </table>
         </div>
-        <p className="muted" style={{ fontSize: 'var(--step--1)', marginTop: '.9rem' }}>
+        <p className="muted" style={{ fontSize: 'var(--text-caption)', marginTop: '.9rem' }}>
           1 credit = ₦50. Videos are 5 seconds. Everything you make is stored and downloadable for
           a year, and a failed generation is refunded automatically.
         </p>
       </section>
 
       <section style={{ marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}>
-        <h2 className="display" style={{ fontSize: 'var(--step-2)', marginBottom: '.5rem' }}>Buying credits</h2>
+        <h2 className="display" style={{ fontSize: 'var(--text-heading-sm)', marginBottom: '.5rem' }}>Buying credits</h2>
         <p className="muted" style={{ marginBottom: '1.5rem' }}>
           Buy in bulk for a bonus, or pay as you go for exactly what you need.
         </p>
@@ -112,7 +111,7 @@ export default function PricingTables() {
       </section>
 
       <section className="plain">
-        <h2 className="display" style={{ fontSize: 'var(--step-2)' }}>No free plan</h2>
+        <h2 className="display" style={{ fontSize: 'var(--text-heading-sm)' }}>No free plan</h2>
         <p>
           Every generation costs us money the moment you press the button, so there is no free tier.
           What you get instead: <strong>no subscription</strong>, <strong>no expiry</strong> on credits

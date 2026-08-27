@@ -8,7 +8,7 @@ export interface Point { date: string; value: number }
  * A single-series trend, with a crosshair and tooltip.
  *
  * One series, so one hue and no legend — the title names it. The mark colour is
- * the validated chart step (#C2820A), not the brighter brand accent: that one is
+ * the validated chart step (var(--ember)), not the brighter brand accent: that one is
  * for buttons and text, which is a different job with different contrast rules.
  */
 export default function Sparkline({
@@ -59,14 +59,14 @@ export default function Sparkline({
         }}>
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#C2820A" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#C2820A" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--ember)" stopOpacity="0.18" />
+            <stop offset="100%" stopColor="var(--ember)" stopOpacity="0" />
           </linearGradient>
         </defs>
 
         <path d={area} fill={`url(#${gradientId})`} />
         {/* 2px line, scaled for the non-uniform viewBox. */}
-        <path d={line} fill="none" stroke="#C2820A" strokeWidth={2} vectorEffect="non-scaling-stroke"
+        <path d={line} fill="none" stroke="var(--ember)" strokeWidth={2} vectorEffect="non-scaling-stroke"
           strokeLinejoin="round" strokeLinecap="round" />
 
         {hover !== null && (
@@ -75,7 +75,7 @@ export default function Sparkline({
               stroke="var(--line)" strokeWidth={1} vectorEffect="non-scaling-stroke" />
             {/* Surface ring so the marker reads against the line beneath it. */}
             <circle cx={x(hover)} cy={y(points[hover].value)} r={4}
-              fill="#C2820A" stroke="var(--surface)" strokeWidth={2} vectorEffect="non-scaling-stroke" />
+              fill="var(--ember)" stroke="var(--surface)" strokeWidth={2} vectorEffect="non-scaling-stroke" />
           </>
         )}
       </svg>

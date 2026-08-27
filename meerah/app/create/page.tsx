@@ -131,7 +131,7 @@ export default function CreatePage() {
                   style={{
                     padding: '.9rem .8rem', background: 'none', font: 'inherit', fontWeight: 600,
                     cursor: 'pointer', whiteSpace: 'nowrap', border: 0, fontSize: '.9rem',
-                    borderBottom: `2px solid ${tool === tab.id ? 'var(--marigold)' : 'transparent'}`,
+                    borderBottom: `2px solid ${tool === tab.id ? 'var(--obsidian)' : 'transparent'}`,
                     color: tool === tab.id ? 'var(--chalk)' : 'var(--muted)',
                   }}>
                   {tab.label}

@@ -34,7 +34,7 @@ export default function PricingPage() {
       <main className="shell" style={{ paddingBlock: 'clamp(2.5rem, 6vw, 4.5rem)' }}>
         <div className="sec-head">
           <p className="eyebrow">Pricing</p>
-          <h1 className="display" style={{ fontSize: 'var(--step-3)', marginTop: '.9rem' }}>
+          <h1 className="display" style={{ fontSize: 'var(--text-heading)', marginTop: '.9rem' }}>
             Pay for what you make
           </h1>
           <p>
@@ -48,7 +48,7 @@ export default function PricingPage() {
 
       <footer style={{ borderTop: '1px solid var(--line)', padding: '2.5rem 0', background: 'var(--ink-deep)' }}>
         <div className="shell">
-          <p className="muted" style={{ fontSize: 'var(--step--1)' }}>
+          <p className="muted" style={{ fontSize: 'var(--text-caption)' }}>
             Prices in Naira, charged through Paystack — card, bank transfer or USSD. No international
             card needed. Credits never expire.
           </p>
