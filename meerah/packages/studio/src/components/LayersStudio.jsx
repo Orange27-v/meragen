@@ -1238,7 +1238,7 @@ export default function LayersStudio({
   };
 
   return (
-    <div className="relative w-full h-full bg-[#121318] text-white flex overflow-hidden font-sans select-none">
+    <div className="relative w-full h-full bg-[#ffffff] text-[#09090b] flex overflow-hidden font-sans select-none">
       <Toaster
         position="top-center"
         toastOptions={{
@@ -1264,7 +1264,7 @@ export default function LayersStudio({
         <button
           onClick={() => fileInputRef.current?.click()}
           title="Upload or Change Image"
-          className="group relative w-12 h-14 rounded-2xl overflow-hidden bg-[#1a1c23] border border-white/10 flex items-center justify-center transition-all duration-200 hover:scale-105 shadow-[0_0_20px_rgba(0,0,0,0.5)] ring-2 ring-[#84cc16]/80"
+          className="group relative w-12 h-14 rounded-2xl overflow-hidden bg-[#ffffff] border border-[#ececee] flex items-center justify-center transition-all duration-200 hover:scale-105 shadow-[0_0_20px_rgba(0,0,0,0.5)] ring-2 ring-[#ff5a00]/80"
         >
           {currentImageUrl ? (
             <img
@@ -1285,7 +1285,7 @@ export default function LayersStudio({
               <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
           )}
-          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-[10px] font-bold tracking-tighter text-white">
+          <div className="absolute inset-0 bg-[#f4f4f5] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-[10px] font-bold tracking-tighter text-[#09090b]">
             CHANGE
           </div>
         </button>
@@ -1308,11 +1308,11 @@ export default function LayersStudio({
         onMouseMove={doPan}
         onMouseUp={stopPan}
         onMouseLeave={stopPan}
-        className={`flex-1 relative h-full flex flex-col items-center justify-center p-4 pb-28 overflow-hidden bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#1d2029] via-[#0f1015] to-[#08090c] ${
+        className={`flex-1 relative h-full flex flex-col items-center justify-center p-4 pb-28 overflow-hidden bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#ececee] via-[#f4f4f5] to-[#f4f4f5] ${
           activeTool === "hand" ? "cursor-grab active:cursor-grabbing" : ""
         }`}
       >
-        <div className="absolute w-[700px] h-[700px] bg-[#84cc16]/5 rounded-full blur-[160px] pointer-events-none" />
+        <div className="absolute w-[700px] h-[700px] bg-[#ff5a00]/5 rounded-full blur-[160px] pointer-events-none" />
 
         {/* Central Display Viewport Container */}
         <div
@@ -1323,9 +1323,9 @@ export default function LayersStudio({
           }}
         >
           {uploading ? (
-            <div className="flex flex-col items-center justify-center p-12 bg-[#1a1c23]/80 backdrop-blur-md rounded-3xl border border-white/10">
-              <div className="w-12 h-12 border-4 border-[#84cc16]/20 border-t-[#84cc16] rounded-full animate-spin mb-4" />
-              <p className="text-sm font-semibold text-white/80">
+            <div className="flex flex-col items-center justify-center p-12 bg-[#ffffff]/80 backdrop-blur-md rounded-3xl border border-[#ececee]">
+              <div className="w-12 h-12 border-4 border-[#ff5a00]/20 border-t-[#ff5a00] rounded-full animate-spin mb-4" />
+              <p className="text-sm font-semibold text-[#3f3f46]">
                 Uploading image... {uploadProgress}%
               </p>
             </div>
@@ -1338,7 +1338,7 @@ export default function LayersStudio({
               onTouchStart={handleImageMouseDown}
               onTouchMove={handleImageMouseMove}
               onTouchEnd={handleImageMouseUp}
-              className={`relative group rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8)] border border-white/10 ${
+              className={`relative group rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8)] border border-[#ececee] ${
                 activeTool === "lasso" ||
                 activeTool === "regional-edit" ||
                 activeTool === "shapes"
@@ -1416,7 +1416,7 @@ export default function LayersStudio({
                 regionalBox.width > 0 &&
                 regionalBox.height > 0 && (
                   <div
-                    className="absolute border-2 border-dashed border-[#38bdf8] bg-[#38bdf8]/10 rounded-lg pointer-events-auto shadow-[0_0_25px_rgba(56,189,248,0.5)] z-30"
+                    className="absolute border-2 border-dashed border-[#09090b] bg-[#09090b]/10 rounded-lg pointer-events-auto shadow-[0_0_25px_rgba(56,189,248,0.5)] z-30"
                     style={{
                       left: `${regionalBox.x}%`,
                       top: `${regionalBox.y}%`,
@@ -1424,10 +1424,10 @@ export default function LayersStudio({
                       height: `${regionalBox.height}%`,
                     }}
                   >
-                    <div className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-[#38bdf8] border border-white rounded-full" />
-                    <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-[#38bdf8] border border-white rounded-full" />
-                    <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-[#38bdf8] border border-white rounded-full" />
-                    <div className="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-[#38bdf8] border border-white rounded-full" />
+                    <div className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-[#09090b] border border-[#ececee] rounded-full" />
+                    <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-[#09090b] border border-[#ececee] rounded-full" />
+                    <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-[#09090b] border border-[#ececee] rounded-full" />
+                    <div className="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-[#09090b] border border-[#ececee] rounded-full" />
                   </div>
                 )}
 
@@ -1440,9 +1440,9 @@ export default function LayersStudio({
                   !isSelectingRegion)) && (
                 <div
                   onMouseDown={(e) => e.stopPropagation()}
-                  className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[280px] sm:w-[340px] bg-[#161822]/95 backdrop-blur-2xl border border-white/20 rounded-full px-3.5 py-2 flex items-center gap-2 shadow-[0_20px_40px_rgba(0,0,0,0.9)] z-50 animate-fade-in"
+                  className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[280px] sm:w-[340px] bg-[#ffffff]/95 backdrop-blur-2xl border border-[#d4d4d8] rounded-full px-3.5 py-2 flex items-center gap-2 shadow-[0_20px_40px_rgba(0,0,0,0.9)] z-50 animate-fade-in"
                 >
-                  <span className="text-white/40 font-semibold text-sm ml-1">
+                  <span className="text-[#71717a] font-semibold text-sm ml-1">
                     +
                   </span>
                   <input
@@ -1453,12 +1453,12 @@ export default function LayersStudio({
                       e.key === "Enter" && handleRunRegionalEdit()
                     }
                     placeholder="Type your prompt here..."
-                    className="flex-1 bg-transparent text-xs text-white placeholder-white/40 focus:outline-none min-w-0 font-medium"
+                    className="flex-1 bg-transparent text-xs text-[#09090b] placeholder-white/40 focus:outline-none min-w-0 font-medium"
                   />
                   <button
                     onClick={handleRunRegionalEdit}
                     disabled={isProcessing}
-                    className="w-7 h-7 rounded-full bg-[#84cc16] hover:bg-[#a3e635] text-black flex items-center justify-center shadow-[0_0_12px_rgba(132,204,22,0.6)] transition-all hover:scale-105 active:scale-95 flex-shrink-0"
+                    className="w-7 h-7 rounded-full bg-[#ff5a00] hover:bg-[#ff5a00] text-[#09090b] flex items-center justify-center shadow-[0_0_12px_rgba(132,204,22,0.6)] transition-all hover:scale-105 active:scale-95 flex-shrink-0"
                     title="Run Selection Edit"
                   >
                     <svg
@@ -1512,7 +1512,7 @@ export default function LayersStudio({
                         }}
                         className={`absolute inset-0 w-full h-full object-contain transition-all duration-200 cursor-pointer pointer-events-auto ${
                           isSelected
-                            ? "ring-2 ring-[#84cc16] drop-shadow-[0_0_20px_rgba(132,204,22,0.6)]"
+                            ? "ring-2 ring-[#ff5a00] drop-shadow-[0_0_20px_rgba(132,204,22,0.6)]"
                             : "hover:opacity-90"
                         }`}
                       />
@@ -1523,21 +1523,21 @@ export default function LayersStudio({
 
               {/* Loading Overlay */}
               {isProcessing && (
-                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center p-6 z-40">
+                <div className="absolute inset-0 bg-[#ffffff] backdrop-blur-sm flex flex-col items-center justify-center p-6 z-40">
                   <div className="relative w-16 h-16 mb-4">
-                    <div className="absolute inset-0 border-4 border-[#84cc16]/20 rounded-full" />
-                    <div className="absolute inset-0 border-4 border-[#84cc16] border-t-transparent rounded-full animate-spin" />
+                    <div className="absolute inset-0 border-4 border-[#ff5a00]/20 rounded-full" />
+                    <div className="absolute inset-0 border-4 border-[#ff5a00] border-t-transparent rounded-full animate-spin" />
                   </div>
-                  <p className="text-sm font-bold tracking-wide text-white">
+                  <p className="text-sm font-bold tracking-wide text-[#09090b]">
                     Processing Image...
                   </p>
-                  <p className="text-xs text-white/50 mt-1">
+                  <p className="text-xs text-[#52525b] mt-1">
                     Open Generative AI Studio
                   </p>
 
-                  <div className="w-48 bg-white/10 h-1.5 rounded-full overflow-hidden mt-4">
+                  <div className="w-48 bg-[#f4f4f5] h-1.5 rounded-full overflow-hidden mt-4">
                     <div
-                      className="bg-gradient-to-r from-[#84cc16] to-[#a3e635] h-full transition-all duration-300"
+                      className="bg-gradient-to-r from-[#ff5a00] to-[#ff5a00] h-full transition-all duration-300"
                       style={{ width: `${progress}%` }}
                     />
                   </div>
@@ -1547,9 +1547,9 @@ export default function LayersStudio({
           ) : (
             <div
               onClick={() => fileInputRef.current?.click()}
-              className="flex flex-col items-center justify-center p-16 border-2 border-dashed border-white/20 hover:border-[#84cc16]/60 rounded-3xl cursor-pointer transition-all duration-200 bg-[#16181f]/50 hover:bg-[#16181f]/80"
+              className="flex flex-col items-center justify-center p-16 border-2 border-dashed border-[#d4d4d8] hover:border-[#ff5a00]/60 rounded-3xl cursor-pointer transition-all duration-200 bg-[#ffffff]/50 hover:bg-[#ffffff]/80"
             >
-              <div className="w-16 h-16 rounded-2xl bg-[#84cc16]/10 text-[#84cc16] flex items-center justify-center mb-4">
+              <div className="w-16 h-16 rounded-2xl bg-[#ff5a00]/10 text-[#ff5a00] flex items-center justify-center mb-4">
                 <svg
                   width="32"
                   height="32"
@@ -1563,10 +1563,10 @@ export default function LayersStudio({
                   <line x1="12" y1="3" x2="12" y2="15" />
                 </svg>
               </div>
-              <p className="text-base font-bold text-white mb-1">
+              <p className="text-base font-bold text-[#09090b] mb-1">
                 Click or Drop Image Here
               </p>
-              <p className="text-xs text-white/50">
+              <p className="text-xs text-[#52525b]">
                 Supports PNG, JPEG, WEBP up to 20MB
               </p>
             </div>
@@ -1577,14 +1577,14 @@ export default function LayersStudio({
         <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2.5 w-full max-w-xl px-4">
           {/* SHAPES (R) POPOVER TOOLBAR */}
           {activeTool === "shapes" && (
-            <div className="flex items-center gap-3 px-4 py-2 bg-[#1b1e26]/95 backdrop-blur-xl border border-[#84cc16]/40 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.6)] animate-fade-in">
+            <div className="flex items-center gap-3 px-4 py-2 bg-[#ffffff]/95 backdrop-blur-xl border border-[#ff5a00]/40 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.6)] animate-fade-in">
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setActiveShape("line")}
                   className={`p-1.5 rounded-lg border transition-all ${
                     activeShape === "line"
-                      ? "bg-[#84cc16] text-black border-[#84cc16]"
-                      : "text-white/70 hover:text-white border-transparent"
+                      ? "bg-[#ff5a00] text-[#09090b] border-[#ff5a00]"
+                      : "text-[#3f3f46] hover:text-[#09090b] border-transparent"
                   }`}
                   title="Line"
                 >
@@ -1604,8 +1604,8 @@ export default function LayersStudio({
                   onClick={() => setActiveShape("arrow")}
                   className={`p-1.5 rounded-lg border transition-all ${
                     activeShape === "arrow"
-                      ? "bg-[#84cc16] text-black border-[#84cc16]"
-                      : "text-white/70 hover:text-white border-transparent"
+                      ? "bg-[#ff5a00] text-[#09090b] border-[#ff5a00]"
+                      : "text-[#3f3f46] hover:text-[#09090b] border-transparent"
                   }`}
                   title="Arrow"
                 >
@@ -1626,8 +1626,8 @@ export default function LayersStudio({
                   onClick={() => setActiveShape("rect")}
                   className={`p-1.5 rounded-lg border transition-all ${
                     activeShape === "rect"
-                      ? "bg-[#84cc16] text-black border-[#84cc16]"
-                      : "text-white/70 hover:text-white border-transparent"
+                      ? "bg-[#ff5a00] text-[#09090b] border-[#ff5a00]"
+                      : "text-[#3f3f46] hover:text-[#09090b] border-transparent"
                   }`}
                   title="Rectangle"
                 >
@@ -1647,8 +1647,8 @@ export default function LayersStudio({
                   onClick={() => setActiveShape("circle")}
                   className={`p-1.5 rounded-lg border transition-all ${
                     activeShape === "circle"
-                      ? "bg-[#84cc16] text-black border-[#84cc16]"
-                      : "text-white/70 hover:text-white border-transparent"
+                      ? "bg-[#ff5a00] text-[#09090b] border-[#ff5a00]"
+                      : "text-[#3f3f46] hover:text-[#09090b] border-transparent"
                   }`}
                   title="Circle"
                 >
@@ -1665,14 +1665,14 @@ export default function LayersStudio({
                 </button>
               </div>
 
-              <div className="w-[1px] h-4 bg-white/10" />
+              <div className="w-[1px] h-4 bg-[#f4f4f5]" />
 
               <div className="flex items-center gap-1.5">
                 {PRESET_COLORS.map((c) => (
                   <button
                     key={c}
                     onClick={() => setShapeColor(c)}
-                    className={`w-4 h-4 rounded-full border border-white/20 transition-all ${
+                    className={`w-4 h-4 rounded-full border border-[#d4d4d8] transition-all ${
                       shapeColor === c
                         ? "scale-125 ring-2 ring-white shadow-md"
                         : "hover:scale-110"
@@ -1686,8 +1686,8 @@ export default function LayersStudio({
 
           {/* Active Drawing Tool Popover Options Bar */}
           {(activeTool === "draw" || activeTool === "eraser") && (
-            <div className="flex items-center gap-3 px-4 py-2 bg-[#1b1e26]/95 backdrop-blur-xl border border-[#84cc16]/40 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.6)] animate-fade-in">
-              <span className="text-xs font-extrabold uppercase text-[#a3e635] tracking-wider">
+            <div className="flex items-center gap-3 px-4 py-2 bg-[#ffffff]/95 backdrop-blur-xl border border-[#ff5a00]/40 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.6)] animate-fade-in">
+              <span className="text-xs font-extrabold uppercase text-[#ff5a00] tracking-wider">
                 {activeTool === "draw" ? "Marker Pen" : "Eraser"}
               </span>
 
@@ -1697,7 +1697,7 @@ export default function LayersStudio({
                     <button
                       key={c}
                       onClick={() => setBrushColor(c)}
-                      className={`w-5 h-5 rounded-full border border-white/20 transition-all ${
+                      className={`w-5 h-5 rounded-full border border-[#d4d4d8] transition-all ${
                         brushColor === c
                           ? "scale-125 ring-2 ring-white shadow-md"
                           : "hover:scale-110"
@@ -1715,8 +1715,8 @@ export default function LayersStudio({
                 </div>
               )}
 
-              <div className="flex items-center gap-2 border-l border-white/10 pl-3">
-                <span className="text-[11px] text-white/60 font-semibold">
+              <div className="flex items-center gap-2 border-l border-[#ececee] pl-3">
+                <span className="text-[11px] text-[#52525b] font-semibold">
                   Size:
                 </span>
                 <input
@@ -1725,18 +1725,18 @@ export default function LayersStudio({
                   max="40"
                   value={brushSize}
                   onChange={(e) => setBrushSize(Number(e.target.value))}
-                  className="w-20 accent-[#84cc16] cursor-pointer"
+                  className="w-20 accent-[#ff5a00] cursor-pointer"
                 />
-                <span className="text-xs font-bold text-white min-w-[20px]">
+                <span className="text-xs font-bold text-[#09090b] min-w-[20px]">
                   {brushSize}px
                 </span>
               </div>
 
-              <div className="flex items-center gap-1 border-l border-white/10 pl-3">
+              <div className="flex items-center gap-1 border-l border-[#ececee] pl-3">
                 <button
                   onClick={handleUndo}
                   disabled={historyIndex < 0}
-                  className="p-1.5 text-white/70 hover:text-white disabled:opacity-30 rounded-lg hover:bg-white/5"
+                  className="p-1.5 text-[#3f3f46] hover:text-[#09090b] disabled:opacity-30 rounded-lg hover:bg-[#fafafa]"
                   title="Undo Stroke"
                 >
                   ↶
@@ -1744,14 +1744,14 @@ export default function LayersStudio({
                 <button
                   onClick={handleRedo}
                   disabled={historyIndex >= historyStack.length - 1}
-                  className="p-1.5 text-white/70 hover:text-white disabled:opacity-30 rounded-lg hover:bg-white/5"
+                  className="p-1.5 text-[#3f3f46] hover:text-[#09090b] disabled:opacity-30 rounded-lg hover:bg-[#fafafa]"
                   title="Redo Stroke"
                 >
                   ↷
                 </button>
                 <button
                   onClick={clearDrawingCanvas}
-                  className="p-1.5 text-rose-400 hover:text-rose-300 rounded-lg hover:bg-white/5 text-xs font-bold"
+                  className="p-1.5 text-rose-400 hover:text-rose-300 rounded-lg hover:bg-[#fafafa] text-xs font-bold"
                   title="Clear Drawings"
                 >
                   Clear
@@ -1761,13 +1761,13 @@ export default function LayersStudio({
           )}
 
           {/* Bottom Floating Micro Toolbar */}
-          <div className="flex items-center gap-1.5 px-3.5 py-2 bg-[#1b1e26]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_12px_35px_rgba(0,0,0,0.6)]">
+          <div className="flex items-center gap-1.5 px-3.5 py-2 bg-[#ffffff]/95 backdrop-blur-xl border border-[#ececee] rounded-2xl shadow-[0_12px_35px_rgba(0,0,0,0.6)]">
             <button
               onClick={() => setActiveTool("pointer")}
               className={`p-2 rounded-xl transition-all ${
                 activeTool === "pointer"
-                  ? "bg-[#84cc16] text-black shadow-[0_0_12px_rgba(132,204,22,0.4)]"
-                  : "text-white/60 hover:text-white hover:bg-white/5"
+                  ? "bg-[#ff5a00] text-[#09090b] shadow-[0_0_12px_rgba(132,204,22,0.4)]"
+                  : "text-[#52525b] hover:text-[#09090b] hover:bg-[#fafafa]"
               }`}
               title="Select Pointer Tool"
             >
@@ -1785,8 +1785,8 @@ export default function LayersStudio({
               onClick={() => setActiveTool("hand")}
               className={`p-2 rounded-xl transition-all ${
                 activeTool === "hand"
-                  ? "bg-[#84cc16] text-black shadow-[0_0_12px_rgba(132,204,22,0.4)]"
-                  : "text-white/60 hover:text-white hover:bg-white/5"
+                  ? "bg-[#ff5a00] text-[#09090b] shadow-[0_0_12px_rgba(132,204,22,0.4)]"
+                  : "text-[#52525b] hover:text-[#09090b] hover:bg-[#fafafa]"
               }`}
               title="Pan Tool"
             >
@@ -1811,8 +1811,8 @@ export default function LayersStudio({
               }
               className={`group relative p-2 rounded-xl transition-all ${
                 activeTool === "lasso"
-                  ? "bg-[#84cc16] text-black shadow-[0_0_12px_rgba(132,204,22,0.4)]"
-                  : "text-white/60 hover:text-white hover:bg-white/5"
+                  ? "bg-[#ff5a00] text-[#09090b] shadow-[0_0_12px_rgba(132,204,22,0.4)]"
+                  : "text-[#52525b] hover:text-[#09090b] hover:bg-[#fafafa]"
               }`}
               title="Lasso Edit"
             >
@@ -1830,7 +1830,7 @@ export default function LayersStudio({
                 />
                 <circle cx="12" cy="12" r="3" />
               </svg>
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-[11px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-md">
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-[#ffffff] text-[#09090b] text-[11px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-md">
                 Lasso edit
               </div>
             </button>
@@ -1843,8 +1843,8 @@ export default function LayersStudio({
               }
               className={`group relative p-2 rounded-xl transition-all ${
                 activeTool === "regional-edit"
-                  ? "bg-[#84cc16] text-black shadow-[0_0_12px_rgba(132,204,22,0.4)]"
-                  : "text-white/60 hover:text-white hover:bg-white/5"
+                  ? "bg-[#ff5a00] text-[#09090b] shadow-[0_0_12px_rgba(132,204,22,0.4)]"
+                  : "text-[#52525b] hover:text-[#09090b] hover:bg-[#fafafa]"
               }`}
               title="Regional Edit"
             >
@@ -1866,7 +1866,7 @@ export default function LayersStudio({
                 />
                 <path d="M9 12h6M12 9v6" />
               </svg>
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-[11px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-md">
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-[#ffffff] text-[#09090b] text-[11px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-md">
                 Regional edit
               </div>
             </button>
@@ -1877,8 +1877,8 @@ export default function LayersStudio({
               }
               className={`p-2 rounded-xl transition-all ${
                 activeTool === "draw"
-                  ? "bg-[#84cc16] text-black shadow-[0_0_12px_rgba(132,204,22,0.4)]"
-                  : "text-white/60 hover:text-white hover:bg-white/5"
+                  ? "bg-[#ff5a00] text-[#09090b] shadow-[0_0_12px_rgba(132,204,22,0.4)]"
+                  : "text-[#52525b] hover:text-[#09090b] hover:bg-[#fafafa]"
               }`}
               title="Highlight Marker Pen"
             >
@@ -1901,8 +1901,8 @@ export default function LayersStudio({
               }
               className={`p-2 rounded-xl transition-all ${
                 activeTool === "eraser"
-                  ? "bg-[#84cc16] text-black shadow-[0_0_12px_rgba(132,204,22,0.4)]"
-                  : "text-white/60 hover:text-white hover:bg-white/5"
+                  ? "bg-[#ff5a00] text-[#09090b] shadow-[0_0_12px_rgba(132,204,22,0.4)]"
+                  : "text-[#52525b] hover:text-[#09090b] hover:bg-[#fafafa]"
               }`}
               title="Eraser Tool"
             >
@@ -1924,8 +1924,8 @@ export default function LayersStudio({
               }
               className={`group relative p-2 rounded-xl transition-all ${
                 activeTool === "shapes"
-                  ? "bg-[#84cc16] text-black shadow-[0_0_12px_rgba(132,204,22,0.4)]"
-                  : "text-white/60 hover:text-white hover:bg-white/5"
+                  ? "bg-[#ff5a00] text-[#09090b] shadow-[0_0_12px_rgba(132,204,22,0.4)]"
+                  : "text-[#52525b] hover:text-[#09090b] hover:bg-[#fafafa]"
               }`}
               title="Shapes (R)"
             >
@@ -1940,39 +1940,39 @@ export default function LayersStudio({
                 <rect x="3" y="3" width="10" height="10" rx="1" />
                 <circle cx="16" cy="16" r="5" />
               </svg>
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-[11px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-md">
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-[#ffffff] text-[#09090b] text-[11px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-md">
                 Shapes (R)
               </div>
             </button>
 
-            <div className="w-[1px] h-4 bg-white/10 mx-1" />
+            <div className="w-[1px] h-4 bg-[#f4f4f5] mx-1" />
 
             <button
               onClick={() => setZoomLevel((z) => Math.max(50, z - 10))}
-              className="px-1.5 py-1 text-white/60 hover:text-white text-xs font-bold"
+              className="px-1.5 py-1 text-[#52525b] hover:text-[#09090b] text-xs font-bold"
             >
               –
             </button>
             <button
               onClick={resetView}
-              className="text-xs font-semibold text-white/80 min-w-[36px] text-center hover:text-white"
+              className="text-xs font-semibold text-[#3f3f46] min-w-[36px] text-center hover:text-[#09090b]"
               title="Reset Zoom & Pan"
             >
               {zoomLevel}%
             </button>
             <button
               onClick={() => setZoomLevel((z) => Math.min(200, z + 10))}
-              className="px-1.5 py-1 text-white/60 hover:text-white text-xs font-bold"
+              className="px-1.5 py-1 text-[#52525b] hover:text-[#09090b] text-xs font-bold"
             >
               +
             </button>
           </div>
 
           {/* Bottom Floating Main Prompt Bar */}
-          <div className="w-full relative flex items-center bg-[#15171e]/95 backdrop-blur-xl border border-white/10 rounded-full px-4 py-2 shadow-[0_15px_40px_rgba(0,0,0,0.6)]">
+          <div className="w-full relative flex items-center bg-[#ffffff]/95 backdrop-blur-xl border border-[#ececee] rounded-full px-4 py-2 shadow-[0_15px_40px_rgba(0,0,0,0.6)]">
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/70 hover:text-white transition-all mr-2 flex-shrink-0"
+              className="w-8 h-8 rounded-full bg-[#fafafa] hover:bg-[#f4f4f5] flex items-center justify-center text-[#3f3f46] hover:text-[#09090b] transition-all mr-2 flex-shrink-0"
               title="Add Image"
             >
               <svg
@@ -1998,13 +1998,13 @@ export default function LayersStudio({
                   ? `Describe layers for ${markedRegions.length} marked region(s)...`
                   : "Describe how to edit image or split layers..."
               }
-              className="flex-1 bg-transparent text-sm text-white placeholder-white/40 focus:outline-none px-2 font-medium min-w-0"
+              className="flex-1 bg-transparent text-sm text-[#09090b] placeholder-white/40 focus:outline-none px-2 font-medium min-w-0"
             />
 
             <button
               onClick={() => handleDecompose()}
               disabled={isProcessing}
-              className="w-10 h-10 rounded-full bg-[#84cc16] hover:bg-[#a3e635] text-black flex items-center justify-center shadow-[0_0_20px_rgba(132,204,22,0.5)] transition-all hover:scale-105 active:scale-95 disabled:opacity-50 ml-2 flex-shrink-0"
+              className="w-10 h-10 rounded-full bg-[#ff5a00] hover:bg-[#ff5a00] text-[#09090b] flex items-center justify-center shadow-[0_0_20px_rgba(132,204,22,0.5)] transition-all hover:scale-105 active:scale-95 disabled:opacity-50 ml-2 flex-shrink-0"
               title="Run Layer Decomposition"
             >
               <svg
@@ -2024,7 +2024,7 @@ export default function LayersStudio({
 
       {/* Right Inspector Panel */}
       {isSidebarOpen && (
-        <div className="w-[380px] h-full bg-[#242833] border-l border-white/10 flex flex-col justify-between z-20 shadow-[-10px_0_30px_rgba(0,0,0,0.5)] animate-fade-in">
+        <div className="w-[380px] h-full bg-[#ececee] border-l border-[#ececee] flex flex-col justify-between z-20 shadow-[-10px_0_30px_rgba(0,0,0,0.5)] animate-fade-in">
           {/* Top Header & Panel Content */}
           <div className="p-5 flex-1 overflow-y-auto custom-scrollbar">
             {/* Header with Back, Title & Close */}
@@ -2032,7 +2032,7 @@ export default function LayersStudio({
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setActiveSideTab("menu")}
-                  className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-white/70 hover:text-white flex items-center justify-center transition-colors"
+                  className="w-8 h-8 rounded-full bg-[#fafafa] hover:bg-[#f4f4f5] text-[#3f3f46] hover:text-[#09090b] flex items-center justify-center transition-colors"
                   title="Back to Tools"
                 >
                   <svg
@@ -2048,7 +2048,7 @@ export default function LayersStudio({
                 </button>
 
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center text-black shadow-sm">
+                  <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center text-[#09090b] shadow-sm">
                     {activeSideTab === "upscale" ? (
                       <svg
                         width="14"
@@ -2124,7 +2124,7 @@ export default function LayersStudio({
                       </svg>
                     )}
                   </div>
-                  <h3 className="text-sm font-extrabold text-white tracking-tight">
+                  <h3 className="text-sm font-extrabold text-[#09090b] tracking-tight">
                     {activeSideTab === "upscale"
                       ? "Upscale"
                       : activeSideTab === "color-grading"
@@ -2142,7 +2142,7 @@ export default function LayersStudio({
 
               <button
                 onClick={() => setIsSidebarOpen(false)}
-                className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-white/40 hover:text-white flex items-center justify-center transition-colors"
+                className="w-8 h-8 rounded-full bg-[#fafafa] hover:bg-[#f4f4f5] text-[#71717a] hover:text-[#09090b] flex items-center justify-center transition-colors"
                 title="Close Panel"
               >
                 <svg
@@ -2165,7 +2165,7 @@ export default function LayersStudio({
                 {/* Hero Feature Card with 5 CDN Layers */}
                 <div
                   onClick={handleLoadSampleLayers}
-                  className="group w-full bg-[#f4f4f7] hover:bg-white rounded-3xl p-3 shadow-lg overflow-hidden border border-white/20 cursor-pointer transition-all duration-200 hover:scale-[1.01]"
+                  className="group w-full bg-[#f4f4f7] hover:bg-white rounded-3xl p-3 shadow-lg overflow-hidden border border-[#d4d4d8] cursor-pointer transition-all duration-200 hover:scale-[1.01]"
                   title="Click to load this layer decomposition example"
                 >
                   <div className="flex items-center gap-2.5">
@@ -2175,18 +2175,18 @@ export default function LayersStudio({
                         alt="Seedream original demo"
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute inset-y-0 left-1/2 w-5 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#d8ff00]/90 to-transparent blur-[3px] animate-pulse" />
-                      <div className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded-md bg-black/75 text-[8px] font-black text-white backdrop-blur-sm">
+                      <div className="absolute inset-y-0 left-1/2 w-5 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#ff5a00]/90 to-transparent blur-[3px] animate-pulse" />
+                      <div className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded-md bg-[#ffffff]/75 text-[8px] font-black text-[#09090b] backdrop-blur-sm">
                         Original
                       </div>
                     </div>
 
-                    <div className="flex-1 bg-[#13151d] rounded-2xl p-2.5 flex flex-col justify-between h-36 shadow-inner overflow-hidden">
+                    <div className="flex-1 bg-[#ffffff] rounded-2xl p-2.5 flex flex-col justify-between h-36 shadow-inner overflow-hidden">
                       <div className="flex items-center justify-between px-1">
-                        <span className="text-[10px] font-black text-[#a3e635] uppercase tracking-wider">
+                        <span className="text-[10px] font-black text-[#ff5a00] uppercase tracking-wider">
                           5 Layers
                         </span>
-                        <span className="text-[9px] font-bold text-white/50 group-hover:text-white transition-colors">
+                        <span className="text-[9px] font-bold text-[#52525b] group-hover:text-[#09090b] transition-colors">
                           Try →
                         </span>
                       </div>
@@ -2195,7 +2195,7 @@ export default function LayersStudio({
                         {DEFAULT_SAMPLE_LAYERS.map((layerUrl, idx) => (
                           <div
                             key={idx}
-                            className="flex-shrink-0 w-11 h-16 rounded-xl overflow-hidden border border-white/10 relative flex items-center justify-center p-1 bg-[#1a1d26] shadow-sm hover:border-[#84cc16]/50 transition-all"
+                            className="flex-shrink-0 w-11 h-16 rounded-xl overflow-hidden border border-[#ececee] relative flex items-center justify-center p-1 bg-[#ffffff] shadow-sm hover:border-[#ff5a00]/50 transition-all"
                             style={{
                               backgroundImage: `linear-gradient(45deg, #242733 25%, transparent 25%), linear-gradient(-45deg, #242733 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #242733 75%), linear-gradient(-45deg, transparent 75%, #242733 75%)`,
                               backgroundSize: "6px 6px",
@@ -2207,14 +2207,14 @@ export default function LayersStudio({
                               alt={`Layer ${idx + 1}`}
                               className="max-h-full max-w-full object-contain drop-shadow-sm transition-transform duration-200 group-hover:scale-105"
                             />
-                            <span className="absolute bottom-0.5 right-0.5 text-[8px] font-black text-white/90 bg-black/70 px-1 rounded">
+                            <span className="absolute bottom-0.5 right-0.5 text-[8px] font-black text-[#18181b] bg-[#ffffff] px-1 rounded">
                               {idx + 1}
                             </span>
                           </div>
                         ))}
                       </div>
 
-                      <div className="text-[9px] text-center text-white/40 font-semibold group-hover:text-[#84cc16] transition-colors">
+                      <div className="text-[9px] text-center text-[#71717a] font-semibold group-hover:text-[#ff5a00] transition-colors">
                         Click to explore sample
                       </div>
                     </div>
@@ -2222,24 +2222,24 @@ export default function LayersStudio({
                 </div>
 
                 {/* Settings Section */}
-                <div className="bg-[#2d313d] rounded-3xl p-5 border border-white/5 space-y-4 shadow-sm">
-                  <h4 className="text-sm font-bold text-white tracking-tight">
+                <div className="bg-[#ececee] rounded-3xl p-5 border border-[#ececee] space-y-4 shadow-sm">
+                  <h4 className="text-sm font-bold text-[#09090b] tracking-tight">
                     Settings
                   </h4>
 
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2">
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#71717a] mb-2">
                       Resolution
                     </label>
-                    <div className="grid grid-cols-3 gap-1.5 bg-[#1a1c24] p-1 rounded-2xl border border-white/5">
+                    <div className="grid grid-cols-3 gap-1.5 bg-[#ffffff] p-1 rounded-2xl border border-[#ececee]">
                       {["1K", "1.5K", "2K"].map((res) => (
                         <button
                           key={res}
                           onClick={() => setResolution(res)}
                           className={`py-2 text-xs font-extrabold rounded-xl transition-all ${
                             resolution === res
-                              ? "bg-[#383c4a] text-white shadow-md border border-white/10"
-                              : "text-white/40 hover:text-white"
+                              ? "bg-[#ececee] text-[#09090b] shadow-md border border-[#ececee]"
+                              : "text-[#71717a] hover:text-[#09090b]"
                           }`}
                         >
                           {res}
@@ -2250,15 +2250,15 @@ export default function LayersStudio({
 
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <label className="block text-[11px] font-bold uppercase tracking-wider text-white/40">
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#71717a]">
                         Layers
                       </label>
-                      <span className="px-2.5 py-0.5 rounded-lg bg-[#1a1c24] border border-white/10 text-xs font-black text-white shadow-sm">
+                      <span className="px-2.5 py-0.5 rounded-lg bg-[#ffffff] border border-[#ececee] text-xs font-black text-[#09090b] shadow-sm">
                         {layerCount}
                       </span>
                     </div>
-                    <div className="bg-[#1a1c24] rounded-2xl p-3 border border-white/5 flex items-center gap-3">
-                      <span className="text-[10px] font-bold text-white/30">
+                    <div className="bg-[#ffffff] rounded-2xl p-3 border border-[#ececee] flex items-center gap-3">
+                      <span className="text-[10px] font-bold text-[#71717a]">
                         2
                       </span>
                       <input
@@ -2267,9 +2267,9 @@ export default function LayersStudio({
                         max="16"
                         value={layerCount}
                         onChange={(e) => setLayerCount(Number(e.target.value))}
-                        className="w-full accent-[#e2f924] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                        className="w-full accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                       />
-                      <span className="text-[10px] font-bold text-white/30">
+                      <span className="text-[10px] font-bold text-[#71717a]">
                         16
                       </span>
                     </div>
@@ -2278,13 +2278,13 @@ export default function LayersStudio({
 
                 {/* RESULTS: DECOMPOSED LAYERS INTERACTIVE CAROUSEL */}
                 {decomposedLayers.length > 0 && (
-                  <div className="space-y-4 border-t border-white/10 pt-4 animate-fade-in">
+                  <div className="space-y-4 border-t border-[#ececee] pt-4 animate-fade-in">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold uppercase text-white/80">
+                        <span className="text-xs font-bold uppercase text-[#3f3f46]">
                           Layer Carousel
                         </span>
-                        <span className="px-2 py-0.5 rounded-full bg-[#84cc16]/20 text-[#a3e635] text-[10px] font-black">
+                        <span className="px-2 py-0.5 rounded-full bg-[#ff5a00]/20 text-[#ff5a00] text-[10px] font-black">
                           {carouselIndex + 1} / {decomposedLayers.length}
                         </span>
                       </div>
@@ -2294,8 +2294,8 @@ export default function LayersStudio({
                           onClick={() => setIsSoloMode(!isSoloMode)}
                           className={`px-2 py-0.5 rounded-lg text-[10px] font-bold border transition-all ${
                             isSoloMode
-                              ? "bg-[#84cc16] text-black border-[#84cc16]"
-                              : "bg-white/5 text-white/60 hover:text-white border-white/10"
+                              ? "bg-[#ff5a00] text-[#09090b] border-[#ff5a00]"
+                              : "bg-[#fafafa] text-[#52525b] hover:text-[#09090b] border-[#ececee]"
                           }`}
                           title="View only active layer"
                         >
@@ -2303,16 +2303,16 @@ export default function LayersStudio({
                         </button>
                         <button
                           onClick={handleDownloadAll}
-                          className="text-xs text-[#a3e635] hover:underline font-semibold"
+                          className="text-xs text-[#ff5a00] hover:underline font-semibold"
                         >
                           Download All
                         </button>
                       </div>
                     </div>
 
-                    <div className="relative group bg-[#111319] border border-white/15 rounded-2xl overflow-hidden p-3 flex flex-col items-center shadow-xl">
+                    <div className="relative group bg-[#ffffff] border border-[#ececee]/15 rounded-2xl overflow-hidden p-3 flex flex-col items-center shadow-xl">
                       <div
-                        className="w-full h-48 rounded-xl overflow-hidden relative flex items-center justify-center border border-white/10"
+                        className="w-full h-48 rounded-xl overflow-hidden relative flex items-center justify-center border border-[#ececee]"
                         style={{
                           backgroundImage: `linear-gradient(45deg, #1c1f26 25%, transparent 25%), linear-gradient(-45deg, #1c1f26 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1c1f26 75%), linear-gradient(-45deg, transparent 75%, #1c1f26 75%)`,
                           backgroundSize: "16px 16px",
@@ -2331,7 +2331,7 @@ export default function LayersStudio({
                               prev > 0 ? prev - 1 : decomposedLayers.length - 1,
                             )
                           }
-                          className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 hover:bg-[#84cc16] text-white hover:text-black flex items-center justify-center backdrop-blur-md border border-white/10 transition-all shadow-md"
+                          className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#ffffff] hover:bg-[#ff5a00] text-[#09090b] hover:text-[#09090b] flex items-center justify-center backdrop-blur-md border border-[#ececee] transition-all shadow-md"
                           title="Previous Layer"
                         >
                           ‹
@@ -2343,7 +2343,7 @@ export default function LayersStudio({
                               prev < decomposedLayers.length - 1 ? prev + 1 : 0,
                             )
                           }
-                          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 hover:bg-[#84cc16] text-white hover:text-black flex items-center justify-center backdrop-blur-md border border-white/10 transition-all shadow-md"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#ffffff] hover:bg-[#ff5a00] text-[#09090b] hover:text-[#09090b] flex items-center justify-center backdrop-blur-md border border-[#ececee] transition-all shadow-md"
                           title="Next Layer"
                         >
                           ›
@@ -2352,10 +2352,10 @@ export default function LayersStudio({
 
                       <div className="w-full flex items-center justify-between mt-3 px-1 text-xs">
                         <div>
-                          <span className="font-extrabold text-white text-sm">
+                          <span className="font-extrabold text-[#09090b] text-sm">
                             Layer {carouselIndex + 1}
                           </span>
-                          <span className="text-[11px] text-white/40 ml-2">
+                          <span className="text-[11px] text-[#71717a] ml-2">
                             Seedream Decomposed
                           </span>
                         </div>
@@ -2365,8 +2365,8 @@ export default function LayersStudio({
                             onClick={() => toggleLayerVisibility(carouselIndex)}
                             className={`p-1.5 rounded-lg border transition-all ${
                               visibleLayers[carouselIndex]
-                                ? "bg-white/10 text-[#a3e635] border-white/10"
-                                : "text-white/30 border-transparent"
+                                ? "bg-[#f4f4f5] text-[#ff5a00] border-[#ececee]"
+                                : "text-[#71717a] border-transparent"
                             }`}
                             title="Toggle Visibility"
                           >
@@ -2380,7 +2380,7 @@ export default function LayersStudio({
                                 `layer_${carouselIndex + 1}.${outputFormat}`,
                               )
                             }
-                            className="px-2.5 py-1 rounded-lg bg-[#84cc16] hover:bg-[#a3e635] text-black font-extrabold text-xs flex items-center gap-1 shadow-md"
+                            className="px-2.5 py-1 rounded-lg bg-[#ff5a00] hover:bg-[#ff5a00] text-[#09090b] font-extrabold text-xs flex items-center gap-1 shadow-md"
                             title="Download this layer"
                           >
                             <span>⬇</span>
@@ -2395,10 +2395,10 @@ export default function LayersStudio({
                         <button
                           key={idx}
                           onClick={() => setCarouselIndex(idx)}
-                          className={`relative flex-shrink-0 w-14 h-12 rounded-xl overflow-hidden border transition-all p-1 bg-[#181a22] ${
+                          className={`relative flex-shrink-0 w-14 h-12 rounded-xl overflow-hidden border transition-all p-1 bg-[#ffffff] ${
                             carouselIndex === idx
-                              ? "border-[#84cc16] ring-2 ring-[#84cc16]/50 scale-105"
-                              : "border-white/10 opacity-60 hover:opacity-100"
+                              ? "border-[#ff5a00] ring-2 ring-[#ff5a00]/50 scale-105"
+                              : "border-[#ececee] opacity-60 hover:opacity-100"
                           }`}
                         >
                           <img
@@ -2406,7 +2406,7 @@ export default function LayersStudio({
                             alt={`Thumb ${idx + 1}`}
                             className="w-full h-full object-contain"
                           />
-                          <span className="absolute bottom-0.5 right-1 text-[8px] font-black text-white/80 bg-black/60 px-1 rounded">
+                          <span className="absolute bottom-0.5 right-1 text-[8px] font-black text-[#3f3f46] bg-[#ffffff] px-1 rounded">
                             {idx + 1}
                           </span>
                         </button>
@@ -2422,12 +2422,12 @@ export default function LayersStudio({
               <div className="space-y-4 animate-fade-in">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between px-1">
-                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-white/40">
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#71717a]">
                       Model
                     </span>
                     <button
                       onClick={handleResetUpscale}
-                      className="flex items-center gap-1 text-[11px] font-bold text-white/50 hover:text-white transition-colors"
+                      className="flex items-center gap-1 text-[11px] font-bold text-[#52525b] hover:text-[#09090b] transition-colors"
                       title="Reset to default"
                     >
                       <svg
@@ -2450,10 +2450,10 @@ export default function LayersStudio({
                       onClick={() =>
                         setIsModelDropdownOpen(!isModelDropdownOpen)
                       }
-                      className="w-full bg-[#2d313d] hover:bg-[#343946] p-3 rounded-2xl border border-white/5 flex items-center justify-between text-left transition-all shadow-sm"
+                      className="w-full bg-[#ececee] hover:bg-[#ececee] p-3 rounded-2xl border border-[#ececee] flex items-center justify-between text-left transition-all shadow-sm"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white flex-shrink-0">
+                        <div className="w-10 h-10 rounded-xl bg-[#f4f4f5] flex items-center justify-center text-[#09090b] flex-shrink-0">
                           <svg
                             width="20"
                             height="20"
@@ -2466,11 +2466,11 @@ export default function LayersStudio({
                           </svg>
                         </div>
                         <div>
-                          <h4 className="text-sm font-bold text-white leading-tight">
+                          <h4 className="text-sm font-bold text-[#09090b] leading-tight">
                             {UPSCALE_MODELS.find((m) => m.id === upscaleModel)
                               ?.name || "Topaz"}
                           </h4>
-                          <p className="text-[11px] text-white/50 truncate max-w-[200px]">
+                          <p className="text-[11px] text-[#52525b] truncate max-w-[200px]">
                             {
                               UPSCALE_MODELS.find((m) => m.id === upscaleModel)
                                 ?.subtitle
@@ -2485,14 +2485,14 @@ export default function LayersStudio({
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2"
-                        className={`text-white/40 transition-transform ${isModelDropdownOpen ? "rotate-180" : ""}`}
+                        className={`text-[#71717a] transition-transform ${isModelDropdownOpen ? "rotate-180" : ""}`}
                       >
                         <polyline points="6 9 12 15 18 9" />
                       </svg>
                     </button>
 
                     {isModelDropdownOpen && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-[#1f222b] border border-white/10 rounded-2xl p-1.5 shadow-2xl z-50 space-y-1">
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-[#ececee] border border-[#ececee] rounded-2xl p-1.5 shadow-2xl z-50 space-y-1">
                         {UPSCALE_MODELS.map((opt) => (
                           <button
                             key={opt.id}
@@ -2502,19 +2502,19 @@ export default function LayersStudio({
                             }}
                             className={`w-full p-2.5 rounded-xl text-left flex flex-col transition-all ${
                               upscaleModel === opt.id
-                                ? "bg-[#343946] text-white"
-                                : "text-white/70 hover:bg-white/5 hover:text-white"
+                                ? "bg-[#ececee] text-[#09090b]"
+                                : "text-[#3f3f46] hover:bg-[#fafafa] hover:text-[#09090b]"
                             }`}
                           >
                             <div className="flex items-center justify-between">
-                              <span className="text-xs font-bold text-white">
+                              <span className="text-xs font-bold text-[#09090b]">
                                 {opt.name}
                               </span>
-                              <span className="text-[10px] font-bold text-[#a3e635]">
+                              <span className="text-[10px] font-bold text-[#ff5a00]">
                                 {opt.cost} credits
                               </span>
                             </div>
-                            <span className="text-[10px] text-white/40">
+                            <span className="text-[10px] text-[#71717a]">
                               {opt.subtitle}
                             </span>
                           </button>
@@ -2525,25 +2525,25 @@ export default function LayersStudio({
                 </div>
 
                 {upscaleModel === "topaz-image-upscale" && (
-                  <div className="bg-[#2d313d] rounded-2xl p-3 border border-white/5 space-y-2 shadow-sm">
+                  <div className="bg-[#ececee] rounded-2xl p-3 border border-[#ececee] space-y-2 shadow-sm">
                     <div className="flex items-center justify-between px-1">
-                      <span className="text-[11px] font-bold text-white/40 uppercase tracking-wider">
+                      <span className="text-[11px] font-bold text-[#71717a] uppercase tracking-wider">
                         Upscale Factor
                       </span>
-                      <span className="bg-[#181a22] text-white text-[10px] font-black px-2 py-0.5 rounded-lg border border-white/10">
+                      <span className="bg-[#ffffff] text-[#09090b] text-[10px] font-black px-2 py-0.5 rounded-lg border border-[#ececee]">
                         {topazFactor * 442}×{topazFactor * 413}
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-4 gap-1.5 bg-[#1a1c24] p-1 rounded-xl border border-white/5">
+                    <div className="grid grid-cols-4 gap-1.5 bg-[#ffffff] p-1 rounded-xl border border-[#ececee]">
                       {[1, 2, 4, 8].map((fac) => (
                         <button
                           key={fac}
                           onClick={() => setTopazFactor(fac)}
                           className={`py-2 text-xs font-extrabold rounded-lg transition-all ${
                             topazFactor === fac
-                              ? "bg-[#383c4a] text-white shadow-md border border-white/10"
-                              : "text-white/40 hover:text-white"
+                              ? "bg-[#ececee] text-[#09090b] shadow-md border border-[#ececee]"
+                              : "text-[#71717a] hover:text-[#09090b]"
                           }`}
                         >
                           x{fac}
@@ -2554,25 +2554,25 @@ export default function LayersStudio({
                 )}
 
                 {upscaleModel === "seedvr2-image-upscale" && (
-                  <div className="bg-[#2d313d] rounded-2xl p-3 border border-white/5 space-y-2 shadow-sm">
+                  <div className="bg-[#ececee] rounded-2xl p-3 border border-[#ececee] space-y-2 shadow-sm">
                     <div className="flex items-center justify-between px-1">
-                      <span className="text-[11px] font-bold text-white/40 uppercase tracking-wider">
+                      <span className="text-[11px] font-bold text-[#71717a] uppercase tracking-wider">
                         Resolution
                       </span>
-                      <span className="bg-[#181a22] text-white text-[10px] font-black px-2 py-0.5 rounded-lg border border-white/10">
+                      <span className="bg-[#ffffff] text-[#09090b] text-[10px] font-black px-2 py-0.5 rounded-lg border border-[#ececee]">
                         {seedvrResolution.toUpperCase()} UHD
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-1.5 bg-[#1a1c24] p-1 rounded-xl border border-white/5">
+                    <div className="grid grid-cols-3 gap-1.5 bg-[#ffffff] p-1 rounded-xl border border-[#ececee]">
                       {["2k", "4k", "8k"].map((res) => (
                         <button
                           key={res}
                           onClick={() => setSeedvrResolution(res)}
                           className={`py-2 text-xs font-extrabold uppercase rounded-lg transition-all ${
                             seedvrResolution === res
-                              ? "bg-[#383c4a] text-white shadow-md border border-white/10"
-                              : "text-white/40 hover:text-white"
+                              ? "bg-[#ececee] text-[#09090b] shadow-md border border-[#ececee]"
+                              : "text-[#71717a] hover:text-[#09090b]"
                           }`}
                         >
                           {res}
@@ -2583,8 +2583,8 @@ export default function LayersStudio({
                 )}
 
                 {upscaleModel === "ai-image-upscaler" && (
-                  <div className="bg-[#2d313d] rounded-2xl p-4 border border-white/5 flex items-center gap-3 shadow-sm">
-                    <div className="w-8 h-8 rounded-xl bg-[#84cc16]/10 text-[#84cc16] flex items-center justify-center flex-shrink-0">
+                  <div className="bg-[#ececee] rounded-2xl p-4 border border-[#ececee] flex items-center gap-3 shadow-sm">
+                    <div className="w-8 h-8 rounded-xl bg-[#ff5a00]/10 text-[#ff5a00] flex items-center justify-center flex-shrink-0">
                       <svg
                         width="16"
                         height="16"
@@ -2595,10 +2595,10 @@ export default function LayersStudio({
                       </svg>
                     </div>
                     <div>
-                      <h5 className="text-xs font-bold text-white">
+                      <h5 className="text-xs font-bold text-[#09090b]">
                         Automatic AI Super-Resolution
                       </h5>
-                      <p className="text-[10px] text-white/50">
+                      <p className="text-[10px] text-[#52525b]">
                         1-click neural clarity and noise reduction.
                       </p>
                     </div>
@@ -2611,7 +2611,7 @@ export default function LayersStudio({
             {activeSideTab === "color-grading" && (
               <div className="space-y-4 animate-fade-in">
                 {/* 1. Color Correct Card */}
-                <div className="bg-[#2d313d] rounded-3xl p-4 border border-white/5 space-y-3 shadow-sm">
+                <div className="bg-[#ececee] rounded-3xl p-4 border border-[#ececee] space-y-3 shadow-sm">
                   <div className="flex items-center justify-between">
                     <button
                       onClick={() =>
@@ -2629,15 +2629,15 @@ export default function LayersStudio({
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2.5"
-                        className={`text-white/40 transition-transform ${openSections.colorCorrect ? "" : "-rotate-90"}`}
+                        className={`text-[#71717a] transition-transform ${openSections.colorCorrect ? "" : "-rotate-90"}`}
                       >
                         <polyline points="6 9 12 15 18 9" />
                       </svg>
-                      <span className="text-sm font-bold text-white tracking-tight">
+                      <span className="text-sm font-bold text-[#09090b] tracking-tight">
                         Color Correct
                       </span>
                       <span
-                        className="w-3.5 h-3.5 rounded-full border border-white/20 text-[9px] flex items-center justify-center text-white/40 cursor-help"
+                        className="w-3.5 h-3.5 rounded-full border border-[#d4d4d8] text-[9px] flex items-center justify-center text-[#71717a] cursor-help"
                         title="Temperature, hue, saturation, contrast and split-tone"
                       >
                         ℹ
@@ -2646,7 +2646,7 @@ export default function LayersStudio({
 
                     <button
                       onClick={() => resetCategory("colorCorrect")}
-                      className="flex items-center gap-1 text-[11px] font-bold text-white/40 hover:text-white transition-colors px-2 py-0.5 rounded-lg hover:bg-white/5"
+                      className="flex items-center gap-1 text-[11px] font-bold text-[#71717a] hover:text-[#09090b] transition-colors px-2 py-0.5 rounded-lg hover:bg-[#fafafa]"
                       title="Reset Color Correct"
                     >
                       <svg
@@ -2667,8 +2667,8 @@ export default function LayersStudio({
                   {openSections.colorCorrect && (
                     <div className="space-y-2 pt-1">
                       {/* Temp */}
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Temp
                         </span>
                         <div className="flex items-center gap-2">
@@ -2686,17 +2686,17 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.colorCorrect.temp}
                           </span>
                         </div>
                       </div>
 
                       {/* Hue */}
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Hue
                         </span>
                         <div className="flex items-center gap-2">
@@ -2715,17 +2715,17 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.colorCorrect.hue.toFixed(1)}
                           </span>
                         </div>
                       </div>
 
                       {/* Saturation */}
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Saturation
                         </span>
                         <div className="flex items-center gap-2">
@@ -2743,17 +2743,17 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.colorCorrect.saturation}
                           </span>
                         </div>
                       </div>
 
                       {/* Contrast */}
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Contrast
                         </span>
                         <div className="flex items-center gap-2">
@@ -2771,17 +2771,17 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.colorCorrect.contrast}
                           </span>
                         </div>
                       </div>
 
                       {/* Split Tone */}
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Split Tone
                         </span>
                         <div className="flex items-center gap-2">
@@ -2800,9 +2800,9 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.colorCorrect.splitTone.toFixed(1)}
                           </span>
                         </div>
@@ -2812,7 +2812,7 @@ export default function LayersStudio({
                 </div>
 
                 {/* 2. Soften Details Card */}
-                <div className="bg-[#2d313d] rounded-3xl p-4 border border-white/5 space-y-3 shadow-sm">
+                <div className="bg-[#ececee] rounded-3xl p-4 border border-[#ececee] space-y-3 shadow-sm">
                   <div className="flex items-center justify-between">
                     <button
                       onClick={() =>
@@ -2830,15 +2830,15 @@ export default function LayersStudio({
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2.5"
-                        className={`text-white/40 transition-transform ${openSections.softenDetails ? "" : "-rotate-90"}`}
+                        className={`text-[#71717a] transition-transform ${openSections.softenDetails ? "" : "-rotate-90"}`}
                       >
                         <polyline points="6 9 12 15 18 9" />
                       </svg>
-                      <span className="text-sm font-bold text-white tracking-tight">
+                      <span className="text-sm font-bold text-[#09090b] tracking-tight">
                         Soften Details
                       </span>
                       <span
-                        className="w-3.5 h-3.5 rounded-full border border-white/20 text-[9px] flex items-center justify-center text-white/40 cursor-help"
+                        className="w-3.5 h-3.5 rounded-full border border-[#d4d4d8] text-[9px] flex items-center justify-center text-[#71717a] cursor-help"
                         title="Radius and detail softening"
                       >
                         ℹ
@@ -2847,7 +2847,7 @@ export default function LayersStudio({
 
                     <button
                       onClick={() => resetCategory("softenDetails")}
-                      className="flex items-center gap-1 text-[11px] font-bold text-white/40 hover:text-white transition-colors px-2 py-0.5 rounded-lg hover:bg-white/5"
+                      className="flex items-center gap-1 text-[11px] font-bold text-[#71717a] hover:text-[#09090b] transition-colors px-2 py-0.5 rounded-lg hover:bg-[#fafafa]"
                       title="Reset Soften Details"
                     >
                       <svg
@@ -2867,8 +2867,8 @@ export default function LayersStudio({
 
                   {openSections.softenDetails && (
                     <div className="space-y-2 pt-1">
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Radius
                         </span>
                         <div className="flex items-center gap-2">
@@ -2886,16 +2886,16 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.softenDetails.radius}
                           </span>
                         </div>
                       </div>
 
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Detail
                         </span>
                         <div className="flex items-center gap-2">
@@ -2914,9 +2914,9 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.softenDetails.detail.toFixed(2)}
                           </span>
                         </div>
@@ -2926,7 +2926,7 @@ export default function LayersStudio({
                 </div>
 
                 {/* 3. Bloom Card */}
-                <div className="bg-[#2d313d] rounded-3xl p-4 border border-white/5 space-y-3 shadow-sm">
+                <div className="bg-[#ececee] rounded-3xl p-4 border border-[#ececee] space-y-3 shadow-sm">
                   <div className="flex items-center justify-between">
                     <button
                       onClick={() =>
@@ -2944,15 +2944,15 @@ export default function LayersStudio({
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2.5"
-                        className={`text-white/40 transition-transform ${openSections.bloom ? "" : "-rotate-90"}`}
+                        className={`text-[#71717a] transition-transform ${openSections.bloom ? "" : "-rotate-90"}`}
                       >
                         <polyline points="6 9 12 15 18 9" />
                       </svg>
-                      <span className="text-sm font-bold text-white tracking-tight">
+                      <span className="text-sm font-bold text-[#09090b] tracking-tight">
                         Bloom
                       </span>
                       <span
-                        className="w-3.5 h-3.5 rounded-full border border-white/20 text-[9px] flex items-center justify-center text-white/40 cursor-help"
+                        className="w-3.5 h-3.5 rounded-full border border-[#d4d4d8] text-[9px] flex items-center justify-center text-[#71717a] cursor-help"
                         title="Luminescence diffusion and blend mode"
                       >
                         ℹ
@@ -2961,7 +2961,7 @@ export default function LayersStudio({
 
                     <button
                       onClick={() => resetCategory("bloom")}
-                      className="flex items-center gap-1 text-[11px] font-bold text-white/40 hover:text-white transition-colors px-2 py-0.5 rounded-lg hover:bg-white/5"
+                      className="flex items-center gap-1 text-[11px] font-bold text-[#71717a] hover:text-[#09090b] transition-colors px-2 py-0.5 rounded-lg hover:bg-[#fafafa]"
                       title="Reset Bloom"
                     >
                       <svg
@@ -2981,8 +2981,8 @@ export default function LayersStudio({
 
                   {openSections.bloom && (
                     <div className="space-y-2 pt-1">
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Radius
                         </span>
                         <div className="flex items-center gap-2">
@@ -3000,16 +3000,16 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.bloom.radius}
                           </span>
                         </div>
                       </div>
 
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Bright
                         </span>
                         <div className="flex items-center gap-2">
@@ -3028,16 +3028,16 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.bloom.bright.toFixed(1)}
                           </span>
                         </div>
                       </div>
 
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Fade
                         </span>
                         <div className="flex items-center gap-2">
@@ -3056,19 +3056,19 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.bloom.fade.toFixed(2)}
                           </span>
                         </div>
                       </div>
 
-                      <div className="bg-[#1f222d] rounded-2xl p-2 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70 px-1">
+                      <div className="bg-[#ececee] rounded-2xl p-2 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46] px-1">
                           Blend
                         </span>
-                        <div className="grid grid-cols-2 gap-1 bg-[#151720] p-0.5 rounded-xl border border-white/5">
+                        <div className="grid grid-cols-2 gap-1 bg-[#ffffff] p-0.5 rounded-xl border border-[#ececee]">
                           {["Screen", "Soft Light"].map((b) => (
                             <button
                               key={b}
@@ -3080,8 +3080,8 @@ export default function LayersStudio({
                               }
                               className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
                                 colorGrading.bloom.blend === b
-                                  ? "bg-[#383c4a] text-white shadow"
-                                  : "text-white/40 hover:text-white"
+                                  ? "bg-[#ececee] text-[#09090b] shadow"
+                                  : "text-[#71717a] hover:text-[#09090b]"
                               }`}
                             >
                               {b}
@@ -3094,7 +3094,7 @@ export default function LayersStudio({
                 </div>
 
                 {/* 4. Halation Card */}
-                <div className="bg-[#2d313d] rounded-3xl p-4 border border-white/5 space-y-3 shadow-sm">
+                <div className="bg-[#ececee] rounded-3xl p-4 border border-[#ececee] space-y-3 shadow-sm">
                   <div className="flex items-center justify-between">
                     <button
                       onClick={() =>
@@ -3112,15 +3112,15 @@ export default function LayersStudio({
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2.5"
-                        className={`text-white/40 transition-transform ${openSections.halation ? "" : "-rotate-90"}`}
+                        className={`text-[#71717a] transition-transform ${openSections.halation ? "" : "-rotate-90"}`}
                       >
                         <polyline points="6 9 12 15 18 9" />
                       </svg>
-                      <span className="text-sm font-bold text-white tracking-tight">
+                      <span className="text-sm font-bold text-[#09090b] tracking-tight">
                         Halation
                       </span>
                       <span
-                        className="w-3.5 h-3.5 rounded-full border border-white/20 text-[9px] flex items-center justify-center text-white/40 cursor-help"
+                        className="w-3.5 h-3.5 rounded-full border border-[#d4d4d8] text-[9px] flex items-center justify-center text-[#71717a] cursor-help"
                         title="Film red glow around intense highlights"
                       >
                         ℹ
@@ -3129,7 +3129,7 @@ export default function LayersStudio({
 
                     <button
                       onClick={() => resetCategory("halation")}
-                      className="flex items-center gap-1 text-[11px] font-bold text-white/40 hover:text-white transition-colors px-2 py-0.5 rounded-lg hover:bg-white/5"
+                      className="flex items-center gap-1 text-[11px] font-bold text-[#71717a] hover:text-[#09090b] transition-colors px-2 py-0.5 rounded-lg hover:bg-[#fafafa]"
                       title="Reset Halation"
                     >
                       <svg
@@ -3149,8 +3149,8 @@ export default function LayersStudio({
 
                   {openSections.halation && (
                     <div className="space-y-2 pt-1">
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Strength
                         </span>
                         <div className="flex items-center gap-2">
@@ -3169,16 +3169,16 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.halation.strength.toFixed(2)}
                           </span>
                         </div>
                       </div>
 
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Threshold
                         </span>
                         <div className="flex items-center gap-2">
@@ -3197,16 +3197,16 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.halation.threshold.toFixed(2)}
                           </span>
                         </div>
                       </div>
 
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Radius
                         </span>
                         <div className="flex items-center gap-2">
@@ -3224,9 +3224,9 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.halation.radius}
                           </span>
                         </div>
@@ -3236,7 +3236,7 @@ export default function LayersStudio({
                 </div>
 
                 {/* 5. Lens Instructions Card */}
-                <div className="bg-[#2d313d] rounded-3xl p-4 border border-white/5 space-y-3 shadow-sm">
+                <div className="bg-[#ececee] rounded-3xl p-4 border border-[#ececee] space-y-3 shadow-sm">
                   <div className="flex items-center justify-between">
                     <button
                       onClick={() =>
@@ -3254,15 +3254,15 @@ export default function LayersStudio({
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2.5"
-                        className={`text-white/40 transition-transform ${openSections.lensInstructions ? "" : "-rotate-90"}`}
+                        className={`text-[#71717a] transition-transform ${openSections.lensInstructions ? "" : "-rotate-90"}`}
                       >
                         <polyline points="6 9 12 15 18 9" />
                       </svg>
-                      <span className="text-sm font-bold text-white tracking-tight">
+                      <span className="text-sm font-bold text-[#09090b] tracking-tight">
                         Lens Instructions
                       </span>
                       <span
-                        className="w-3.5 h-3.5 rounded-full border border-white/20 text-[9px] flex items-center justify-center text-white/40 cursor-help"
+                        className="w-3.5 h-3.5 rounded-full border border-[#d4d4d8] text-[9px] flex items-center justify-center text-[#71717a] cursor-help"
                         title="Vignette and optical lens distortion"
                       >
                         ℹ
@@ -3271,7 +3271,7 @@ export default function LayersStudio({
 
                     <button
                       onClick={() => resetCategory("lensInstructions")}
-                      className="flex items-center gap-1 text-[11px] font-bold text-white/40 hover:text-white transition-colors px-2 py-0.5 rounded-lg hover:bg-white/5"
+                      className="flex items-center gap-1 text-[11px] font-bold text-[#71717a] hover:text-[#09090b] transition-colors px-2 py-0.5 rounded-lg hover:bg-[#fafafa]"
                       title="Reset Lens Instructions"
                     >
                       <svg
@@ -3291,8 +3291,8 @@ export default function LayersStudio({
 
                   {openSections.lensInstructions && (
                     <div className="space-y-2 pt-1">
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Strength
                         </span>
                         <div className="flex items-center gap-2">
@@ -3311,16 +3311,16 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.lensInstructions.strength.toFixed(3)}
                           </span>
                         </div>
                       </div>
 
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Radius
                         </span>
                         <div className="flex items-center gap-2">
@@ -3338,16 +3338,16 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.lensInstructions.radius}
                           </span>
                         </div>
                       </div>
 
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Vignette
                         </span>
                         <div className="flex items-center gap-2">
@@ -3366,16 +3366,16 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.lensInstructions.vignette.toFixed(2)}
                           </span>
                         </div>
                       </div>
 
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Distortion
                         </span>
                         <div className="flex items-center gap-2">
@@ -3394,9 +3394,9 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.lensInstructions.distortion.toFixed(
                               2,
                             )}
@@ -3408,7 +3408,7 @@ export default function LayersStudio({
                 </div>
 
                 {/* 6. Exposure Card */}
-                <div className="bg-[#2d313d] rounded-3xl p-4 border border-white/5 space-y-3 shadow-sm">
+                <div className="bg-[#ececee] rounded-3xl p-4 border border-[#ececee] space-y-3 shadow-sm">
                   <div className="flex items-center justify-between">
                     <button
                       onClick={() =>
@@ -3426,15 +3426,15 @@ export default function LayersStudio({
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2.5"
-                        className={`text-white/40 transition-transform ${openSections.exposure ? "" : "-rotate-90"}`}
+                        className={`text-[#71717a] transition-transform ${openSections.exposure ? "" : "-rotate-90"}`}
                       >
                         <polyline points="6 9 12 15 18 9" />
                       </svg>
-                      <span className="text-sm font-bold text-white tracking-tight">
+                      <span className="text-sm font-bold text-[#09090b] tracking-tight">
                         Exposure
                       </span>
                       <span
-                        className="w-3.5 h-3.5 rounded-full border border-white/20 text-[9px] flex items-center justify-center text-white/40 cursor-help"
+                        className="w-3.5 h-3.5 rounded-full border border-[#d4d4d8] text-[9px] flex items-center justify-center text-[#71717a] cursor-help"
                         title="Exposure stops adjustment"
                       >
                         ℹ
@@ -3443,7 +3443,7 @@ export default function LayersStudio({
 
                     <button
                       onClick={() => resetCategory("exposure")}
-                      className="flex items-center gap-1 text-[11px] font-bold text-white/40 hover:text-white transition-colors px-2 py-0.5 rounded-lg hover:bg-white/5"
+                      className="flex items-center gap-1 text-[11px] font-bold text-[#71717a] hover:text-[#09090b] transition-colors px-2 py-0.5 rounded-lg hover:bg-[#fafafa]"
                       title="Reset Exposure"
                     >
                       <svg
@@ -3463,8 +3463,8 @@ export default function LayersStudio({
 
                   {openSections.exposure && (
                     <div className="space-y-2 pt-1">
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Stops
                         </span>
                         <div className="flex items-center gap-2">
@@ -3483,9 +3483,9 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.exposure.stops.toFixed(2)}
                           </span>
                         </div>
@@ -3495,7 +3495,7 @@ export default function LayersStudio({
                 </div>
 
                 {/* 7. Film Grain Card */}
-                <div className="bg-[#2d313d] rounded-3xl p-4 border border-white/5 space-y-3 shadow-sm">
+                <div className="bg-[#ececee] rounded-3xl p-4 border border-[#ececee] space-y-3 shadow-sm">
                   <div className="flex items-center justify-between">
                     <button
                       onClick={() =>
@@ -3513,15 +3513,15 @@ export default function LayersStudio({
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2.5"
-                        className={`text-white/40 transition-transform ${openSections.filmGrain ? "" : "-rotate-90"}`}
+                        className={`text-[#71717a] transition-transform ${openSections.filmGrain ? "" : "-rotate-90"}`}
                       >
                         <polyline points="6 9 12 15 18 9" />
                       </svg>
-                      <span className="text-sm font-bold text-white tracking-tight">
+                      <span className="text-sm font-bold text-[#09090b] tracking-tight">
                         Film Grain
                       </span>
                       <span
-                        className="w-3.5 h-3.5 rounded-full border border-white/20 text-[9px] flex items-center justify-center text-white/40 cursor-help"
+                        className="w-3.5 h-3.5 rounded-full border border-[#d4d4d8] text-[9px] flex items-center justify-center text-[#71717a] cursor-help"
                         title="Analog film stock grain simulation"
                       >
                         ℹ
@@ -3530,7 +3530,7 @@ export default function LayersStudio({
 
                     <button
                       onClick={() => resetCategory("filmGrain")}
-                      className="flex items-center gap-1 text-[11px] font-bold text-white/40 hover:text-white transition-colors px-2 py-0.5 rounded-lg hover:bg-white/5"
+                      className="flex items-center gap-1 text-[11px] font-bold text-[#71717a] hover:text-[#09090b] transition-colors px-2 py-0.5 rounded-lg hover:bg-[#fafafa]"
                       title="Reset Film Grain"
                     >
                       <svg
@@ -3550,8 +3550,8 @@ export default function LayersStudio({
 
                   {openSections.filmGrain && (
                     <div className="space-y-2 pt-1">
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Strength
                         </span>
                         <div className="flex items-center gap-2">
@@ -3570,16 +3570,16 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.filmGrain.strength.toFixed(2)}
                           </span>
                         </div>
                       </div>
 
-                      <div className="bg-[#1f222d] rounded-2xl p-2.5 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70">
+                      <div className="bg-[#ececee] rounded-2xl p-2.5 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46]">
                           Bias
                         </span>
                         <div className="flex items-center gap-2">
@@ -3598,19 +3598,19 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[#84cc16] cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                            className="w-24 accent-[#ff5a00] cursor-pointer h-1.5 bg-[#f4f4f5] rounded-lg"
                           />
-                          <span className="text-xs font-bold text-white min-w-[28px] text-right">
+                          <span className="text-xs font-bold text-[#09090b] min-w-[28px] text-right">
                             {colorGrading.filmGrain.bias.toFixed(2)}
                           </span>
                         </div>
                       </div>
 
-                      <div className="bg-[#1f222d] rounded-2xl p-2 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/70 px-1">
+                      <div className="bg-[#ececee] rounded-2xl p-2 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#3f3f46] px-1">
                           Size
                         </span>
-                        <div className="grid grid-cols-3 gap-1 bg-[#151720] p-0.5 rounded-xl border border-white/5">
+                        <div className="grid grid-cols-3 gap-1 bg-[#ffffff] p-0.5 rounded-xl border border-[#ececee]">
                           {["35mm", "16mm", "8mm"].map((sz) => (
                             <button
                               key={sz}
@@ -3622,8 +3622,8 @@ export default function LayersStudio({
                               }
                               className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all ${
                                 colorGrading.filmGrain.size === sz
-                                  ? "bg-[#383c4a] text-white shadow"
-                                  : "text-white/40 hover:text-white"
+                                  ? "bg-[#ececee] text-[#09090b] shadow"
+                                  : "text-[#71717a] hover:text-[#09090b]"
                               }`}
                             >
                               {sz}
@@ -3643,16 +3643,16 @@ export default function LayersStudio({
                 {/* Model Selector Card */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between px-1">
-                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-white/40">
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#71717a]">
                       Model
                     </span>
-                    <span className="text-[10px] font-bold text-[#a3e635] bg-[#84cc16]/15 px-2 py-0.5 rounded-md">
+                    <span className="text-[10px] font-bold text-[#ff5a00] bg-[#ff5a00]/15 px-2 py-0.5 rounded-md">
                       1.0 credit
                     </span>
                   </div>
 
-                  <div className="bg-[#2d313d] p-3.5 rounded-2xl border border-white/5 flex items-center gap-3 shadow-sm">
-                    <div className="w-10 h-10 rounded-xl bg-[#84cc16]/10 text-[#84cc16] flex items-center justify-center flex-shrink-0">
+                  <div className="bg-[#ececee] p-3.5 rounded-2xl border border-[#ececee] flex items-center gap-3 shadow-sm">
+                    <div className="w-10 h-10 rounded-xl bg-[#ff5a00]/10 text-[#ff5a00] flex items-center justify-center flex-shrink-0">
                       <svg
                         width="20"
                         height="20"
@@ -3663,10 +3663,10 @@ export default function LayersStudio({
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-white leading-tight">
+                      <h4 className="text-sm font-bold text-[#09090b] leading-tight">
                         AI Background Remover
                       </h4>
-                      <p className="text-[11px] text-white/50">
+                      <p className="text-[11px] text-[#52525b]">
                         ai-background-remover
                       </p>
                     </div>
@@ -3674,18 +3674,18 @@ export default function LayersStudio({
                 </div>
 
                 {/* Transparency Preview Card */}
-                <div className="bg-[#2d313d] rounded-3xl p-4 border border-white/5 space-y-3 shadow-sm">
+                <div className="bg-[#ececee] rounded-3xl p-4 border border-[#ececee] space-y-3 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-white">
+                    <span className="text-xs font-bold text-[#09090b]">
                       Target Preview
                     </span>
-                    <span className="text-[10px] text-white/40">
+                    <span className="text-[10px] text-[#71717a]">
                       Alpha Matte Cutout
                     </span>
                   </div>
 
                   <div
-                    className="w-full h-44 rounded-2xl overflow-hidden relative flex items-center justify-center border border-white/10"
+                    className="w-full h-44 rounded-2xl overflow-hidden relative flex items-center justify-center border border-[#ececee]"
                     style={{
                       backgroundImage: `linear-gradient(45deg, #1c1f26 25%, transparent 25%), linear-gradient(-45deg, #1c1f26 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1c1f26 75%), linear-gradient(-45deg, transparent 75%, #1c1f26 75%)`,
                       backgroundSize: "14px 14px",
@@ -3702,14 +3702,14 @@ export default function LayersStudio({
                   </div>
 
                   <div className="space-y-1.5 pt-1">
-                    <div className="flex items-center gap-2 text-xs text-white/70">
-                      <span className="text-[#a3e635] font-bold">✓</span>
+                    <div className="flex items-center gap-2 text-xs text-[#3f3f46]">
+                      <span className="text-[#ff5a00] font-bold">✓</span>
                       <span>
                         Precision edge extraction (hair, fur, fine contours)
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-white/70">
-                      <span className="text-[#a3e635] font-bold">✓</span>
+                    <div className="flex items-center gap-2 text-xs text-[#3f3f46]">
+                      <span className="text-[#ff5a00] font-bold">✓</span>
                       <span>High-resolution transparent PNG output</span>
                     </div>
                   </div>
@@ -3723,16 +3723,16 @@ export default function LayersStudio({
                 {/* Model Selector Card */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between px-1">
-                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-white/40">
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#71717a]">
                       Model
                     </span>
-                    <span className="text-[10px] font-bold text-[#a3e635] bg-[#84cc16]/15 px-2 py-0.5 rounded-md">
+                    <span className="text-[10px] font-bold text-[#ff5a00] bg-[#ff5a00]/15 px-2 py-0.5 rounded-md">
                       0.03 credits
                     </span>
                   </div>
 
-                  <div className="bg-[#2d313d] p-3.5 rounded-2xl border border-white/5 flex items-center gap-3 shadow-sm">
-                    <div className="w-10 h-10 rounded-xl bg-[#84cc16]/10 text-[#84cc16] flex items-center justify-center flex-shrink-0">
+                  <div className="bg-[#ececee] p-3.5 rounded-2xl border border-[#ececee] flex items-center gap-3 shadow-sm">
+                    <div className="w-10 h-10 rounded-xl bg-[#ff5a00]/10 text-[#ff5a00] flex items-center justify-center flex-shrink-0">
                       <svg
                         width="20"
                         height="20"
@@ -3748,10 +3748,10 @@ export default function LayersStudio({
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-white leading-tight">
+                      <h4 className="text-sm font-bold text-[#09090b] leading-tight">
                         AI Image Extension
                       </h4>
-                      <p className="text-[11px] text-white/50">
+                      <p className="text-[11px] text-[#52525b]">
                         ai-image-extension
                       </p>
                     </div>
@@ -3759,33 +3759,33 @@ export default function LayersStudio({
                 </div>
 
                 {/* Interactive Outpaint Expansion Canvas Preview Card */}
-                <div className="bg-[#2d313d] rounded-3xl p-4 border border-white/5 space-y-3 shadow-sm">
+                <div className="bg-[#ececee] rounded-3xl p-4 border border-[#ececee] space-y-3 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-white">
+                    <span className="text-xs font-bold text-[#09090b]">
                       Canvas Preview
                     </span>
-                    <span className="text-[10px] text-white/40">
+                    <span className="text-[10px] text-[#71717a]">
                       Boundary Outpainting
                     </span>
                   </div>
 
-                  <div className="w-full h-44 rounded-2xl overflow-hidden relative flex items-center justify-center border border-dashed border-[#84cc16]/50 bg-[#161822] p-4">
+                  <div className="w-full h-44 rounded-2xl overflow-hidden relative flex items-center justify-center border border-dashed border-[#ff5a00]/50 bg-[#ffffff] p-4">
                     {/* Corner Guides */}
-                    <div className="absolute top-2 left-2 text-[#84cc16] text-[10px] font-mono">
+                    <div className="absolute top-2 left-2 text-[#ff5a00] text-[10px] font-mono">
                       ↖ Expand
                     </div>
-                    <div className="absolute top-2 right-2 text-[#84cc16] text-[10px] font-mono">
+                    <div className="absolute top-2 right-2 text-[#ff5a00] text-[10px] font-mono">
                       ↗ Expand
                     </div>
-                    <div className="absolute bottom-2 left-2 text-[#84cc16] text-[10px] font-mono">
+                    <div className="absolute bottom-2 left-2 text-[#ff5a00] text-[10px] font-mono">
                       ↙ Expand
                     </div>
-                    <div className="absolute bottom-2 right-2 text-[#84cc16] text-[10px] font-mono">
+                    <div className="absolute bottom-2 right-2 text-[#ff5a00] text-[10px] font-mono">
                       ↘ Expand
                     </div>
 
                     {currentImageUrl && (
-                      <div className="relative border border-white/30 rounded-lg overflow-hidden shadow-2xl max-h-[75%] max-w-[75%]">
+                      <div className="relative border border-[#d4d4d8] rounded-lg overflow-hidden shadow-2xl max-h-[75%] max-w-[75%]">
                         <img
                           src={currentImageUrl}
                           alt="Current input"
@@ -3797,14 +3797,14 @@ export default function LayersStudio({
                   </div>
 
                   <div className="space-y-1.5 pt-1">
-                    <div className="flex items-center gap-2 text-xs text-white/70">
-                      <span className="text-[#a3e635] font-bold">✓</span>
+                    <div className="flex items-center gap-2 text-xs text-[#3f3f46]">
+                      <span className="text-[#ff5a00] font-bold">✓</span>
                       <span>
                         Expands borders while matching lighting, style & textures
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-white/70">
-                      <span className="text-[#a3e635] font-bold">✓</span>
+                    <div className="flex items-center gap-2 text-xs text-[#3f3f46]">
+                      <span className="text-[#ff5a00] font-bold">✓</span>
                       <span>
                         Automatic intelligent edge outpainting & continuation
                       </span>
@@ -3821,13 +3821,13 @@ export default function LayersStudio({
                   <button
                     key={item.id}
                     onClick={() => setActiveSideTab(item.id)}
-                    className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all text-white/70 hover:text-white hover:bg-white/5"
+                    className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all text-[#3f3f46] hover:text-[#09090b] hover:bg-[#fafafa]"
                   >
                     <div className="flex items-center gap-3">
                       <span>{item.label}</span>
                     </div>
                     {item.isNew && (
-                      <span className="px-2 py-0.5 text-[10px] font-black uppercase bg-[#84cc16] text-black rounded-md tracking-wider">
+                      <span className="px-2 py-0.5 text-[10px] font-black uppercase bg-[#ff5a00] text-[#09090b] rounded-md tracking-wider">
                         New
                       </span>
                     )}
@@ -3838,8 +3838,8 @@ export default function LayersStudio({
 
             {/* Sub-Panels for Other Side Tools */}
             {activeSideTab === "edit-text" && (
-              <div className="p-4 bg-[#2d313d] border border-white/10 rounded-2xl space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#a3e635]">
+              <div className="p-4 bg-[#ececee] border border-[#ececee] rounded-2xl space-y-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#ff5a00]">
                   Edit Text Tool
                 </h4>
                 <input
@@ -3847,12 +3847,12 @@ export default function LayersStudio({
                   value={textEditPrompt}
                   onChange={(e) => setTextEditPrompt(e.target.value)}
                   placeholder="Enter text modification prompt..."
-                  className="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-xs text-white placeholder-white/40 focus:outline-none focus:border-[#84cc16]"
+                  className="w-full bg-[#f4f4f5] border border-[#ececee] rounded-xl p-2.5 text-xs text-[#09090b] placeholder-white/40 focus:outline-none focus:border-[#ff5a00]"
                 />
                 <button
                   onClick={() => handleExecuteSideTool("edit-text")}
                   disabled={isProcessing}
-                  className="w-full py-2 bg-[#84cc16] hover:bg-[#a3e635] text-black font-bold text-xs uppercase rounded-xl shadow-md"
+                  className="w-full py-2 bg-[#ff5a00] hover:bg-[#ff5a00] text-[#09090b] font-bold text-xs uppercase rounded-xl shadow-md"
                 >
                   {isProcessing ? "Processing..." : "Run Text Edit"}
                 </button>
@@ -3860,17 +3860,17 @@ export default function LayersStudio({
             )}
 
             {activeSideTab === "enhancer" && (
-              <div className="p-4 bg-[#2d313d] border border-white/10 rounded-2xl space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#a3e635]">
+              <div className="p-4 bg-[#ececee] border border-[#ececee] rounded-2xl space-y-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#ff5a00]">
                   AI Enhancer
                 </h4>
-                <p className="text-xs text-white/60">
+                <p className="text-xs text-[#52525b]">
                   Automatically optimize lighting, sharpness, and color balance.
                 </p>
                 <button
                   onClick={() => handleExecuteSideTool("enhancer")}
                   disabled={isProcessing}
-                  className="w-full py-2 bg-[#84cc16] hover:bg-[#a3e635] text-black font-bold text-xs uppercase rounded-xl shadow-md"
+                  className="w-full py-2 bg-[#ff5a00] hover:bg-[#ff5a00] text-[#09090b] font-bold text-xs uppercase rounded-xl shadow-md"
                 >
                   {isProcessing ? "Enhancing..." : "Enhance Image"}
                 </button>
@@ -3878,17 +3878,17 @@ export default function LayersStudio({
             )}
 
             {activeSideTab === "relight" && (
-              <div className="p-4 bg-[#2d313d] border border-white/10 rounded-2xl space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#a3e635]">
+              <div className="p-4 bg-[#ececee] border border-[#ececee] rounded-2xl space-y-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#ff5a00]">
                   AI Relight
                 </h4>
-                <p className="text-xs text-white/60">
+                <p className="text-xs text-[#52525b]">
                   Adjust illumination, ambient studio light, and shadows.
                 </p>
                 <button
                   onClick={() => handleExecuteSideTool("relight")}
                   disabled={isProcessing}
-                  className="w-full py-2 bg-[#84cc16] hover:bg-[#a3e635] text-black font-bold text-xs uppercase rounded-xl shadow-md"
+                  className="w-full py-2 bg-[#ff5a00] hover:bg-[#ff5a00] text-[#09090b] font-bold text-xs uppercase rounded-xl shadow-md"
                 >
                   {isProcessing ? "Relighting..." : "Apply Relight"}
                 </button>
@@ -3896,17 +3896,17 @@ export default function LayersStudio({
             )}
 
             {activeSideTab === "angles" && (
-              <div className="p-4 bg-[#2d313d] border border-white/10 rounded-2xl space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#a3e635]">
+              <div className="p-4 bg-[#ececee] border border-[#ececee] rounded-2xl space-y-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#ff5a00]">
                   3D Angle Perspective
                 </h4>
-                <p className="text-xs text-white/60">
+                <p className="text-xs text-[#52525b]">
                   Adjust perspective tilt and camera angle alignment.
                 </p>
                 <button
                   onClick={() => handleExecuteSideTool("angles")}
                   disabled={isProcessing}
-                  className="w-full py-2 bg-[#84cc16] hover:bg-[#a3e635] text-black font-bold text-xs uppercase rounded-xl shadow-md"
+                  className="w-full py-2 bg-[#ff5a00] hover:bg-[#ff5a00] text-[#09090b] font-bold text-xs uppercase rounded-xl shadow-md"
                 >
                   {isProcessing ? "Transforming..." : "Apply Perspective Angle"}
                 </button>
@@ -3915,12 +3915,12 @@ export default function LayersStudio({
           </div>
 
           {/* Bottom Action Footer */}
-          <div className="p-4 bg-[#242833] border-t border-white/10 flex flex-col gap-2">
+          <div className="p-4 bg-[#ececee] border-t border-[#ececee] flex flex-col gap-2">
             {activeSideTab === "layer-decomposition" ? (
               <button
                 onClick={() => handleDecompose()}
                 disabled={isProcessing}
-                className="w-full py-3.5 bg-[#e2f924] hover:bg-[#d4ed1b] active:scale-[0.98] text-black font-extrabold text-sm rounded-2xl shadow-[0_4px_25px_rgba(226,249,36,0.35)] transition-all flex items-center justify-center gap-2 tracking-tight disabled:opacity-50"
+                className="w-full py-3.5 bg-[#ff5a00] hover:bg-[#ff5a00] active:scale-[0.98] text-[#09090b] font-extrabold text-sm rounded-2xl shadow-[0_4px_25px_rgba(226,249,36,0.35)] transition-all flex items-center justify-center gap-2 tracking-tight disabled:opacity-50"
               >
                 {isProcessing ? (
                   <span>Decomposing ({progress}%)...</span>
@@ -3942,7 +3942,7 @@ export default function LayersStudio({
               <button
                 onClick={handleRunUpscale}
                 disabled={isProcessing}
-                className="w-full py-3.5 bg-[#e2f924] hover:bg-[#d4ed1b] active:scale-[0.98] text-black font-extrabold text-sm rounded-2xl shadow-[0_4px_25px_rgba(226,249,36,0.35)] transition-all flex items-center justify-center gap-2 tracking-tight disabled:opacity-50"
+                className="w-full py-3.5 bg-[#ff5a00] hover:bg-[#ff5a00] active:scale-[0.98] text-[#09090b] font-extrabold text-sm rounded-2xl shadow-[0_4px_25px_rgba(226,249,36,0.35)] transition-all flex items-center justify-center gap-2 tracking-tight disabled:opacity-50"
               >
                 {isProcessing ? (
                   <span>Upscaling ({progress}%)...</span>
@@ -3969,7 +3969,7 @@ export default function LayersStudio({
               <div className="flex items-center gap-2.5 w-full">
                 <button
                   onClick={handleResetAllColorGrading}
-                  className="w-12 h-12 rounded-2xl bg-white/10 hover:bg-white/15 text-white flex items-center justify-center transition-all border border-white/10 hover:border-white/20 flex-shrink-0"
+                  className="w-12 h-12 rounded-2xl bg-[#f4f4f5] hover:bg-white/15 text-[#09090b] flex items-center justify-center transition-all border border-[#ececee] hover:border-[#d4d4d8] flex-shrink-0"
                   title="Reset All Color Grading"
                 >
                   <svg
@@ -3987,7 +3987,7 @@ export default function LayersStudio({
 
                 <button
                   onClick={handleDownloadGradedImage}
-                  className="flex-1 py-3.5 bg-white/10 hover:bg-white/15 text-white font-extrabold text-sm rounded-2xl border border-white/10 hover:border-white/20 transition-all flex items-center justify-center gap-2 shadow-md"
+                  className="flex-1 py-3.5 bg-[#f4f4f5] hover:bg-white/15 text-[#09090b] font-extrabold text-sm rounded-2xl border border-[#ececee] hover:border-[#d4d4d8] transition-all flex items-center justify-center gap-2 shadow-md"
                 >
                   <svg
                     width="16"
@@ -4008,7 +4008,7 @@ export default function LayersStudio({
               <button
                 onClick={handleRunRemoveBg}
                 disabled={isProcessing}
-                className="w-full py-3.5 bg-[#e2f924] hover:bg-[#d4ed1b] active:scale-[0.98] text-black font-extrabold text-sm rounded-2xl shadow-[0_4px_25px_rgba(226,249,36,0.35)] transition-all flex items-center justify-center gap-2 tracking-tight disabled:opacity-50"
+                className="w-full py-3.5 bg-[#ff5a00] hover:bg-[#ff5a00] active:scale-[0.98] text-[#09090b] font-extrabold text-sm rounded-2xl shadow-[0_4px_25px_rgba(226,249,36,0.35)] transition-all flex items-center justify-center gap-2 tracking-tight disabled:opacity-50"
               >
                 {isProcessing ? (
                   <span>Removing background ({progress}%)...</span>
@@ -4030,7 +4030,7 @@ export default function LayersStudio({
               <button
                 onClick={handleRunExpand}
                 disabled={isProcessing}
-                className="w-full py-3.5 bg-[#e2f924] hover:bg-[#d4ed1b] active:scale-[0.98] text-black font-extrabold text-sm rounded-2xl shadow-[0_4px_25px_rgba(226,249,36,0.35)] transition-all flex items-center justify-center gap-2 tracking-tight disabled:opacity-50"
+                className="w-full py-3.5 bg-[#ff5a00] hover:bg-[#ff5a00] active:scale-[0.98] text-[#09090b] font-extrabold text-sm rounded-2xl shadow-[0_4px_25px_rgba(226,249,36,0.35)] transition-all flex items-center justify-center gap-2 tracking-tight disabled:opacity-50"
               >
                 {isProcessing ? (
                   <span>Expanding borders ({progress}%)...</span>

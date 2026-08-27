@@ -171,8 +171,8 @@ export function GenerationCopyButtons({
           title={copiedKind === "text" ? "Prompt copied" : "Copy prompt"}
           aria-label={copiedKind === "text" ? "Prompt copied" : "Copy prompt"}
           onClick={(event) => runCopy(event, "text")}
-          className={`flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-black/60 backdrop-blur-md transition-all hover:bg-[#22d3ee] hover:text-black ${
-            copiedKind === "text" ? "text-[#22d3ee]" : "text-white"
+          className={`flex h-8 w-8 items-center justify-center rounded-full border border-[#ececee] bg-[#ffffff] backdrop-blur-md transition-all hover:bg-[#09090b] hover:text-[#09090b] ${
+            copiedKind === "text" ? "text-[#09090b]" : "text-[#09090b]"
           }`}
         >
           {copiedKind === "text" ? (
@@ -188,8 +188,8 @@ export function GenerationCopyButtons({
           title={copiedKind === "image" ? "Image copied" : "Copy image"}
           aria-label={copiedKind === "image" ? "Image copied" : "Copy image"}
           onClick={(event) => runCopy(event, "image")}
-          className={`flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-black/60 backdrop-blur-md transition-all hover:bg-[#22d3ee] hover:text-black ${
-            copiedKind === "image" ? "text-[#22d3ee]" : "text-white"
+          className={`flex h-8 w-8 items-center justify-center rounded-full border border-[#ececee] bg-[#ffffff] backdrop-blur-md transition-all hover:bg-[#09090b] hover:text-[#09090b] ${
+            copiedKind === "image" ? "text-[#09090b]" : "text-[#09090b]"
           }`}
         >
           {copiedKind === "image" ? (
@@ -340,7 +340,7 @@ export default function MobileGenerationActions({
           event.stopPropagation();
           setOpen((current) => !current);
         }}
-        className="relative z-50 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-black/70 text-white shadow-lg backdrop-blur-md active:scale-95"
+        className="relative z-50 flex h-11 w-11 items-center justify-center rounded-full border border-[#ececee]/15 bg-[#ffffff] text-[#09090b] shadow-lg backdrop-blur-md active:scale-95"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <circle cx="5" cy="12" r="1.7" />
@@ -350,7 +350,7 @@ export default function MobileGenerationActions({
       </button>
 
       {open && (
-        <div className="absolute right-0 top-12 z-50 min-w-[178px] overflow-hidden rounded-xl border border-white/15 bg-[#151515]/95 p-1.5 shadow-2xl backdrop-blur-xl">
+        <div className="absolute right-0 top-12 z-50 min-w-[178px] overflow-hidden rounded-xl border border-[#ececee]/15 bg-[#ffffff]/95 p-1.5 shadow-2xl backdrop-blur-xl">
           {availableActions.map((action) => (
             <button
               key={`${action.kind}-${action.label}`}
@@ -359,7 +359,7 @@ export default function MobileGenerationActions({
               className={`flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold transition-colors ${
                 action.danger
                   ? "text-red-400 hover:bg-red-500/15 active:bg-red-500/20"
-                  : "text-white hover:bg-white/10 active:bg-white/15"
+                  : "text-[#09090b] hover:bg-[#f4f4f5] active:bg-white/15"
               }`}
             >
               <span className="flex h-6 w-6 items-center justify-center">

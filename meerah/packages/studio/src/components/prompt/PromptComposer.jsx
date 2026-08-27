@@ -12,31 +12,31 @@ const DEFAULT_POSITION_CLASS =
   "absolute bottom-4 w-full max-w-[95%] lg:max-w-4xl z-30 animate-fade-in-up";
 
 const DEFAULT_PANEL_CLASS =
-  "w-full bg-gradient-to-b from-[#18181c]/90 via-[#0f0f12]/90 to-[#0c0c0e]/95 backdrop-blur-2xl rounded-[2rem] border border-white/[0.08] p-4 flex flex-col gap-3 shadow-[0_15px_50px_rgba(0,0,0,0.8)]";
+  "w-full bg-gradient-to-b from-[#ffffff]/90 via-[#f4f4f5]/90 to-[#f4f4f5]/95 backdrop-blur-2xl rounded-[2rem] border border-[#ececee] p-4 flex flex-col gap-3 shadow-[0_15px_50px_rgba(0,0,0,0.8)]";
 
 const DEFAULT_TEXTAREA_CLASS =
-  "w-full bg-transparent border-none text-white text-sm placeholder:text-white/20 focus:outline-none resize-none pt-1 leading-relaxed min-h-[40px] max-h-[150px] md:max-h-[250px] overflow-y-auto custom-scrollbar disabled:opacity-40";
+  "w-full bg-transparent border-none text-[#09090b] text-sm placeholder:text-[#a1a1aa] focus:outline-none resize-none pt-1 leading-relaxed min-h-[40px] max-h-[150px] md:max-h-[250px] overflow-y-auto custom-scrollbar disabled:opacity-40";
 
 const DEFAULT_ACTION_CLASS =
-  "bg-[#22d3ee] text-black px-7 py-3 rounded-full font-bold text-sm hover:opacity-95 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 w-full sm:w-auto shadow-lg shadow-[#22d3ee]/20 hover:shadow-[#22d3ee]/35 border border-[#22d3ee]/10 z-10 disabled:opacity-50 disabled:cursor-not-allowed";
+  "bg-[#09090b] text-[#09090b] px-7 py-3 rounded-full font-bold text-sm hover:opacity-95 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 w-full sm:w-auto shadow-lg shadow-[#09090b]/20 hover:shadow-[#09090b]/35 border border-[#09090b]/10 z-10 disabled:opacity-50 disabled:cursor-not-allowed";
 
 const CONTROL_LAYOUT_CLASS =
-  "h-[38px] flex items-center gap-2 rounded-md transition-all border group whitespace-nowrap shadow-inner focus:outline-none focus-visible:border-[#22d3ee]/45 focus-visible:ring-1 focus-visible:ring-[#22d3ee]/30";
+  "h-[38px] flex items-center gap-2 rounded-md transition-all border group whitespace-nowrap shadow-inner focus:outline-none focus-visible:border-[#09090b]/45 focus-visible:ring-1 focus-visible:ring-[#09090b]/30";
 
 const CONTROL_IDLE_CLASS =
-  "text-white bg-[#16161a]/60 hover:bg-[#202026]/80 border-white/[0.06]";
+  "text-[#09090b] bg-[#ffffff]/60 hover:bg-[#ececee]/80 border-[#ececee]/[0.06]";
 
 const CONTROL_ACTIVE_CLASS =
-  "text-[#22d3ee] bg-[#22d3ee]/10 hover:bg-[#22d3ee]/15 border-[#22d3ee]/25";
+  "text-[#09090b] bg-[#09090b]/10 hover:bg-[#09090b]/15 border-[#09090b]/25";
 
 const MEDIA_CONTROL_LAYOUT_CLASS =
-  "w-10 h-10 shrink-0 rounded-full border transition-all flex items-center justify-center relative overflow-hidden group focus:outline-none focus-visible:border-[#22d3ee]/45 focus-visible:ring-1 focus-visible:ring-[#22d3ee]/30";
+  "w-10 h-10 shrink-0 rounded-full border transition-all flex items-center justify-center relative overflow-hidden group focus:outline-none focus-visible:border-[#09090b]/45 focus-visible:ring-1 focus-visible:ring-[#09090b]/30";
 
 const DEFAULT_POPOVER_POSITION_CLASS =
   "absolute bottom-[calc(100%+12px)] left-0 z-50";
 
 const DEFAULT_POPOVER_CLASS =
-  "bg-[#0c0c0f]/95 rounded-xl p-3.5 shadow-[0_10px_40px_rgba(0,0,0,0.8)] border border-white/[0.08] backdrop-blur-2xl min-w-[160px] max-h-[40vh] overflow-y-auto custom-scrollbar";
+  "bg-[#f4f4f5]/95 rounded-xl p-3.5 shadow-[0_10px_40px_rgba(0,0,0,0.8)] border border-[#ececee] backdrop-blur-2xl min-w-[160px] max-h-[40vh] overflow-y-auto custom-scrollbar";
 
 function joinClasses(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -67,17 +67,17 @@ export function promptMediaButtonClassName({
   return joinClasses(
     MEDIA_CONTROL_LAYOUT_CLASS,
     active
-      ? "border-[#22d3ee]/60 bg-[#22d3ee]/5 hover:border-[#22d3ee]/70"
-      : "border-white/[0.03] bg-white/[0.03] hover:bg-white/[0.06] hover:border-[#22d3ee]/40",
+      ? "border-[#09090b]/60 bg-[#09090b]/5 hover:border-[#09090b]/70"
+      : "border-[#ececee] bg-[#fafafa] hover:bg-white/[0.06] hover:border-[#09090b]/40",
     className,
   );
 }
 
 export const PROMPT_MEDIA_PREVIEW_CLASS =
-  "relative w-10 h-10 shrink-0 rounded-full border border-white/10 overflow-hidden shadow-md group";
+  "relative w-10 h-10 shrink-0 rounded-full border border-[#ececee] overflow-hidden shadow-md group";
 
 export const PROMPT_CONTROL_LABEL_CLASS =
-  "text-xs font-semibold text-current opacity-70 group-hover:text-[#22d3ee] group-hover:opacity-100 transition-all";
+  "text-xs font-semibold text-current opacity-70 group-hover:text-[#09090b] group-hover:opacity-100 transition-all";
 
 export function PromptChevronIcon({ className = "" }) {
   return (
@@ -188,7 +188,7 @@ export function PromptPopoverHeader({ children, className = "" }) {
   return (
     <div
       className={joinClasses(
-        "text-[11px] font-semibold text-white/30 uppercase tracking-wider pb-2 border-b border-white/[0.05] mb-2 px-1",
+        "text-[11px] font-semibold text-[#71717a] uppercase tracking-wider pb-2 border-b border-[#ececee] mb-2 px-1",
         className,
       )}
     >
@@ -221,14 +221,14 @@ export function PromptMenuItem({
       role="menuitemradio"
       className={joinClasses(
         "w-full min-h-10 flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl text-left cursor-pointer transition-all group/menu-item",
-        "text-xs font-semibold text-white/70 hover:bg-[#22d3ee]/10 hover:text-[#22d3ee] focus:outline-none focus-visible:bg-[#22d3ee]/10 focus-visible:text-[#22d3ee]",
+        "text-xs font-semibold text-[#3f3f46] hover:bg-[#09090b]/10 hover:text-[#09090b] focus:outline-none focus-visible:bg-[#09090b]/10 focus-visible:text-[#09090b]",
         className,
       )}
     >
       <span className="min-w-0">
         <span className="block truncate">{children}</span>
         {description && (
-          <span className="block text-[9px] font-medium text-white/35 mt-0.5 truncate group-hover/menu-item:text-white/50">
+          <span className="block text-[9px] font-medium text-[#09090b]/35 mt-0.5 truncate group-hover/menu-item:text-[#52525b]">
             {description}
           </span>
         )}
@@ -255,7 +255,7 @@ export function PromptSegmentedControl({ children, className = "" }) {
   return (
     <div
       className={joinClasses(
-        "inline-flex items-center gap-1 bg-white/[0.03] border border-white/[0.05] rounded-full p-0.5",
+        "inline-flex items-center gap-1 bg-[#fafafa] border border-[#ececee] rounded-full p-0.5",
         className,
       )}
     >
@@ -278,10 +278,10 @@ export function PromptSegmentOption({
       aria-pressed={selected}
       className={joinClasses(
         "min-h-7 px-3 py-1 rounded-full text-xs font-semibold transition-all flex items-center justify-center gap-1.5",
-        "focus:outline-none focus-visible:ring-1 focus-visible:ring-[#22d3ee]/40",
+        "focus:outline-none focus-visible:ring-1 focus-visible:ring-[#09090b]/40",
         selected
-          ? "bg-[#22d3ee] text-black shadow-md shadow-[#22d3ee]/20"
-          : "text-white/40 hover:text-white/70",
+          ? "bg-[#09090b] text-[#09090b] shadow-md shadow-[#09090b]/20"
+          : "text-[#71717a] hover:text-[#3f3f46]",
         className,
       )}
     >
@@ -366,7 +366,7 @@ export function PromptFooter({ children, className = "" }) {
   return (
     <div
       className={joinClasses(
-        "flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-3 border-t border-white/[0.03] relative",
+        "flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-3 border-t border-[#ececee] relative",
         className,
       )}
     >
