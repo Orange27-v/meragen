@@ -1,0 +1,100 @@
+# Production stack for a single Contabo VPS.
+#
+# Backend and website are separate codebases now — this file orchestrates both,
+# expecting them as sibling folders:
+#
+#   loopy/
+#     backend/   this repo: API + worker + datastores
+#     meerah/    the website: landing page + dashboard
+#
+# Four processes: web, api, worker, and the datastores. The worker is separate
+# so generation load never slows down signups, top-ups or page loads, and so it
+# can be scaled on its own with `--scale worker=N`.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-meerah}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-meerah}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backups:/backups
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-meerah}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # Not published: only the app containers should ever reach the database.
+    expose: ["5432"]
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes: [redisdata:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    expose: ["6379"]
+
+  api:
+    build: { context: .., dockerfile: infra/Dockerfile.api }
+    restart: always
+    env_file: [../.env]
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-meerah}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-meerah}
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    expose: ["3001"]
+    healthcheck:
+      # The API reports its own readiness, including whether anyone can sign in.
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  worker:
+    build: { context: .., dockerfile: infra/Dockerfile.api }
+    command: ["node", "dist/src/worker.js"]
+    restart: always
+    env_file: [../.env]
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-meerah}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-meerah}
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+  # The website lives in its own repo alongside this one.
+  web:
+    build: { context: ../../meerah, dockerfile: Dockerfile }
+    restart: always
+    environment:
+      API_URL: http://api:3001
+    env_file: [../../meerah/.env.local]
+    depends_on: [api]
+    expose: ["3000"]
+
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddydata:/data
+      - caddyconfig:/config
+    depends_on: [web, api]
+
+volumes:
+  pgdata:
+  redisdata:
+  caddydata:
+  caddyconfig:

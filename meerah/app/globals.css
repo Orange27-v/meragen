@@ -1,0 +1,106 @@
+/* Meerah — adire indigo + aso-oke marigold. Same tokens as the landing page. */
+:root {
+  --ink: #131A3A;
+  --ink-deep: #0B0F26;
+  --surface: #1B2450;
+  --surface-hi: #232E63;
+  --chalk: #F4F1E8;
+  --muted: #9BA2CC;
+  --marigold: #FFB020;
+  --danger: #FF6B5A;
+  --ok: #4ADE9B;
+  --line: rgba(244, 241, 232, 0.10);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--chalk);
+  font-family: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+p { margin: 0; }
+a { color: var(--marigold); }
+
+.display {
+  font-family: "Anton", Impact, sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.95;
+}
+
+.shell { max-width: 1080px; margin-inline: auto; padding: 0 clamp(1.25rem, 4vw, 2.5rem); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: .8rem 1.3rem; border-radius: 2px; border: 1px solid transparent;
+  font: inherit; font-weight: 700; font-size: .9rem; letter-spacing: .02em;
+  cursor: pointer; text-decoration: none;
+  transition: background .16s, border-color .16s, opacity .16s;
+}
+.btn-primary { background: var(--marigold); color: #17110A; }
+.btn-primary:hover:not(:disabled) { background: #FFC24D; }
+.btn-ghost { border-color: var(--line); color: var(--chalk); background: transparent; }
+.btn-ghost:hover:not(:disabled) { border-color: var(--marigold); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn-block { width: 100%; }
+
+input, textarea, select {
+  width: 100%; padding: .8rem 1rem; border-radius: 2px;
+  background: var(--ink-deep); border: 1px solid var(--line); color: var(--chalk);
+  font: inherit;
+}
+input:focus, textarea:focus, select:focus {
+  outline: 2px solid var(--marigold); outline-offset: 1px; border-color: transparent;
+}
+label { display: block; font-size: .78rem; font-weight: 600; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: .45rem; }
+
+.field { margin-bottom: 1.1rem; }
+
+.card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 4px; padding: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+.alert {
+  padding: .8rem 1rem; border-radius: 2px; font-size: .9rem;
+  border-left: 3px solid var(--danger); background: rgba(255, 107, 90, .1);
+  color: var(--chalk); margin-bottom: 1rem;
+}
+.alert-ok { border-left-color: var(--ok); background: rgba(74, 222, 155, .1); }
+
+.muted { color: var(--muted); }
+.tabular { font-variant-numeric: tabular-nums; }
+
+.topbar {
+  border-bottom: 1px solid var(--line);
+  background: var(--ink-deep);
+}
+.topbar-in { display: flex; align-items: center; gap: 1.5rem; height: 66px; }
+.wordmark {
+  font-family: "Anton", Impact, sans-serif; font-size: 1.3rem; letter-spacing: .1em;
+  text-transform: uppercase; text-decoration: none; color: var(--chalk);
+  display: flex; align-items: center; gap: .5rem;
+}
+.mark { width: 14px; height: 14px; background: var(--marigold);
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); flex: none; }
+
+.balance {
+  margin-left: auto; display: flex; align-items: baseline; gap: .5rem;
+  font-variant-numeric: tabular-nums;
+}
+.balance b { font-family: "Anton", Impact, sans-serif; font-size: 1.25rem; font-weight: 400; }
+
+.auth-wrap { min-height: 100dvh; display: grid; place-items: center; padding: 2rem 1.25rem; }
+.auth-card { width: 100%; max-width: 400px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}

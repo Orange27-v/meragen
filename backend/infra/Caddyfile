@@ -1,0 +1,48 @@
+# Caddy handles TLS automatically via Let's Encrypt — no certbot, no renewals.
+# Replace meerah.com with your domain and point its A record at this VPS.
+
+meerah.com, www.meerah.com {
+	encode zstd gzip
+
+	# Paystack posts here. Kept ahead of the web route so it reaches the API
+	# directly, and never touches Next.js.
+	handle /webhooks/* {
+		reverse_proxy api:3001
+	}
+
+	# The API, including signed file downloads.
+	handle /api/* {
+		reverse_proxy api:3001
+	}
+	handle /files/* {
+		reverse_proxy api:3001
+	}
+	handle /health {
+		reverse_proxy api:3001
+	}
+
+	handle {
+		reverse_proxy web:3000
+	}
+
+	header {
+		# HSTS: once a browser has seen this, it will not try plain HTTP again.
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# The service worker must never be cached, or a stale one keeps serving an
+	# old app after a deploy.
+	@sw path /sw.js
+	header @sw Cache-Control "no-cache"
+
+	log {
+		output file /data/access.log {
+			roll_size 20mb
+			roll_keep 5
+		}
+	}
+}

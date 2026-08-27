@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: meerah-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: meerah
+      POSTGRES_PASSWORD: meerah_dev
+      POSTGRES_DB: meerah
+    ports: ["5432:5432"]
+    volumes: ["meerah-pgdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U meerah -d meerah"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: meerah-redis
+    restart: unless-stopped
+    ports: ["6379:6379"]
+    volumes: ["meerah-redisdata:/data"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  meerah-pgdata:
+  meerah-redisdata:

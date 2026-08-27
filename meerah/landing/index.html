@@ -1,0 +1,634 @@
+<title>Meerah</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+
+<style>
+  /* ---------------------------------------------------------------
+     Meerah — single committed visual world: adire indigo + aso-oke
+     marigold. Deliberately one theme; every colour painted explicitly
+     so the page holds on any host ground.
+     --------------------------------------------------------------- */
+  :root {
+    --ink:          #131A3A;  /* adire indigo — the ground */
+    --ink-deep:     #0B0F26;  /* wells, footer */
+    --surface:      #1B2450;  /* raised cards */
+    --surface-hi:   #232E63;  /* hover / borders */
+    --chalk:        #F4F1E8;  /* undyed cotton — primary text */
+    --muted:        #9BA2CC;  /* indigo-biased grey, chosen not default */
+    --marigold:     #FFB020;  /* aso-oke gold — the only accent */
+    --marigold-dim: #C98A12;
+    --line:         rgba(244, 241, 232, 0.10);
+
+    --measure: 62ch;
+    --pad: clamp(1.25rem, 5vw, 3rem);
+    --shell: 1180px;
+
+    --step--1: clamp(0.82rem, 0.79rem + 0.14vw, 0.9rem);
+    --step-0:  clamp(1rem, 0.96rem + 0.2vw, 1.12rem);
+    --step-1:  clamp(1.2rem, 1.1rem + 0.5vw, 1.45rem);
+    --step-2:  clamp(1.5rem, 1.3rem + 1vw, 2.1rem);
+    --step-3:  clamp(2rem, 1.6rem + 2vw, 3.2rem);
+    --step-4:  clamp(2.9rem, 2rem + 4.4vw, 6.2rem);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ink);
+    color: var(--chalk);
+    font-family: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: var(--step-0);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4 { text-wrap: balance; margin: 0; }
+  p { margin: 0; }
+  a { color: inherit; }
+
+  .display {
+    font-family: "Anton", "Instrument Sans", Impact, sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.005em;
+    line-height: 0.94;
+    text-transform: uppercase;
+  }
+
+  .shell {
+    max-width: var(--shell);
+    margin-inline: auto;
+    padding-inline: var(--pad);
+  }
+
+  .eyebrow {
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--marigold);
+  }
+
+  /* --- adire-inspired resist pattern, used sparingly ------------- */
+  .adire {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    background-image:
+      radial-gradient(circle at 50% 50%, rgba(255, 176, 32, 0.16) 0 1.5px, transparent 2px),
+      linear-gradient(rgba(244, 241, 232, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(244, 241, 232, 0.045) 1px, transparent 1px);
+    background-size: 34px 34px, 34px 34px, 34px 34px;
+    mask-image: radial-gradient(ellipse 80% 60% at 70% 0%, #000 20%, transparent 72%);
+  }
+
+  /* --- nav ------------------------------------------------------- */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: color-mix(in srgb, var(--ink) 88%, transparent);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-in {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 70px;
+  }
+  .wordmark {
+    font-family: "Anton", sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+  .mark {
+    width: 15px; height: 15px;
+    background: var(--marigold);
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+    flex: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 1.75rem;
+    margin-left: auto;
+    font-size: var(--step--1);
+    font-weight: 500;
+  }
+  .nav-links a { color: var(--muted); text-decoration: none; transition: color 0.16s; }
+  .nav-links a:hover { color: var(--chalk); }
+  @media (max-width: 780px) { .nav-links { display: none; } }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.25rem;
+    border-radius: 2px;
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform 0.14s, background 0.16s, border-color 0.16s;
+    font-family: inherit;
+  }
+  .btn-primary { background: var(--marigold); color: #17110A; }
+  .btn-primary:hover { background: #FFC24D; transform: translateY(-1px); }
+  .btn-ghost { border-color: var(--line); color: var(--chalk); background: transparent; }
+  .btn-ghost:hover { border-color: var(--marigold); }
+  .btn-lg { padding: 0.95rem 1.7rem; font-size: var(--step-0); }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--marigold);
+    outline-offset: 3px;
+  }
+
+  /* --- hero ------------------------------------------------------ */
+  .hero { position: relative; overflow: hidden; padding: clamp(3.5rem, 8vw, 7rem) 0 clamp(3rem, 6vw, 5rem); }
+  .hero-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+  }
+  @media (max-width: 940px) { .hero-grid { grid-template-columns: 1fr; } }
+
+  .hero h1 { font-size: var(--step-4); margin: 1.1rem 0 0; }
+  .hero h1 em { font-style: normal; color: var(--marigold); }
+  .hero-sub {
+    margin-top: 1.5rem;
+    max-width: 46ch;
+    font-size: var(--step-1);
+    color: var(--muted);
+  }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 2.2rem; }
+  .hero-note {
+    margin-top: 1.5rem;
+    font-size: var(--step--1);
+    color: var(--muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.4rem;
+  }
+  .hero-note span { display: flex; align-items: center; gap: 0.45rem; }
+  .tick { color: var(--marigold); font-weight: 700; }
+
+  /* --- the language demo — the page's thesis, made live ---------- */
+  .demo {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: clamp(1.5rem, 3vw, 2rem);
+    position: relative;
+  }
+  .demo-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .demo-label { font-size: var(--step--1); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .rec { display: flex; align-items: center; gap: 0.5rem; font-size: var(--step--1); color: var(--marigold); font-weight: 600; }
+  .rec-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--marigold); animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+  .wave { display: flex; align-items: center; gap: 3px; height: 54px; margin: 1.5rem 0; }
+  .wave i {
+    flex: 1;
+    background: var(--marigold);
+    border-radius: 1px;
+    opacity: 0.85;
+    animation: bob 1.4s ease-in-out infinite;
+    min-height: 3px;
+  }
+  @keyframes bob { 0%, 100% { height: 14%; } 50% { height: var(--h, 60%); } }
+
+  .demo-line {
+    font-family: "Anton", sans-serif;
+    text-transform: none;
+    font-size: var(--step-2);
+    line-height: 1.15;
+    min-height: 3.2em;
+    letter-spacing: 0.01em;
+  }
+  .demo-lang {
+    margin-top: 0.4rem;
+    font-size: var(--step--1);
+    color: var(--muted);
+  }
+  .lang-pills { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.4rem; }
+  .pill {
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: var(--step--1);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.16s;
+  }
+  .pill:hover { border-color: var(--surface-hi); color: var(--chalk); }
+  .pill[aria-pressed="true"] { background: var(--marigold); border-color: var(--marigold); color: #17110A; }
+
+  /* --- sections -------------------------------------------------- */
+  section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
+  .band { background: var(--ink-deep); border-block: 1px solid var(--line); }
+  .sec-head { max-width: var(--measure); margin-bottom: clamp(2rem, 4vw, 3rem); }
+  .sec-head h2 { font-size: var(--step-3); margin-top: 0.9rem; }
+  .sec-head p { margin-top: 1rem; color: var(--muted); font-size: var(--step-1); }
+
+  /* --- the two differentiators ----------------------------------- */
+  .wedge { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  @media (max-width: 820px) { .wedge { grid-template-columns: 1fr; } }
+  .wedge > div { background: var(--ink); padding: clamp(1.75rem, 4vw, 2.75rem); }
+  .wedge h3 { font-size: var(--step-2); font-family: "Anton", sans-serif; text-transform: uppercase; letter-spacing: 0.01em; }
+  .wedge p { margin-top: 0.9rem; color: var(--muted); }
+  .wedge .tag { font-size: var(--step--1); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--marigold); }
+
+  /* --- feature grid ---------------------------------------------- */
+  .features { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .feat { background: var(--ink); padding: 1.5rem; transition: background 0.18s; }
+  .feat:hover { background: var(--surface); }
+  .feat h4 { font-size: var(--step-0); font-weight: 700; }
+  .feat p { margin-top: 0.35rem; font-size: var(--step--1); color: var(--muted); line-height: 1.5; }
+
+  /* --- steps ------------------------------------------------------ */
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: clamp(1.5rem, 4vw, 3rem); counter-reset: s; }
+  .step { border-top: 2px solid var(--marigold); padding-top: 1.25rem; }
+  .step::before {
+    counter-increment: s;
+    content: counter(s, decimal-leading-zero);
+    font-family: "Anton", sans-serif;
+    font-size: var(--step-2);
+    color: var(--marigold);
+    display: block;
+    line-height: 1;
+    margin-bottom: 0.6rem;
+  }
+  .step h4 { font-size: var(--step-1); font-weight: 700; }
+  .step p { margin-top: 0.5rem; color: var(--muted); font-size: var(--step--1); }
+
+  /* --- pricing ---------------------------------------------------- */
+  .packs { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 1rem; }
+  .pack {
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    background: var(--ink);
+    transition: border-color 0.18s;
+  }
+  .pack:hover { border-color: var(--surface-hi); }
+  .pack.featured { border-color: var(--marigold); background: var(--surface); }
+  .pack-name { font-size: var(--step--1); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .pack.featured .pack-name { color: var(--marigold); }
+  .pack-price { font-family: "Anton", sans-serif; font-size: var(--step-3); line-height: 1; margin-top: 0.5rem; font-variant-numeric: tabular-nums; }
+  .pack-credits { font-size: var(--step-0); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .pack-bonus { font-size: var(--step--1); color: var(--marigold); font-weight: 600; }
+  .pack .btn { margin-top: 1.1rem; }
+
+  .price-strip {
+    margin-top: 2rem;
+    padding: 1.4rem 1.6rem;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--marigold);
+    background: var(--ink);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2.5rem;
+    align-items: baseline;
+  }
+  .price-strip div { font-size: var(--step--1); color: var(--muted); }
+  .price-strip b { display: block; color: var(--chalk); font-size: var(--step-1); font-family: "Anton", sans-serif; font-weight: 400; font-variant-numeric: tabular-nums; }
+
+  /* --- straight talk ---------------------------------------------- */
+  .plain { max-width: var(--measure); }
+  .plain h2 { font-size: var(--step-3); }
+  .plain p { margin-top: 1.2rem; color: var(--muted); font-size: var(--step-1); }
+  .plain strong { color: var(--chalk); font-weight: 600; }
+
+  /* --- footer ------------------------------------------------------ */
+  footer { background: var(--ink-deep); border-top: 1px solid var(--line); padding: 3rem 0 2.5rem; }
+  .foot { display: flex; flex-wrap: wrap; gap: 1.5rem 3rem; align-items: center; }
+  .foot-links { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-left: auto; font-size: var(--step--1); }
+  .foot-links a { color: var(--muted); text-decoration: none; }
+  .foot-links a:hover { color: var(--chalk); }
+  .foot-note { width: 100%; font-size: var(--step--1); color: var(--muted); opacity: 0.75; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+</style>
+
+<nav class="nav">
+  <div class="shell nav-in">
+    <a class="wordmark" href="#top"><span class="mark"></span>Meerah</a>
+    <div class="nav-links">
+      <a href="#voice">MyVoice</a>
+      <a href="#tools">Tools</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+    </div>
+    <a class="btn btn-primary" href="#pricing">Buy credits</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="adire"></div>
+  <div class="shell hero-grid">
+    <div>
+      <p class="eyebrow">Pay in Naira · No foreign card</p>
+      <h1 class="display">Make the ad.<br>In <em>your own</em> voice.</h1>
+      <p class="hero-sub">
+        Video, images, voiceover and ad creative for Nigerian businesses — generated in minutes,
+        paid for in Naira, with credits that never expire.
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" href="#pricing">Buy credits</a>
+        <a class="btn btn-ghost btn-lg" href="#voice">Hear MyVoice</a>
+      </div>
+      <div class="hero-note">
+        <span><b class="tick">✓</b> Paystack, transfer or USSD</span>
+        <span><b class="tick">✓</b> No subscription</span>
+        <span><b class="tick">✓</b> Credits never expire</span>
+      </div>
+    </div>
+
+    <div class="demo" id="voice">
+      <div class="demo-head">
+        <span class="demo-label">MyVoice</span>
+        <span class="rec"><span class="rec-dot"></span>5-second sample</span>
+      </div>
+      <div class="wave" id="wave" aria-hidden="true"></div>
+      <p class="demo-line" id="demoLine">Na your face. Na your voice. Na your own tongue.</p>
+      <p class="demo-lang" id="demoLang">Nigerian Pidgin</p>
+      <div class="lang-pills" role="group" aria-label="Preview language">
+        <button class="pill" type="button" data-i="0" aria-pressed="true">Pidgin</button>
+        <button class="pill" type="button" data-i="1" aria-pressed="false">Yorùbá</button>
+        <button class="pill" type="button" data-i="2" aria-pressed="false">Igbo</button>
+        <button class="pill" type="button" data-i="3" aria-pressed="false">Hausa</button>
+        <button class="pill" type="button" data-i="4" aria-pressed="false">English</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="band">
+  <div class="shell">
+    <div class="sec-head">
+      <p class="eyebrow">Why this, and not the free apps</p>
+      <h2 class="display">Two things they cannot copy</h2>
+      <p>Anyone can generate a video now. These are the parts that make the work yours.</p>
+    </div>
+    <div class="wedge">
+      <div>
+        <p class="tag">MyVoice</p>
+        <h3>Your voice, in your language</h3>
+        <p>
+          Record five seconds. Get voiceovers in your own voice — in Pidgin, Yorùbá, Igbo or Hausa.
+          Not a stiff American accent reading your Lagos property listing.
+        </p>
+      </div>
+      <div>
+        <p class="tag">BrandFace</p>
+        <h3>The same face, every time</h3>
+        <p>
+          Save a character, a voice and a brand look once. Every video after that stays consistent —
+          so a customer scrolling past recognises you before they read a word.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="tools">
+  <div class="shell">
+    <div class="sec-head">
+      <p class="eyebrow">The studio</p>
+      <h2 class="display">Twelve tools, one account</h2>
+      <p>600+ models behind a set of tools built for selling, not for showing off.</p>
+    </div>
+      <p class="eyebrow" style="margin-bottom:.75rem">Video</p>
+      <div class="features" style="margin-bottom:2.25rem">
+        <div class="feat"><h4>VidEngine</h4><p>Text or photo to video. Pick your quality, see the price before you spend.</p></div>
+        <div class="feat"><h4>Vibe Reel</h4><p>One-tap motion presets. Pick a look, not a hundred settings.</p></div>
+        <div class="feat"><h4>ShotDirector</h4><p>Describe the scene, get the shot list and the footage.</p></div>
+        <div class="feat"><h4>Snip Reel</h4><p>Turn one long video into clips ready for Status and Reels.</p></div>
+      </div>
+      <p class="eyebrow" style="margin-bottom:.75rem">Image</p>
+      <div class="features" style="margin-bottom:2.25rem">
+        <div class="feat"><h4>PixCraft</h4><p>Product shots, flyers and thumbnails from a description.</p></div>
+        <div class="feat"><h4>Patch Up</h4><p>Remove, replace or repair anything in a frame.</p></div>
+      </div>
+      <p class="eyebrow" style="margin-bottom:.75rem">People</p>
+      <div class="features" style="margin-bottom:2.25rem">
+        <div class="feat"><h4>TalkSync</h4><p>Make any face speak your script, lips matching.</p></div>
+        <div class="feat"><h4>Body Double</h4><p>Swap the body, keep the face. New outfit, same person.</p></div>
+        <div class="feat"><h4>Star Maker</h4><p>One consistent face that fronts everything you post.</p></div>
+      </div>
+      <p class="eyebrow" style="margin-bottom:.75rem">Selling</p>
+      <div class="features" style="margin-bottom:2.25rem">
+        <div class="feat"><h4>Sales Reel</h4><p>Ad creative built for Instagram, WhatsApp Status and TikTok.</p></div>
+        <div class="feat"><h4>SoundTrack</h4><p>Original music and voiceover, no copyright strike waiting to happen.</p></div>
+      </div>
+      <p class="eyebrow" style="margin-bottom:.75rem">More</p>
+      <div class="features" style="margin-bottom:2.25rem">
+        <div class="feat"><h4>App Shelf</h4><p>Tell us what to build next. We count the votes.</p></div>
+      </div>
+  </div>
+</section>
+
+<section class="band" id="how">
+  <div class="shell">
+    <div class="sec-head">
+      <p class="eyebrow">How it works</p>
+      <h2 class="display">Three steps</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <h4>Buy credits</h4>
+        <p>Card, bank transfer or USSD through Paystack. Naira, no dollar conversion, no international card needed.</p>
+      </div>
+      <div class="step">
+        <h4>Make the thing</h4>
+        <p>Pick a tool, describe what you want. The price shows before you generate — and changes as you change the settings.</p>
+      </div>
+      <div class="step">
+        <h4>Post it</h4>
+        <p>Download in the right size for wherever it's going. If a generation fails, the credits come straight back.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="shell">
+    <div class="sec-head">
+      <p class="eyebrow">Pricing</p>
+      <h2 class="display">Pay for what you make</h2>
+      <p>No monthly fee. No tier you forget to cancel. Credits sit in your account until you use them.</p>
+    </div>
+
+    <div class="packs">
+      <div class="pack">
+        <span class="pack-name">Starter</span>
+        <span class="pack-price">₦2,000</span>
+        <span class="pack-credits">2,000 credits</span>
+        <span class="pack-bonus">&nbsp;</span>
+        <a class="btn btn-ghost" href="#">Choose Starter</a>
+      </div>
+      <div class="pack featured">
+        <span class="pack-name">Creator</span>
+        <span class="pack-price">₦5,000</span>
+        <span class="pack-credits">5,250 credits</span>
+        <span class="pack-bonus">+250 free</span>
+        <a class="btn btn-primary" href="#">Choose Creator</a>
+      </div>
+      <div class="pack">
+        <span class="pack-name">Business</span>
+        <span class="pack-price">₦15,000</span>
+        <span class="pack-credits">16,500 credits</span>
+        <span class="pack-bonus">+1,500 free</span>
+        <a class="btn btn-ghost" href="#">Choose Business</a>
+      </div>
+      <div class="pack">
+        <span class="pack-name">Agency</span>
+        <span class="pack-price">₦50,000</span>
+        <span class="pack-credits">57,500 credits</span>
+        <span class="pack-bonus">+7,500 free</span>
+        <a class="btn btn-ghost" href="#">Choose Agency</a>
+      </div>
+    </div>
+
+    <div class="price-strip">
+      <div>5-second video from<b>₦300</b></div>
+      <div>Image from<b>₦150</b></div>
+      <div>Credits expire in<b>Never</b></div>
+      <div>Failed generation<b>Refunded</b></div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="shell plain">
+    <p class="eyebrow">Straight talk</p>
+    <h2 class="display">There's no free plan</h2>
+    <p>
+      Every generation costs us money the moment you press the button, so there's no free tier and no
+      trial. <strong>What you get instead:</strong> we're not funding a giveaway out of your subscription,
+      we're not going to expire your credits after 90 days to force a renewal, and we don't need your card
+      on file to charge you next month.
+    </p>
+    <p>
+      You buy credits. You spend them when you want. If a generation fails, you get them back.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="shell foot">
+    <a class="wordmark" href="#top"><span class="mark"></span>Meerah</a>
+    <div class="foot-links">
+      <a href="#voice">MyVoice</a>
+      <a href="#tools">Tools</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#how">How it works</a>
+    </div>
+    <p class="foot-note">
+      Built in Nigeria, for Nigerian creators, vendors, agents and agencies. Prices in Naira.
+      Payments handled by Paystack.
+    </p>
+  </div>
+</footer>
+
+<script>
+  // Bars for the sample waveform. Generated rather than hand-authored so the
+  // shape reads as speech instead of a repeating pattern.
+  (function buildWave() {
+    const wave = document.getElementById('wave');
+    if (!wave) return;
+    const BARS = 44;
+    for (let i = 0; i < BARS; i++) {
+      const bar = document.createElement('i');
+      // Envelope: quiet at the edges, busiest through the middle, like a phrase.
+      const envelope = Math.sin((i / (BARS - 1)) * Math.PI);
+      const height = 18 + envelope * (35 + Math.random() * 45);
+      bar.style.setProperty('--h', height.toFixed(0) + '%');
+      bar.style.animationDelay = (i * 0.045).toFixed(2) + 's';
+      wave.appendChild(bar);
+    }
+  })();
+
+  // The page's thesis, running live: one line, five languages.
+  (function languageRotator() {
+    const LINES = [
+      { text: 'Na your face. Na your voice. Na your own tongue.', label: 'Nigerian Pidgin' },
+      { text: 'Ojú rẹ. Ohùn rẹ. Èdè rẹ.',                        label: 'Yorùbá' },
+      { text: 'Ihu gị. Olu gị. Asụsụ gị.',                       label: 'Igbo' },
+      { text: 'Fuskarka. Muryarka. Harshenka.',                  label: 'Hausa' },
+      { text: 'Your face. Your voice. Your language.',           label: 'English' },
+    ];
+
+    const line = document.getElementById('demoLine');
+    const lang = document.getElementById('demoLang');
+    const pills = Array.from(document.querySelectorAll('.pill'));
+    if (!line || !lang) return;
+
+    let index = 0;
+    let timer = null;
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function show(next) {
+      index = next;
+      line.style.opacity = '0';
+      line.style.transform = 'translateY(6px)';
+      window.setTimeout(() => {
+        line.textContent = LINES[index].text;
+        lang.textContent = LINES[index].label;
+        line.style.opacity = '1';
+        line.style.transform = 'none';
+      }, still ? 0 : 180);
+      pills.forEach((pill) => {
+        pill.setAttribute('aria-pressed', String(Number(pill.dataset.i) === index));
+      });
+    }
+
+    function start() {
+      if (still) return;
+      stop();
+      timer = window.setInterval(() => show((index + 1) % LINES.length), 3400);
+    }
+    function stop() {
+      if (timer) window.clearInterval(timer);
+      timer = null;
+    }
+
+    line.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
+
+    pills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        stop();
+        show(Number(pill.dataset.i));
+      });
+    });
+
+    start();
+    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+  })();
+</script>

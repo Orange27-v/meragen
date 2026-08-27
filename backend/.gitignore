@@ -1,0 +1,16 @@
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Secrets. Contains live Paystack, Firebase and 9jaLingo keys.
+.env
+.env.local
+.env.test
+
+# Local file storage — R2 replaces this in production.
+storage/
+.storage-test/
+
+infra/backups/
+*.log
+.DS_Store

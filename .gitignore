@@ -1,0 +1,36 @@
+# --- Secrets. Never commit these. -------------------------------------------
+.env
+.env.*
+!.env.example
+*firebase-adminsdk*.json
+*service-account*.json
+*.pem
+*.key
+
+# --- Dependencies and build output ------------------------------------------
+node_modules/
+dist/
+.next/
+*.tsbuildinfo
+coverage/
+
+# --- Local runtime data ------------------------------------------------------
+backend/storage/
+backend/.storage-test/
+backend/infra/backups/
+*.log
+
+# --- Third-party clone, kept locally as the fork source ----------------------
+# packages/studio is the fork we actually ship; this is the upstream checkout.
+Open-Generative-AI/
+
+# --- Founder's source documents, not code ------------------------------------
+# The same material lives in meerah/planning.md.
+*.pdf
+"Screenshot (5).png"
+Screenshot*.png
+
+# Local media, not source.
+videos/
+
+.DS_Store

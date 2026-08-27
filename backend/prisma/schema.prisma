@@ -1,0 +1,362 @@
+// Meerah data model — see planning.md §5.
+//
+// Money rule: `credit_transactions` is an append-only ledger and the ONLY source
+// of truth for a balance. `users.credit_balance` is a denormalised cache kept in
+// step inside the same transaction that writes the ledger row. Never mutate a
+// ledger row after insert.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid()) @db.Uuid
+  email         String   @unique
+  phone         String?
+
+  /// Firebase uid. Every account has one — Google is the only way in, so this
+  /// is the real identity. Unique so two
+  /// Google accounts can never collapse into one Meerah account.
+  firebaseUid   String?  @unique @map("firebase_uid")
+  /// Which identity provider vouched for this account. Only Google today; kept
+  /// so adding Apple or another provider later is not a migration.
+  authProvider  AuthProvider @default(google) @map("auth_provider")
+  /// Set when the identity provider vouches for the address.
+  emailVerified Boolean  @default(false) @map("email_verified")
+
+  /// Can see the numbers. Granted from ADMIN_EMAILS at sign-in, never by
+  /// anything a customer can reach.
+  isAdmin       Boolean  @default(false) @map("is_admin")
+
+  /// Cached balance in credits. Source of truth is the sum of creditTransactions.
+  /// Only ever written inside CreditsService under a SELECT ... FOR UPDATE lock.
+  creditBalance Int      @default(0) @map("credit_balance")
+
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  creditTransactions CreditTransaction[]
+  generations        Generation[]
+  brandAssets        BrandAsset[]
+  sessions           Session[]
+  appInterests       AppInterest[]
+  scheduledPosts     ScheduledPost[]
+  subscription       Subscription?
+
+  @@map("users")
+}
+
+/// A signed-in browser.
+///
+/// Only the SHA-256 of the token is stored: a leaked database dump then cannot
+/// be used to impersonate anyone, because the raw token exists nowhere but the
+/// user's own browser.
+model Session {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  tokenHash  String   @unique @map("token_hash")
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  lastSeenAt DateTime @default(now()) @map("last_seen_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+enum AuthProvider {
+  password
+  google
+
+  @@map("auth_provider")
+}
+
+enum CreditTransactionType {
+  topup
+  generation_charge
+  refund
+
+  @@map("credit_transaction_type")
+}
+
+model CreditTransaction {
+  id           String                @id @default(uuid()) @db.Uuid
+  userId       String                @map("user_id") @db.Uuid
+  type         CreditTransactionType
+
+  /// Positive for topup and refund, negative for generation_charge.
+  amount       Int
+  /// Balance immediately after this entry was applied — lets us audit the chain
+  /// without replaying every row.
+  balanceAfter Int                   @map("balance_after")
+
+  /// Paystack transaction reference. Unique so a replayed webhook cannot
+  /// double-credit an account (planning.md §2.3).
+  paystackRef  String?               @unique @map("paystack_ref")
+
+  /// Caller-supplied key making charges and refunds safely retryable.
+  idempotencyKey String?             @unique @map("idempotency_key")
+
+  generationId String?               @map("generation_id") @db.Uuid
+  createdAt    DateTime              @default(now()) @map("created_at")
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  generation Generation? @relation(fields: [generationId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@map("credit_transactions")
+}
+
+enum GenerationStatus {
+  queued
+  processing
+  completed
+  failed
+
+  @@map("generation_status")
+}
+
+enum Vendor {
+  muapi
+  ninejalingo
+
+  @@map("vendor")
+}
+
+model Generation {
+  id           String           @id @default(uuid()) @db.Uuid
+  userId       String           @map("user_id") @db.Uuid
+
+  /// Product feature name — VidEngine, PixCraft, TalkSync, MyVoice, ...
+  feature      String
+  vendor       Vendor
+  /// Vendor-side model identifier this job was pinned to, e.g. seedance-pro-t2v-fast.
+  modelId      String           @map("model_id")
+
+  status       GenerationStatus @default(queued)
+
+  /// Feature-specific request params: resolution, duration, camera settings, ...
+  inputParams  Json             @map("input_params")
+
+  costCredits  Int              @map("cost_credits")
+  /// Vendor cost in USD cents at submit time, kept for margin reporting (§6).
+  vendorCostUsdCents Int?       @map("vendor_cost_usd_cents")
+
+  /// Vendor's own job handle, for status checks and webhook correlation.
+  vendorJobId  String?          @map("vendor_job_id")
+
+  /// Last time we asked the vendor how this job was doing. Drives the sweeper,
+  /// which is what actually guarantees a job is never abandoned.
+  lastPolledAt DateTime?        @map("last_polled_at")
+
+  outputUrl    String?          @map("output_url")
+  /// Key in our own storage once the result has been archived off the vendor.
+  /// Lets us re-sign an expired URL without going back to the vendor.
+  storageKey   String?          @map("storage_key")
+  errorMessage String?          @map("error_message")
+  /// Set once a failure has been refunded, so a retry cannot refund twice.
+  refundedAt   DateTime?        @map("refunded_at")
+
+  createdAt    DateTime         @default(now()) @map("created_at")
+  completedAt  DateTime?        @map("completed_at")
+
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions  CreditTransaction[]
+  scheduledPost ScheduledPost?
+
+  @@index([userId, createdAt])
+  @@index([status])
+  @@index([vendorJobId])
+  @@index([status, lastPolledAt])
+  @@map("generations")
+}
+
+enum BrandAssetType {
+  character
+  voice_profile
+  template
+
+  @@map("brand_asset_type")
+}
+
+enum ScheduledPostStatus {
+  planned
+  generating
+  ready
+  published
+  failed
+  cancelled
+
+  @@map("scheduled_post_status")
+}
+
+/// Where a finished post goes.
+///
+/// v1 ships `manual` only, and the API refuses the others. Direct publishing
+/// needs Meta App Review plus Business Manager verification — external approval
+/// queues on unpredictable timelines, and a bootstrapped launch cannot afford to
+/// wait on them. These values exist so v2 is a plug-in, not a migration.
+///
+/// WhatsApp is absent on purpose: no reliable auto-post API exists for it, so
+/// manual share is expected to stay permanent there.
+enum PostPlatform {
+  manual
+  instagram
+  facebook
+
+  @@map("post_platform")
+}
+
+/// A post planned for a future date.
+///
+/// The platform generates the video or image shortly before it is due, so the
+/// customer wakes up to finished work rather than a queue (planning.md §7
+/// Phase 11).
+model ScheduledPost {
+  id           String              @id @default(uuid()) @db.Uuid
+  userId       String              @map("user_id") @db.Uuid
+
+  /// When it should go out.
+  scheduledFor DateTime            @map("scheduled_for")
+  /// Generated this far ahead, so a slow render still lands on time.
+  status       ScheduledPostStatus @default(planned)
+  platform     PostPlatform        @default(manual)
+
+  /// What to make. A tier id or any catalogue model id.
+  tierId       String              @map("tier_id")
+  prompt       String
+  caption      String?
+
+  /// Set once the generation for this slot exists.
+  generationId String?             @unique @map("generation_id") @db.Uuid
+  errorMessage String?             @map("error_message")
+  publishedAt  DateTime?           @map("published_at")
+
+  createdAt    DateTime            @default(now()) @map("created_at")
+  updatedAt    DateTime            @updatedAt @map("updated_at")
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  generation Generation? @relation(fields: [generationId], references: [id], onDelete: SetNull)
+
+  @@index([userId, scheduledFor])
+  @@index([status, scheduledFor])
+  @@map("scheduled_posts")
+}
+
+/// The Post Planner add-on.
+///
+/// Billed monthly in credits from the existing balance rather than a recurring
+/// card mandate: no card kept on file, no failed-renewal dunning, and if someone
+/// runs out of credits it simply pauses instead of locking them out. That fits
+/// the market and the "no subscription trap" promise (planning.md §1).
+model Subscription {
+  id             String    @id @default(uuid()) @db.Uuid
+  userId         String    @unique @map("user_id") @db.Uuid
+
+  /// Credits taken each month. 60 credits = ₦3,000.
+  monthlyCredits Int       @map("monthly_credits")
+  active         Boolean   @default(true)
+  /// When the next charge is due.
+  renewsAt       DateTime  @map("renews_at")
+  lastChargedAt  DateTime? @map("last_charged_at")
+  /// Set when a renewal could not be paid, so the UI can explain why.
+  pausedAt       DateTime? @map("paused_at")
+
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([active, renewsAt])
+  @@map("subscriptions")
+}
+
+/// A customer telling us they want a tool we have not built yet.
+model AppInterest {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  appName   String   @map("app_name")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, appName])
+  @@index([appName])
+  @@map("app_interests")
+}
+
+/// The stickiness layer (planning.md §1) — saved characters, cloned voices and
+/// brand templates. This is the moat; treat it as launch scope, not v2.
+model BrandAsset {
+  id              String         @id @default(uuid()) @db.Uuid
+  userId          String         @map("user_id") @db.Uuid
+  type            BrandAssetType
+  name            String
+
+  /// e.g. a 9jaLingo voice id or a MuAPI character reference.
+  vendorReference String?        @map("vendor_reference")
+  /// Key in our storage for the preview image or audio sample.
+  storageKey      String?        @map("storage_key")
+  metadata        Json           @default("{}")
+
+  /// How often this has been reused. Orders the picker, and tells us whether
+  /// the stickiness layer is actually working.
+  usedCount       Int            @default(0) @map("used_count")
+  lastUsedAt      DateTime?      @map("last_used_at")
+
+  createdAt       DateTime       @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+  @@map("brand_assets")
+}
+
+/// A snapshot of one vendor model's price, synced from the vendor's public
+/// catalogue. Prices move — most MuAPI models are `dynamic_pricing` — so this
+/// table is what our quotes are computed against, and drift from it is an alert
+/// rather than a silent margin loss (planning.md §6).
+model ModelPrice {
+  id             String   @id @default(uuid()) @db.Uuid
+  vendor         Vendor
+  /// Vendor's model identifier, e.g. seedance-pro-t2v-fast.
+  modelId        String   @map("model_id")
+  category       String
+  /// Vendor cost in USD micro-dollars (millionths) — integers only, no floats
+  /// anywhere near money.
+  costUsdMicros  Int      @map("cost_usd_micros")
+  /// Vendor reserves the right to price this per-request; quotes for these
+  /// models should ask the vendor rather than trust this number.
+  dynamicPricing Boolean  @default(false) @map("dynamic_pricing")
+
+  firstSeenAt    DateTime @default(now()) @map("first_seen_at")
+  lastSyncedAt   DateTime @updatedAt @map("last_synced_at")
+
+  changes PriceChange[]
+
+  @@unique([vendor, modelId])
+  @@index([category])
+  @@map("model_prices")
+}
+
+/// Append-only record of every vendor price move we have observed. Read by the
+/// margin alerting job; never updated in place.
+model PriceChange {
+  id              String   @id @default(uuid()) @db.Uuid
+  modelPriceId    String   @map("model_price_id") @db.Uuid
+  previousUsdMicros Int    @map("previous_usd_micros")
+  newUsdMicros    Int      @map("new_usd_micros")
+  /// True when the move pushed a pinned tier under its margin floor.
+  breachedFloor   Boolean  @default(false) @map("breached_floor")
+  detectedAt      DateTime @default(now()) @map("detected_at")
+
+  modelPrice ModelPrice @relation(fields: [modelPriceId], references: [id], onDelete: Cascade)
+
+  @@index([detectedAt])
+  @@map("price_changes")
+}
