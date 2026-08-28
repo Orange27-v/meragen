@@ -30,6 +30,11 @@ Open-Generative-AI/
 "Screenshot (5).png"
 Screenshot*.png
 
+# Installed agent skills — local tooling, not part of the product.
+.claude/
+.agents/
+skills-lock.json
+
 # Local media, not source.
 videos/
 

@@ -4,7 +4,10 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { api, setToken, getToken } from '@/lib/api';
-import { signInWithGoogle, describeGoogleError, isFirebaseConfigured } from '@/lib/firebase';
+import {
+  signInWithGoogle, describeGoogleError, isFirebaseConfigured,
+  preloadFirebase, completeRedirectSignIn,
+} from '@/lib/firebase';
 
 /**
  * The only way in.
@@ -20,7 +23,26 @@ export default function SignInPage() {
 
   // Already signed in? Go straight through.
   useEffect(() => {
-    if (getToken()) router.replace('/studio');
+    if (getToken()) { router.replace('/studio'); return; }
+
+    // Load Firebase now, so the click that opens the popup stays synchronous.
+    // Awaiting the import inside the handler spends the user gesture and the
+    // browser blocks the popup.
+    void preloadFirebase().catch(() => undefined);
+
+    // If we were sent to Google as a full-page redirect, finish that here.
+    void completeRedirectSignIn().then(async (idToken) => {
+      if (!idToken) return;
+      setBusy(true);
+      try {
+        const result = await api.google(idToken);
+        setToken(result.token);
+        router.push('/studio');
+      } catch (err) {
+        setError((err as Error).message);
+        setBusy(false);
+      }
+    });
   }, [router]);
 
   async function go() {
