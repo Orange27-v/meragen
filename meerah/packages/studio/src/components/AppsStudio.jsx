@@ -219,7 +219,7 @@ export default function AppsStudio({ apiKey }) {
                 </button>
                 <button
                   onClick={() => setSelectedApp(app)}
-                  className="flex-1 py-2 bg-[#09090b]/10 text-[#09090b] rounded-md text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#09090b]/20 transition-all border border-[#09090b]/20 active:scale-95"
+                  className="flex-1 py-2 bg-[#09090b]/10 text-[#ffffff] rounded-md text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#09090b]/20 transition-all border border-[#09090b]/20 active:scale-95"
                 >
                   <FaExternalLinkAlt className="text-[9px]" />
                   Demo
@@ -240,7 +240,7 @@ export default function AppsStudio({ apiKey }) {
                   href={app.hosted || '#'}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 py-2 bg-[#09090b]/10 text-[#09090b] rounded-md text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#09090b]/20 transition-all border border-[#09090b]/20 active:scale-95"
+                  className="flex-1 py-2 bg-[#09090b]/10 text-[#ffffff] rounded-md text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#09090b]/20 transition-all border border-[#09090b]/20 active:scale-95"
                 >
                   <FaExternalLinkAlt className="text-[9px]" />
                   Demo
@@ -330,7 +330,7 @@ export default function AppsStudio({ apiKey }) {
           <div className="absolute inset-0 bg-[#ffffff] backdrop-blur-sm animate-fade-in" onClick={() => setSelectedApp(null)} />
           <div className="relative bg-[#f4f4f5] border border-[#ececee] w-full max-w-md rounded-2xl p-8 space-y-8 animate-scale-up shadow-2xl">
             <div className="flex flex-col items-center text-center space-y-4">
-              <div className="w-20 h-20 rounded-[28px] bg-[#09090b]/10 border border-[#09090b]/20 flex items-center justify-center text-4xl text-[#09090b] mb-2">
+              <div className="w-20 h-20 rounded-[28px] bg-[#09090b]/10 border border-[#09090b]/20 flex items-center justify-center text-4xl text-[#ffffff] mb-2">
                 <selectedApp.icon />
               </div>
               <h2 className="text-2xl font-black text-[#09090b] uppercase tracking-tight">
@@ -345,7 +345,7 @@ export default function AppsStudio({ apiKey }) {
               <button 
                 onClick={handleRequestAccess}
                 disabled={isRequesting}
-                className="w-full py-4 bg-[#09090b] text-[#09090b] rounded-md text-sm font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#09090b]/90 transition-all shadow-lg active:scale-95 disabled:opacity-50"
+                className="w-full py-4 bg-[#09090b] text-[#ffffff] rounded-md text-sm font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#09090b]/90 transition-all shadow-lg active:scale-95 disabled:opacity-50"
               >
                 {isRequesting ? 'Sending Details...' : 'Get Template'}
               </button>

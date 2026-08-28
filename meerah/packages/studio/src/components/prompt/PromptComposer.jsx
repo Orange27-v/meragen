@@ -18,7 +18,7 @@ const DEFAULT_TEXTAREA_CLASS =
   "w-full bg-transparent border-none text-[#09090b] text-sm placeholder:text-[#a1a1aa] focus:outline-none resize-none pt-1 leading-relaxed min-h-[40px] max-h-[150px] md:max-h-[250px] overflow-y-auto custom-scrollbar disabled:opacity-40";
 
 const DEFAULT_ACTION_CLASS =
-  "bg-[#09090b] text-[#09090b] px-7 py-3 rounded-full font-bold text-sm hover:opacity-95 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 w-full sm:w-auto shadow-lg shadow-[#09090b]/20 hover:shadow-[#09090b]/35 border border-[#09090b]/10 z-10 disabled:opacity-50 disabled:cursor-not-allowed";
+  "bg-[#09090b] text-[#ffffff] px-7 py-3 rounded-full font-bold text-sm hover:opacity-95 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 w-full sm:w-auto shadow-lg shadow-[#09090b]/20 hover:shadow-[#09090b]/35 border border-[#09090b]/10 z-10 disabled:opacity-50 disabled:cursor-not-allowed";
 
 const CONTROL_LAYOUT_CLASS =
   "h-[38px] flex items-center gap-2 rounded-md transition-all border group whitespace-nowrap shadow-inner focus:outline-none focus-visible:border-[#09090b]/45 focus-visible:ring-1 focus-visible:ring-[#09090b]/30";
@@ -27,7 +27,7 @@ const CONTROL_IDLE_CLASS =
   "text-[#09090b] bg-[#ffffff]/60 hover:bg-[#ececee]/80 border-[#ececee]/[0.06]";
 
 const CONTROL_ACTIVE_CLASS =
-  "text-[#09090b] bg-[#09090b]/10 hover:bg-[#09090b]/15 border-[#09090b]/25";
+  "text-[#ffffff] bg-[#09090b]/10 hover:bg-[#09090b]/15 border-[#09090b]/25";
 
 const MEDIA_CONTROL_LAYOUT_CLASS =
   "w-10 h-10 shrink-0 rounded-full border transition-all flex items-center justify-center relative overflow-hidden group focus:outline-none focus-visible:border-[#09090b]/45 focus-visible:ring-1 focus-visible:ring-[#09090b]/30";
@@ -221,7 +221,7 @@ export function PromptMenuItem({
       role="menuitemradio"
       className={joinClasses(
         "w-full min-h-10 flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl text-left cursor-pointer transition-all group/menu-item",
-        "text-xs font-semibold text-[#3f3f46] hover:bg-[#09090b]/10 hover:text-[#09090b] focus:outline-none focus-visible:bg-[#09090b]/10 focus-visible:text-[#09090b]",
+        "text-xs font-semibold text-[#3f3f46] hover:bg-[#09090b]/10 hover:text-[#ffffff] focus:outline-none focus-visible:bg-[#09090b]/10 focus-visible:text-[#ffffff]",
         className,
       )}
     >
@@ -280,7 +280,7 @@ export function PromptSegmentOption({
         "min-h-7 px-3 py-1 rounded-full text-xs font-semibold transition-all flex items-center justify-center gap-1.5",
         "focus:outline-none focus-visible:ring-1 focus-visible:ring-[#09090b]/40",
         selected
-          ? "bg-[#09090b] text-[#09090b] shadow-md shadow-[#09090b]/20"
+          ? "bg-[#09090b] text-[#ffffff] shadow-md shadow-[#09090b]/20"
           : "text-[#71717a] hover:text-[#3f3f46]",
         className,
       )}

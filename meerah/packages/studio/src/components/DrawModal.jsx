@@ -1044,13 +1044,7 @@ export default function DrawModal({
             /* Setup Card */
             <div className="border-2 border-dashed border-[#ececee] rounded-2xl p-8 max-w-md w-full text-center flex flex-col items-center gap-6 bg-[#f4f4f5]/50">
               <div className="w-56 h-36 rounded-xl border border-[#ececee] overflow-hidden shadow-lg select-none relative bg-[#f4f4f5]">
-                <img
-                  src="https://d3adwkbyhxyrtq.cloudfront.net/webassets/videomodels/neta-lumina.avif"
-                  alt="Draw visual representation"
-                  className="w-full h-full object-cover opacity-60"
-                />
                 <div className="absolute bottom-2 left-2 right-2 bg-[#ffffff] backdrop-blur-md rounded-md p-1 px-2 border border-[#ececee] flex items-center gap-1">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#ff5a00] animate-pulse"></div>
                   <span className="text-[9px] text-[#52525b] tracking-wider uppercase font-bold">
                     Sketchpad active
                   </span>
@@ -1588,7 +1582,7 @@ export default function DrawModal({
                   onClick={() => setIsModelDropdownOpen(!isModelDropdownOpen)}
                   className="h-[38px] flex items-center gap-2 px-3 bg-[#ffffff]/80 hover:bg-[#ffffff] rounded-xl border border-[#ececee] text-xs text-[#3f3f46] whitespace-nowrap shadow-xl"
                 >
-                  <span className="text-[10px] text-[#ff5a00] font-black bg-[#ff5a00]/10 px-1.5 rounded border border-[#ff5a00]/25">
+                  <span className="text-[10px] text-[#ffffff] font-black bg-[#ff5a00]/10 px-1.5 rounded border border-[#ff5a00]/25">
                     G
                   </span>
                   {selectedModel === "nano-banana-pro-edit"

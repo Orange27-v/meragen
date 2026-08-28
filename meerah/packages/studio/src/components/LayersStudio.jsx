@@ -1549,7 +1549,7 @@ export default function LayersStudio({
               onClick={() => fileInputRef.current?.click()}
               className="flex flex-col items-center justify-center p-16 border-2 border-dashed border-[#d4d4d8] hover:border-[#ff5a00]/60 rounded-3xl cursor-pointer transition-all duration-200 bg-[#ffffff]/50 hover:bg-[#ffffff]/80"
             >
-              <div className="w-16 h-16 rounded-2xl bg-[#ff5a00]/10 text-[#ff5a00] flex items-center justify-center mb-4">
+              <div className="w-16 h-16 rounded-2xl bg-[#ff5a00]/10 text-[#ffffff] flex items-center justify-center mb-4">
                 <svg
                   width="32"
                   height="32"
@@ -2170,11 +2170,6 @@ export default function LayersStudio({
                 >
                   <div className="flex items-center gap-2.5">
                     <div className="relative w-28 h-36 rounded-2xl overflow-hidden bg-zinc-900 flex-shrink-0 shadow-md">
-                      <img
-                        src="https://cdn.muapi.ai/assets/1786019968051_cKRYLHHu.png"
-                        alt="Seedream original demo"
-                        className="w-full h-full object-cover"
-                      />
                       <div className="absolute inset-y-0 left-1/2 w-5 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#ff5a00]/90 to-transparent blur-[3px] animate-pulse" />
                       <div className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded-md bg-[#ffffff]/75 text-[8px] font-black text-[#09090b] backdrop-blur-sm">
                         Original
@@ -2284,7 +2279,7 @@ export default function LayersStudio({
                         <span className="text-xs font-bold uppercase text-[#3f3f46]">
                           Layer Carousel
                         </span>
-                        <span className="px-2 py-0.5 rounded-full bg-[#ff5a00]/20 text-[#ff5a00] text-[10px] font-black">
+                        <span className="px-2 py-0.5 rounded-full bg-[#ff5a00]/20 text-[#ffffff] text-[10px] font-black">
                           {carouselIndex + 1} / {decomposedLayers.length}
                         </span>
                       </div>
@@ -2584,7 +2579,7 @@ export default function LayersStudio({
 
                 {upscaleModel === "ai-image-upscaler" && (
                   <div className="bg-[#ececee] rounded-2xl p-4 border border-[#ececee] flex items-center gap-3 shadow-sm">
-                    <div className="w-8 h-8 rounded-xl bg-[#ff5a00]/10 text-[#ff5a00] flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 rounded-xl bg-[#ff5a00]/10 text-[#ffffff] flex items-center justify-center flex-shrink-0">
                       <svg
                         width="16"
                         height="16"
@@ -3652,7 +3647,7 @@ export default function LayersStudio({
                   </div>
 
                   <div className="bg-[#ececee] p-3.5 rounded-2xl border border-[#ececee] flex items-center gap-3 shadow-sm">
-                    <div className="w-10 h-10 rounded-xl bg-[#ff5a00]/10 text-[#ff5a00] flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-[#ff5a00]/10 text-[#ffffff] flex items-center justify-center flex-shrink-0">
                       <svg
                         width="20"
                         height="20"
@@ -3732,7 +3727,7 @@ export default function LayersStudio({
                   </div>
 
                   <div className="bg-[#ececee] p-3.5 rounded-2xl border border-[#ececee] flex items-center gap-3 shadow-sm">
-                    <div className="w-10 h-10 rounded-xl bg-[#ff5a00]/10 text-[#ff5a00] flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-[#ff5a00]/10 text-[#ffffff] flex items-center justify-center flex-shrink-0">
                       <svg
                         width="20"
                         height="20"

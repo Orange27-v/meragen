@@ -328,7 +328,7 @@ export default function VibeMotionStudio({
                 {/* ── Mode tag (top-left) ── */}
                 <div className={`absolute top-2 left-2 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider backdrop-blur-sm border ${
                   entry.mode === "edit"
-                    ? "bg-[#09090b]/20 text-[#09090b] border-[#09090b]/30"
+                    ? "bg-[#09090b]/20 text-[#ffffff] border-[#09090b]/30"
                     : "bg-violet-600/30 text-violet-300 border-violet-500/30"
                 }`}>
                   {entry.mode === "edit" ? "✏ Edit" : "✦ Generated"}
@@ -361,7 +361,7 @@ export default function VibeMotionStudio({
                         setPrompt("");
                         setTimeout(() => textareaRef.current?.focus(), 50);
                       }}
-                      className="p-2 bg-[#ffffff] backdrop-blur-md rounded-full text-[#09090b] hover:bg-[#09090b] hover:text-[#09090b] transition-all border border-[#ececee]"
+                      className="p-2 bg-[#ffffff] backdrop-blur-md rounded-full text-[#3f3f46] hover:bg-[#09090b] hover:text-[#ffffff] transition-all border border-[#ececee]"
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -463,40 +463,12 @@ export default function VibeMotionStudio({
           <div className="flex flex-col items-center justify-center h-full animate-fade-in-up transition-all duration-700 min-h-[50vh]">
             {/* Overlapping floating cards */}
             <div className="flex items-center justify-center gap-1.5 md:gap-3 mb-10 select-none scale-90 sm:scale-100">
-              <div className="w-18 h-22 sm:w-24 sm:h-28 rounded-2xl border border-[#ececee] shadow-2xl -rotate-[12deg] transform hover:rotate-0 hover:scale-110 hover:z-20 transition-all duration-300 overflow-hidden bg-[#fafafa] flex-shrink-0">
-                <img
-                  src="https://d3adwkbyhxyrtq.cloudfront.net/webassets/videomodels/sdxl-image.avif"
-                  alt="Creative asset 1"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="w-18 h-22 sm:w-24 sm:h-28 rounded-2xl border border-[#ececee] shadow-2xl -rotate-[4deg] transform hover:rotate-0 hover:scale-110 hover:z-20 transition-all duration-300 overflow-hidden bg-[#fafafa] -ml-3 sm:-ml-4 flex-shrink-0">
-                <img
-                  src="https://d3adwkbyhxyrtq.cloudfront.net/webassets/videomodels/chroma-image.avif"
-                  alt="Creative asset 2"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="w-18 h-18 sm:w-24 sm:h-24 rounded-full border border-[#ececee] shadow-2xl rotate-[6deg] transform hover:rotate-0 hover:scale-110 hover:z-20 transition-all duration-300 overflow-hidden bg-[#fafafa] -ml-3 sm:-ml-4 flex-shrink-0">
-                <img
-                  src="https://d3adwkbyhxyrtq.cloudfront.net/webassets/videomodels/neta-lumina.avif"
-                  alt="Creative asset 3"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="w-18 h-22 sm:w-24 sm:h-28 rounded-2xl border border-[#ececee] shadow-2xl rotate-[12deg] transform hover:rotate-0 hover:scale-110 hover:z-20 transition-all duration-300 overflow-hidden bg-[#fafafa] -ml-3 sm:-ml-4 flex-shrink-0">
-                <img
-                  src="https://d3adwkbyhxyrtq.cloudfront.net/webassets/videomodels/perfect-pony-xl.avif"
-                  alt="Creative asset 4"
-                  className="w-full h-full object-cover"
-                />
-              </div>
             </div>
 
             <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-center px-4 flex flex-col items-center">
-              <span className="text-[#09090b] font-black uppercase text-xl sm:text-3xl tracking-wide mb-1 opacity-90">START CREATING WITH</span>
-              <span className="text-[#09090b] font-black uppercase text-2xl sm:text-4xl sm:mt-1 tracking-tight">
-                VIBE MOTION STUDIO
+              <span className="text-[#71717a] text-sm font-medium tracking-wide mb-1">Start creating</span>
+              <span className="text-[#09090b] font-semibold text-2xl sm:text-4xl sm:mt-1 tracking-tight">
+                Vibe Reel
               </span>
             </h1>
             <p className="text-[#71717a] text-xs sm:text-sm font-medium tracking-wide text-center max-w-lg leading-relaxed px-4">
@@ -533,7 +505,7 @@ export default function VibeMotionStudio({
 
             {/* Right: Edit mode status banner beside toggle buttons */}
             {editMode && (
-              <div className="flex items-center gap-2 px-3 py-1 bg-[#09090b]/5 border border-[#09090b]/10 rounded-full text-[11px] text-[#09090b] font-medium tracking-tight min-w-0 max-w-full overflow-hidden">
+              <div className="flex items-center gap-2 px-3 py-1 bg-[#09090b]/5 border border-[#09090b]/10 rounded-full text-[11px] text-[#ffffff] font-medium tracking-tight min-w-0 max-w-full overflow-hidden">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="flex-shrink-0">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
