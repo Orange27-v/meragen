@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { SettingsRail, RailSection } from "./rail/SettingsRail";
 import ToolShowcase from "./rail/ToolShowcase";
 import { QualityPicker, useQualityTiers } from "./rail/QualityPicker";
+import { QualityPoster } from "./rail/QualityPoster";
 import { CostMeter } from "./rail/CostMeter";
 import toast, { Toaster } from "react-hot-toast";
 import { runMotionGraphics, runMotionGraphicsEdit, getUserBalance } from "../muapi.js";
@@ -297,6 +298,13 @@ export default function VibeMotionStudio({
         />
       }
     >
+      <QualityPoster
+        toolId="vibereel"
+        tiers={qualityTiers}
+        value={selectedTierId}
+        onChange={handleTierSelect}
+        kind="video"
+      />
       <RailSection label="Your prompt">
 
           {/* ── Top Row: Mode Toggle & Edit Source Banner ── */}
@@ -323,7 +331,7 @@ export default function VibeMotionStudio({
 
             {/* Right: Edit mode status banner beside toggle buttons */}
             {editMode && (
-              <div className="flex items-center gap-2 px-3 py-1 bg-[color-mix(in_srgb,var(--action)_5%,transparent)] border border-[color-mix(in_srgb,var(--line-hi)_10%,transparent)] rounded-full text-[11px] text-[var(--chalk)] font-medium tracking-tight min-w-0 max-w-full overflow-hidden">
+              <div className="flex items-center gap-2 px-3 py-1 bg-[var(--slab-hi)] border border-[color-mix(in_srgb,var(--line-hi)_10%,transparent)] rounded-full text-[11px] text-[var(--chalk)] font-medium tracking-tight min-w-0 max-w-full overflow-hidden">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="flex-shrink-0">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -370,11 +378,8 @@ export default function VibeMotionStudio({
           {/* ── Controls row: dropdowns + generate button ── */}
       </RailSection>
 
-      <RailSection label="Quality" hint="Every price is the full cost of one video. Nothing else is added.">
-        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} kind="video" />
-      </RailSection>
 
-      <RailSection label="Settings">
+      <RailSection label="Settings" weight="chips">
             <div ref={controlsRef} className="flex flex-wrap items-center gap-2">
 
               {/* ── Aspect Ratio dropdown ── */}
@@ -447,7 +452,7 @@ export default function VibeMotionStudio({
                     onClick={toggleDropdown("source")}
                     className={promptControlClassName({ active: true })}
                   >
-                    <div className="w-4 h-4 bg-[color-mix(in_srgb,var(--action)_20%,transparent)] rounded flex items-center justify-center border border-[color-mix(in_srgb,var(--line-hi)_30%,transparent)]">
+                    <div className="w-4 h-4 bg-[var(--slab-hi)] rounded flex items-center justify-center border border-[color-mix(in_srgb,var(--line-hi)_30%,transparent)]">
                       <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -557,7 +562,7 @@ export default function VibeMotionStudio({
             {history.map((entry, idx) => (
               <div
                 key={entry.id || idx}
-                className="relative group rounded overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-primary/50 transition-all duration-300 flex flex-col cursor-pointer"
+                className="relative group rounded overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-[var(--line-hi)] transition-all duration-300 flex flex-col cursor-pointer"
                 onClick={() => setFullscreenUrl(entry.url)}
               >
                 {/* Video thumbnail */}
@@ -575,8 +580,8 @@ export default function VibeMotionStudio({
                 {/* ── Mode tag (top-left) ── */}
                 <div className={`absolute top-2 left-2 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider backdrop-blur-sm border ${
                   entry.mode === "edit"
-                    ? "bg-[color-mix(in_srgb,var(--action)_20%,transparent)] text-[var(--chalk)] border-[color-mix(in_srgb,var(--line-hi)_30%,transparent)]"
-                    : "bg-[color-mix(in_srgb,var(--action)_30%,transparent)] text-[var(--lilac)] border-[color-mix(in_srgb,var(--peri)_30%,transparent)]"
+                    ? "bg-[var(--slab-hi)] text-[var(--chalk)] border-[color-mix(in_srgb,var(--line-hi)_30%,transparent)]"
+                    : "bg-[var(--slab-hi)] text-[var(--lilac)] border-[color-mix(in_srgb,var(--peri)_30%,transparent)]"
                 }`}>
                   {entry.mode === "edit" ? "✏ Edit" : "✦ Generated"}
                 </div>
@@ -591,7 +596,7 @@ export default function VibeMotionStudio({
                     type="button"
                     title="Download"
                     onClick={(e) => { e.stopPropagation(); downloadFile(entry.url, `motion-${entry.id || idx}.mp4`); }}
-                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-primary hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
@@ -608,7 +613,7 @@ export default function VibeMotionStudio({
                         setPrompt("");
                         setTimeout(() => textareaRef.current?.focus(), 50);
                       }}
-                      className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--iron)] hover:bg-[var(--action)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                      className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--iron)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -688,7 +693,7 @@ export default function VibeMotionStudio({
                   </p>
                   <div className="flex items-center justify-between mt-1 flex-wrap gap-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap">
+                      <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-[var(--slab-hi)] rounded border border-[var(--line)] whitespace-nowrap">
                         Vibe Motion
                       </span>
                       <div className="flex gap-2">

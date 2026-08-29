@@ -48,8 +48,14 @@
 
   --primary-hsl:     243 75% 59%;   /* #4f46e5 — the filled action */
   --primary-hi-hsl:  244 82% 67%;   /* #6d64f0 — its hover */
-  --ring-hsl:        243 100% 73%;  /* #7d76ff — focus, and the selected control */
-  --lilac-hsl:       243 100% 82%;  /* #a5a1ff — accent text; indigo is 2.5:1 here */
+  --ring-hsl:        215 22% 72%;   /* #a8b2c2 — focus. Neutral on purpose: the
+                                       indigo is reserved for the one control
+                                       that spends money, and a focus ring in
+                                       the same colour made four things compete
+                                       with it. shadcn ships a neutral ring for
+                                       the same reason. */
+  --peri-hsl:        243 100% 73%;  /* #7d76ff — kept for the fork's gradients */
+  --lilac-hsl:       243 100% 82%;  /* #a5a1ff — accent *text*; indigo is 2.5:1 here */
 
   --ok-hsl:          158 64% 52%;   /* #34d399 */
   --danger-hsl:      351 95% 71%;   /* #fb7185 */
@@ -94,12 +100,14 @@
 
   --indigo:    hsl(var(--primary-hsl));
   --indigo-hi: hsl(var(--primary-hi-hsl));
-  --peri:      hsl(var(--ring-hsl));
+  --peri:      hsl(var(--peri-hsl));
   --lilac:     hsl(var(--lilac-hsl));
   --on-action: #ffffff;
 
   --hair:      hsl(var(--border-hsl));
   --hair-lit:  hsl(var(--ring-hsl));
+  --ring-solid:hsl(var(--ring-hsl));  /* the focus colour, as a named token */
+  --popover-bg:hsl(var(--raised-hsl)); /* dialogs and dropdowns, for the fork */
   --hair-hi:   hsl(var(--border-hsl));
   --hair-inner:hsl(var(--border-hsl));
 
@@ -226,7 +234,7 @@ a { color: var(--chalk); }
 .btn-lg { padding: 16px 24px; font-size: 16px; }
 
 a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
-  outline: 2px solid var(--peri);
+  outline: 2px solid var(--ring-solid);
   outline-offset: 2px;
 }
 
@@ -243,7 +251,7 @@ input, textarea, select {
   font: inherit;
   font-size: 14px;
 }
-input:focus, textarea:focus, select:focus { border-color: var(--peri); outline: none; }
+input:focus, textarea:focus, select:focus { border-color: var(--ring-solid); outline: none; }
 input::placeholder, textarea::placeholder { color: var(--ash); }
 
 label {
@@ -336,7 +344,8 @@ label {
   :root {
     --sidebar-background:         var(--background-hsl);
     --sidebar-foreground:         var(--muted-fg-hsl);
-    --sidebar-primary:            var(--primary-hsl);
+    /* The sidebar highlights by fill, not by the action colour. */
+    --sidebar-primary:            var(--secondary-hsl);
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent:             var(--secondary-hsl);
     --sidebar-accent-foreground:  var(--foreground-hsl);

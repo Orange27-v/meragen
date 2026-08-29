@@ -24,8 +24,9 @@ import {
   getI2IModelById,
 } from "../models.js";
 import { SettingsRail, RailSection } from "./rail/SettingsRail";
-import ToolShowcase from "./rail/ToolShowcase";
+import { WorkTabs } from "./rail/WorkTabs";
 import { QualityPicker, useQualityTiers } from "./rail/QualityPicker";
+import { QualityPoster } from "./rail/QualityPoster";
 import { CostMeter } from "./rail/CostMeter";
 import {
   getFamilyVariant,
@@ -420,7 +421,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
                 <button
                   type="button"
                   onClick={handleDone}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-primary text-[var(--chalk)] rounded-xl text-xs font-black transition-all hover:scale-105"
+                  className="flex items-center gap-1 px-3 py-1.5 bg-[var(--slab-hi)] text-[var(--chalk)] rounded-xl text-xs font-black transition-all hover:scale-105"
                 >
                   ✓ Done ({count})
                 </button>
@@ -432,7 +433,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
                   setPanelOpen(false);
                   fileInputRef.current?.click();
                 }}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-[var(--lilac)] rounded-full text-xs font-bold transition-all border border-primary/20"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--slab-hi)] hover:bg-[var(--slab-hi)]/20 text-[var(--lilac)] rounded-full text-xs font-bold transition-all border border-[var(--line)]"
               >
                 <svg
                   width="11"
@@ -486,7 +487,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
                     onClick={() => entry.url && handleCellClick(entry)}
                     className={`relative rounded-xl overflow-hidden border-2 cursor-pointer group/cell aspect-square transition-all ${
                       isSelected
-                        ? "border-primary shadow-glow"
+                        ? "border-[var(--chalk)] shadow-black/40"
                         : "border-[var(--line)] hover:border-[var(--line)]"
                     } ${atMax ? "opacity-40 cursor-not-allowed" : ""} ${!entry.url ? "cursor-wait" : ""}`}
                   >
@@ -498,7 +499,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
                       />
                     ) : (
                       <div className="w-full h-full bg-[var(--sunk)] flex flex-col items-center justify-center">
-                        <div className="w-8 h-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin mb-1" />
+                        <div className="w-8 h-8 rounded-full border-2 border-[var(--line)] border-t-primary animate-spin mb-1" />
                         <span className="text-[10px] font-black text-[var(--lilac)]">
                           {entry.progress}%
                         </span>
@@ -531,7 +532,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
 
                     {/* Selection badge */}
                     {isSelected && (
-                      <div className="absolute top-1 left-1 min-w-[20px] h-5 bg-primary rounded-full flex items-center justify-center px-1">
+                      <div className="absolute top-1 left-1 min-w-[20px] h-5 bg-[var(--slab-hi)] rounded-full flex items-center justify-center px-1">
                         {isMulti ? (
                           <span className="text-[10px] font-black text-[var(--chalk)]">
                             {selIdx + 1}
@@ -565,7 +566,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
               <button
                 type="button"
                 onClick={handleDone}
-                className="px-4 py-1.5 bg-primary text-[var(--chalk)] rounded-xl text-xs font-black transition-all hover:scale-105"
+                className="px-4 py-1.5 bg-[var(--slab-hi)] text-[var(--chalk)] rounded-xl text-xs font-black transition-all hover:scale-105"
               >
                 Use Selected
               </button>
@@ -1150,6 +1151,14 @@ export default function ImageStudio({
         />
       }
     >
+      <QualityPoster
+        toolId="pixcraft"
+        tiers={qualityTiers}
+        value={selectedTierId}
+        onChange={handleTierSelect}
+        kind="image"
+        onPickModel={setSelectedModelId}
+      />
       {referenceVariant && (
         <RailSection label="Start from a picture" hint="Optional. Leave it empty to make a picture from words alone.">
             {/* Inline list of uploaded files */}
@@ -1209,9 +1218,6 @@ export default function ImageStudio({
             />
       </RailSection>
 
-      <RailSection label="Quality" hint="The price covers one picture at this quality.">
-        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} kind="image" onPickModel={setSelectedModelId} />
-      </RailSection>
 
       <RailSection label="Picture settings">
             <div ref={dropdownRef} className="flex flex-wrap items-center gap-2">
@@ -1370,12 +1376,15 @@ export default function ImageStudio({
       {/* ── RIGHT: THE WORK ── */}
       <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
       <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar px-4 pb-8">
-        {history.length > 0 ? (
+        <WorkTabs
+          toolId="pixcraft"
+          hasResults={history.length > 0}
+          results={<>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full pt-4 animate-fade-in-up">
             {history.map((entry, idx) => (
               <div
                 key={entry.id || idx}
-                className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-primary/50 transition-all duration-300 flex flex-col cursor-pointer"
+                className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-[var(--line-hi)] transition-all duration-300 flex flex-col cursor-pointer"
                 onClick={() => setFullscreenUrl(entry.url)}
               >
                 <img
@@ -1398,7 +1407,7 @@ export default function ImageStudio({
                       e.stopPropagation();
                       downloadImage(entry.url, `muapi-${entry.id || idx}.jpg`);
                     }}
-                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-primary hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
@@ -1458,7 +1467,7 @@ export default function ImageStudio({
                   </p>
                   <div className="flex items-center justify-between mt-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-primary/10 rounded border border-primary/20 capitalize">
+                      <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-[var(--slab-hi)] rounded border border-[var(--line)] capitalize">
                         {entry.model?.replace("-", " ") || "Image Studio"}
                       </span>
                       <span className="text-[10px] text-[var(--fog)]">{entry.aspect_ratio}</span>
@@ -1468,9 +1477,107 @@ export default function ImageStudio({
               </div>
             ))}
           </div>
-        ) : (
-          <ToolShowcase toolId="pixcraft" />
-        )}
+          </>}
+          history={history.length > 0 ? <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full pt-4 animate-fade-in-up">
+            {history.map((entry, idx) => (
+              <div
+                key={entry.id || idx}
+                className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-[var(--line-hi)] transition-all duration-300 flex flex-col cursor-pointer"
+                onClick={() => setFullscreenUrl(entry.url)}
+              >
+                <img
+                  src={entry.url}
+                  alt={entry.prompt?.substring(0, 30) || "Generated image"}
+                  className="w-full aspect-square object-cover bg-[var(--night)] hover:opacity-80 transition-opacity"
+                />
+                
+                {/* Overlay actions */}
+                <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <GenerationCopyButtons
+                    prompt={entry.prompt}
+                    imageUrl={entry.url}
+                    onCopyError={onGenerationError}
+                  />
+                  <button
+                    type="button"
+                    title="Download"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      downloadImage(entry.url, `muapi-${entry.id || idx}.jpg`);
+                    }}
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    title="Delete"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (confirm("Are you sure you want to delete this generated item?")) {
+                        handleDeleteEntry(entry, idx).catch((err) => {
+                          onGenerationError?.(err.message || "Failed to delete item");
+                        });
+                      }
+                    }}
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                      <line x1="10" y1="11" x2="10" y2="17" />
+                      <line x1="14" y1="11" x2="14" y2="17" />
+                    </svg>
+                  </button>
+                </div>
+                <MobileGenerationActions
+                  prompt={entry.prompt}
+                  imageUrl={entry.url}
+                  onCopyError={onGenerationError}
+                  actions={[
+                    {
+                      kind: "download",
+                      label: "Download",
+                      onSelect: () =>
+                        downloadImage(entry.url, `muapi-${entry.id || idx}.jpg`),
+                    },
+                    {
+                      kind: "delete",
+                      label: "Delete",
+                      danger: true,
+                      onSelect: () => {
+                        if (confirm("Are you sure you want to delete this generated item?")) {
+                          handleDeleteEntry(entry, idx).catch((err) => {
+                            onGenerationError?.(err.message || "Failed to delete item");
+                          });
+                        }
+                      },
+                    },
+                  ]}
+                />
+
+                {/* Prompt & Details */}
+                <div className="p-3 bg-[var(--surface)] backdrop-blur-sm border-t border-[var(--line)] flex-1 flex flex-col justify-between gap-2">
+                  <p className="text-[var(--iron)] text-xs line-clamp-3 leading-relaxed" title={entry.prompt}>
+                    {entry.prompt || "No prompt provided"}
+                  </p>
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-[var(--slab-hi)] rounded border border-[var(--line)] capitalize">
+                        {entry.model?.replace("-", " ") || "Image Studio"}
+                      </span>
+                      <span className="text-[10px] text-[var(--fog)]">{entry.aspect_ratio}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          </> : null}
+        />
       </div>
 
       </div>

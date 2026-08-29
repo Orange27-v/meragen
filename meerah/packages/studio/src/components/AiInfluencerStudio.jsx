@@ -596,7 +596,7 @@ export default function AiInfluencerStudio({
                 onClick={() => setAspectRatio(r)}
                 className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all ${
                   aspectRatio === r
-                    ? "bg-[var(--action)] text-[var(--chalk)] shadow-md shadow-violet-600/40"
+                    ? "bg-[var(--iron)] text-[var(--chalk)] shadow-md shadow-violet-600/40"
                     : "text-[var(--fog)] hover:text-[var(--chalk)]"
                 }`}
               >
@@ -702,7 +702,7 @@ export default function AiInfluencerStudio({
             type="text"
             value={customPrompt}
             onChange={(e) => setCustomPrompt(e.target.value)}
-            placeholder="Add extra details… e.g. neon cyberpunk lighting, dramatic shadows"
+            placeholder="Soft window light, plain background, looking just past the camera"
             className="w-full h-9 bg-[var(--surface)] border border-[var(--line)] rounded-xl px-3 text-[12px] text-[var(--paper-ink)] placeholder-[var(--ash)] outline-none focus:border-[color-mix(in_srgb,var(--peri)_40%,transparent)] transition-colors"
           />
         </div>
@@ -738,7 +738,7 @@ export default function AiInfluencerStudio({
                 onKeyDown={(e) => e.key === "Enter" && setSelectedHistoryIdx(idx)}
                 className={`group relative w-full aspect-[3/4] rounded-xl overflow-hidden border transition-all cursor-pointer ${
                   selectedHistoryIdx === idx
-                    ? "border-[var(--peri)] ring-1 ring-[color-mix(in_srgb,var(--peri)_40%,transparent)]"
+                    ? "border-[var(--ring-solid)] ring-1 ring-[color-mix(in_srgb,var(--peri)_40%,transparent)]"
                     : "border-[var(--line)] hover:border-[var(--line)]"
                 }`}
               >

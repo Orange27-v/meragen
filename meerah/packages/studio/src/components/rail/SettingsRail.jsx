@@ -41,12 +41,22 @@ export function SettingsRail({ children, footer, className = "" }) {
  * `hint` is for the thing a first-time user needs and an experienced one stops
  * reading — it sits under the label, not inside a tooltip nobody opens.
  */
-export function RailSection({ label, hint, children, action }) {
+export function RailSection({ label, hint, children, action, weight = "block" }) {
+  // `chips` is the demoted tier: the settings that matter least get a tighter
+  // label and sit on one line. When every section looked the same, a 5-second
+  // duration toggle carried the same visual weight as the prompt.
+  const chips = weight === "chips";
   return (
-    <section className="space-y-2">
+    <section className={chips ? "space-y-1.5" : "space-y-2"}>
       {label && (
         <div className="flex items-baseline gap-2">
-          <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--fog)]">
+          <h3
+            className={
+              chips
+                ? "text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--ash)]"
+                : "text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--fog)]"
+            }
+          >
             {label}
           </h3>
           {action}
@@ -110,7 +120,7 @@ export function OptionRow({ options, value, onChange, format }) {
             aria-pressed={selected}
             className={`px-2.5 h-[32px] rounded-tag border text-[12px] font-medium transition-colors ${
               selected
-                ? "border-[var(--line-hi)] bg-[var(--action)] text-[var(--chalk)]"
+                ? "border-[var(--line-hi)] bg-[var(--iron)] text-[var(--chalk)]"
                 : "border-[var(--line)] bg-[var(--surface)] text-[var(--iron)] hover:border-[var(--line)]"
             }`}
           >
@@ -119,5 +129,41 @@ export function OptionRow({ options, value, onChange, format }) {
         );
       })}
     </div>
+  );
+}
+
+/**
+ * An empty media slot, as a visible invitation.
+ *
+ * VidEngine can start from a photo — it says so in its own description — but
+ * until a source is chosen the section holding that capability renders nothing,
+ * so the rail jumped from the poster straight to the prompt and the feature was
+ * invisible. A dashed well says the slot exists before anything fills it.
+ */
+export function RailWell({ label, hint, badge, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="relative w-full rounded border border-dashed border-[var(--line)] bg-transparent
+                 px-4 py-6 text-center transition-colors hover:border-[var(--line-hi)]
+                 hover:bg-[var(--slab-hi)] focus-visible:outline-none focus-visible:ring-2
+                 focus-visible:ring-[var(--ring-solid)]"
+    >
+      {badge && (
+        <span className="absolute right-2 top-2 rounded bg-[var(--slab-hi)] px-1.5 py-0.5 text-[10px] text-[var(--fog)]">
+          {badge}
+        </span>
+      )}
+      <span className="mx-auto mb-2 grid h-9 w-9 place-items-center rounded bg-[var(--slab-hi)] text-[var(--iron)]">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <circle cx="8.5" cy="8.5" r="1.5" />
+          <path d="m21 15-5-5L5 21" />
+        </svg>
+      </span>
+      <span className="block text-[13px] font-medium text-[var(--chalk)]">{label}</span>
+      {hint && <span className="mt-0.5 block text-[11.5px] text-[var(--fog)]">{hint}</span>}
+    </button>
   );
 }

@@ -171,8 +171,8 @@ function AudioFileUploader({ label, value, onChange, apiKey }) {
         onClick={() => uploadState === UPLOAD_STATE.IDLE && fileInputRef.current?.click()}
         className={`relative border rounded p-4 transition-all duration-300 flex items-center gap-3.5 cursor-pointer ${
           uploadState === UPLOAD_STATE.READY 
-            ? "border-primary/60 bg-primary/10 shadow-[0_0_15px_rgba(34,211,238,0.05)]" 
-            : "border-[var(--line)] bg-[var(--sunk)] hover:bg-[var(--night)] hover:border-primary/50"
+            ? "border-[var(--line)] bg-[var(--slab-hi)] shadow-[0_0_15px_rgba(34,211,238,0.05)]" 
+            : "border-[var(--line)] bg-[var(--sunk)] hover:bg-[var(--night)] hover:border-[var(--line-hi)]"
         }`}
       >
         <input 
@@ -205,7 +205,7 @@ function AudioFileUploader({ label, value, onChange, apiKey }) {
                 <span>{progress}%</span>
               </div>
               <div className="h-1.5 bg-[var(--night)] rounded-full overflow-hidden">
-                <div className="h-full bg-primary transition-all duration-300" style={{ width: `${progress}%` }} />
+                <div className="h-full bg-[var(--slab-hi)] transition-all duration-300" style={{ width: `${progress}%` }} />
               </div>
             </div>
           </div>
@@ -213,7 +213,7 @@ function AudioFileUploader({ label, value, onChange, apiKey }) {
 
         {uploadState === UPLOAD_STATE.READY && (
           <>
-            <div className="w-10 h-10 rounded bg-primary/20 flex items-center justify-center text-[var(--lilac)] border border-primary/30">
+            <div className="w-10 h-10 rounded bg-[var(--slab-hi)] flex items-center justify-center text-[var(--lilac)] border border-[var(--line)]">
               <MusicIcon className="text-[var(--lilac)]" />
             </div>
             <div className="text-left flex-1 min-w-0">
@@ -441,11 +441,11 @@ function PremiumAudioPlayer({ url, title }) {
             className="flex-1 h-2 bg-[var(--slab)] hover:bg-[var(--slab)] rounded-full cursor-pointer relative group transition-colors"
           >
             <div 
-              className="absolute left-0 top-0 bottom-0 bg-primary rounded-full group-hover:bg-primary/95 transition-all"
+              className="absolute left-0 top-0 bottom-0 bg-[var(--slab-hi)] rounded-full group-hover:bg-[var(--slab-hi)]/95 transition-all"
               style={{ width: `${(currentTime / (duration || 1)) * 100}%` }}
             />
             <div 
-              className="absolute w-3.5 h-3.5 bg-[var(--surface)] rounded-full -top-[3px] shadow-glow opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+              className="absolute w-3.5 h-3.5 bg-[var(--surface)] rounded-full -top-[3px] shadow-black/40 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
               style={{ left: `calc(${(currentTime / (duration || 1)) * 100}% - 7px)` }}
             />
           </div>
@@ -481,7 +481,7 @@ function PremiumAudioPlayer({ url, title }) {
           {/* Main Play/Pause Button */}
           <button
             onClick={togglePlay}
-            className="w-12 h-12 bg-primary hover:bg-white text-[var(--chalk)] rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-glow"
+            className="w-12 h-12 bg-[var(--slab-hi)] hover:bg-white text-[var(--chalk)] rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-black/40"
             title={isPlaying ? "Pause" : "Play"}
             type="button"
           >
@@ -491,7 +491,7 @@ function PremiumAudioPlayer({ url, title }) {
           {/* Download Button */}
           <button
             onClick={downloadAudio}
-            className="px-4 py-2 bg-[var(--night)] hover:bg-[var(--slab)] border border-[var(--line)] rounded text-xs font-bold text-[var(--chalk)] flex items-center gap-2 hover:border-primary/45 transition-all"
+            className="px-4 py-2 bg-[var(--night)] hover:bg-[var(--slab)] border border-[var(--line)] rounded text-xs font-bold text-[var(--chalk)] flex items-center gap-2 hover:border-[var(--line-hi)] transition-all"
             title="Download Audio"
             type="button"
           >
@@ -767,7 +767,7 @@ export default function AudioStudio({
               ref={modelBtnRef}
               type="button"
               onClick={() => setOpenDropdown(!openDropdown)}
-              className="w-full bg-[var(--sunk)] border border-[var(--line)] rounded px-4 py-3.5 text-sm text-left font-bold text-[var(--chalk)] flex items-center justify-between hover:bg-[var(--night)] hover:border-primary/50 transition-all"
+              className="w-full bg-[var(--sunk)] border border-[var(--line)] rounded px-4 py-3.5 text-sm text-left font-bold text-[var(--chalk)] flex items-center justify-between hover:bg-[var(--night)] hover:border-[var(--line-hi)] transition-all"
             >
               <span>{selectedModel ? audioLabel(selectedModel).name : "Choose what to make"}</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={`transition-transform duration-200 ${openDropdown ? 'rotate-180' : ''}`}>
@@ -786,7 +786,7 @@ export default function AudioStudio({
                       setOpenDropdown(false);
                     }}
                     className={`w-full text-left px-4 py-2.5 rounded text-xs font-bold transition-all flex flex-col gap-1.5 border ${
-                      model.id === selectedModelId ? "text-[var(--lilac)] bg-primary/10 border-primary/20" : "text-[var(--chalk)] border-transparent hover:bg-[var(--sunk)] hover:text-[var(--chalk)]"
+                      model.id === selectedModelId ? "text-[var(--lilac)] bg-[var(--slab-hi)] border-[var(--line)]" : "text-[var(--chalk)] border-transparent hover:bg-[var(--sunk)] hover:text-[var(--chalk)]"
                     }`}
                   >
                     <span>{audioLabel(model).name}</span>
@@ -857,7 +857,7 @@ export default function AudioStudio({
                       type="button"
                       onClick={() => setParams(prev => ({ ...prev, [key]: !prev[key] }))}
                       className={`w-11 h-6 rounded-full p-1 transition-all duration-300 relative shrink-0 ${
-                        params[key] ? "bg-primary" : "bg-[var(--night)]"
+                        params[key] ? "bg-[var(--slab-hi)]" : "bg-[var(--night)]"
                       }`}
                     >
                       <div className={`w-4 h-4 rounded-full bg-[var(--surface)] shadow-md transform transition-all duration-300 ${
@@ -904,7 +904,7 @@ export default function AudioStudio({
                               }}
                               className={`w-full text-left px-4 py-2.5 rounded text-xs font-bold transition-all border ${
                                 params[key] === optionValue
-                                  ? "text-[var(--lilac)] bg-primary/10 border-primary/20"
+                                  ? "text-[var(--lilac)] bg-[var(--slab-hi)] border-[var(--line)]"
                                   : "text-[var(--chalk)] border-transparent hover:bg-[var(--sunk)] hover:text-[var(--chalk)]"
                               }`}
                             >
@@ -932,7 +932,7 @@ export default function AudioStudio({
                   <div key={key} className="space-y-3 bg-[var(--sunk)] border border-[var(--line)] rounded p-4 transition-all hover:border-[var(--line)]">
                     <div className="flex items-center justify-between text-xs font-bold">
                       <span className="text-[var(--chalk)] tracking-tight">{schema.title || key}</span>
-                      <span className="text-[var(--lilac)] font-mono bg-primary/10 px-2 py-0.5 rounded border border-primary/20">{params[key] !== undefined ? params[key] : schema.default}</span>
+                      <span className="text-[var(--lilac)] font-mono bg-[var(--slab-hi)] px-2 py-0.5 rounded border border-[var(--line)]">{params[key] !== undefined ? params[key] : schema.default}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] text-[var(--iron)] font-medium w-6 text-right">{schema.minValue}</span>
@@ -966,7 +966,7 @@ export default function AudioStudio({
                     <textarea
                       value={params[key] || ""}
                       onChange={(e) => setParams(prev => ({ ...prev, [key]: e.target.value }))}
-                      className="w-full bg-[var(--sunk)] border border-[var(--line)] focus:border-primary/85 rounded p-3 text-xs text-[var(--chalk)] placeholder:text-[var(--fog)] focus:outline-none transition-all min-h-[100px] resize-none leading-relaxed shadow-inner"
+                      className="w-full bg-[var(--sunk)] border border-[var(--line)] focus:border-[var(--line)] rounded p-3 text-xs text-[var(--chalk)] placeholder:text-[var(--fog)] focus:outline-none transition-all min-h-[100px] resize-none leading-relaxed shadow-inner"
                       placeholder={schema.description || "Enter what you want generated..."}
                     />
                     {schema.examples && Array.isArray(schema.examples) && (
@@ -976,7 +976,7 @@ export default function AudioStudio({
                             key={idx}
                             type="button"
                             onClick={() => setParams(prev => ({ ...prev, [key]: ex }))}
-                            className="text-[11px] px-3 py-1 bg-[var(--night)] border border-[var(--line)] hover:bg-primary/20 hover:border-primary/45 hover:text-[var(--chalk)] rounded-full transition-all font-semibold text-[var(--chalk)]"
+                            className="text-[11px] px-3 py-1 bg-[var(--night)] border border-[var(--line)] hover:bg-[var(--slab-hi)]/20 hover:border-[var(--line-hi)] hover:text-[var(--chalk)] rounded-full transition-all font-semibold text-[var(--chalk)]"
                           >
                             "{ex.slice(0, 35)}..."
                           </button>
@@ -1001,7 +1001,7 @@ export default function AudioStudio({
                       const val = isNumber ? (e.target.value === "" ? "" : parseFloat(e.target.value)) : e.target.value;
                       setParams(prev => ({ ...prev, [key]: val }));
                     }}
-                    className="w-full bg-[var(--sunk)] border border-[var(--line)] hover:border-[var(--line)] focus:border-primary/80 rounded px-4 py-3.5 text-xs text-[var(--chalk)] placeholder:text-[var(--fog)] focus:outline-none transition-all shadow-inner"
+                    className="w-full bg-[var(--sunk)] border border-[var(--line)] hover:border-[var(--line)] focus:border-[var(--line)] rounded px-4 py-3.5 text-xs text-[var(--chalk)] placeholder:text-[var(--fog)] focus:outline-none transition-all shadow-inner"
                   />
                   {schema.description && (
                     <span className="block text-[11px] text-[var(--iron)] leading-normal">
@@ -1061,7 +1061,7 @@ export default function AudioStudio({
             {isGenerating && !generateError && (
               <div className="flex flex-col items-center gap-6 animate-fade-in">
                 <div className="relative">
-                  <div className="w-24 h-24 border-[3px] border-[var(--line)] border-t-primary rounded-full animate-spin shadow-glow" />
+                  <div className="w-24 h-24 border-[3px] border-[var(--line)] border-t-primary rounded-full animate-spin shadow-black/40" />
                   <div className="absolute inset-0 flex items-center justify-center text-[var(--lilac)]">
                     <MusicIcon className="animate-pulse text-[var(--lilac)]" />
                   </div>
@@ -1088,7 +1088,7 @@ export default function AudioStudio({
                 <div className="flex items-center justify-between px-1">
                   <button
                     onClick={handleNew}
-                    className="text-xs font-bold text-[var(--chalk)] hover:text-[var(--lilac)] flex items-center gap-2 transition-all bg-[var(--sunk)] border border-[var(--line)] hover:border-primary/30 px-4 py-2 rounded-full"
+                    className="text-xs font-bold text-[var(--chalk)] hover:text-[var(--lilac)] flex items-center gap-2 transition-all bg-[var(--sunk)] border border-[var(--line)] hover:border-[var(--line-hi)] px-4 py-2 rounded-full"
                     type="button"
                   >
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -1120,13 +1120,13 @@ export default function AudioStudio({
                     onClick={() => handleSelectHistory(entry, idx)}
                     className={`p-3.5 bg-[var(--sunk)] border rounded cursor-pointer transition-all flex flex-col justify-between h-28 border-[var(--line)] hover:bg-[var(--night)] hover:border-[var(--line)] ${
                       activeResultUrl === entry.url && view === "result"
-                        ? "border-primary bg-primary/5 shadow-glow"
+                        ? "border-[var(--chalk)] bg-[var(--slab-hi)] shadow-black/40"
                         : ""
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <div className={`w-8 h-8 rounded flex items-center justify-center flex-shrink-0 ${
-                        activeResultUrl === entry.url && view === "result" ? "bg-primary/20 text-[var(--lilac)]" : "bg-[var(--night)] text-[var(--chalk)]"
+                        activeResultUrl === entry.url && view === "result" ? "bg-[var(--slab-hi)] text-[var(--lilac)]" : "bg-[var(--night)] text-[var(--chalk)]"
                       }`}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                           <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />

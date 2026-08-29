@@ -93,7 +93,7 @@ export function QualityPicker({ tiers, value, onChange, kind = "video", onPickMo
             onClick={() => onChange(tier)}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-tag border text-left transition-colors ${
               selected
-                ? "border-[var(--peri)] bg-[color-mix(in_srgb,var(--action)_12%,transparent)] ring-1 ring-[var(--peri)]"
+                ? "border-[var(--chalk)] bg-[var(--slab-hi)]"
                 : "border-[var(--line)] bg-[var(--surface)] hover:border-[var(--line-hi)] hover:bg-[var(--slab-hi)]"
             }`}
           >

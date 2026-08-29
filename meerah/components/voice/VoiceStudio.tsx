@@ -94,7 +94,7 @@ export default function VoiceStudio() {
                     aria-pressed={language === entry.code}
                     className={`rounded px-3 py-2.5 text-left text-[13px] transition-colors ${
                       language === entry.code
-                        ? 'bg-primary text-primary-foreground font-semibold'
+                        ? 'bg-[var(--slab-hi)] text-[var(--lilac)]-foreground font-semibold'
                         : 'bg-card text-[var(--iron)] hover:bg-secondary hover:text-[var(--chalk)]'
                     }`}>
                     {entry.name}
@@ -148,7 +148,7 @@ export default function VoiceStudio() {
           <section>
             <Label htmlFor="script" className="mb-2.5 block">Script</Label>
             <Textarea id="script" value={script} onChange={(e) => setScript(e.target.value)}
-              placeholder="Type exactly what the voice should say" className="min-h-[140px]" />
+              placeholder="Abeg come see wetin we get this weekend — price better pass last week" className="min-h-[140px]" />
             <p className={`mt-1.5 text-right text-[11px] tabular-nums ${over ? 'text-destructive' : 'text-[var(--fog)]'}`}>
               {script.length.toLocaleString()} / {MAX_CHARACTERS.toLocaleString()}
             </p>

@@ -147,6 +147,23 @@ tight `0 1px 2px rgba(0,0,0,.5)` — not a soft drop shadow. Hover moves to
 `--surface` fill, `--iron` text, 1px `--line`. Hover lifts to `--surface-hi`,
 `--line-hi`, `--chalk`.
 
+### The rail's four weights
+
+Top to bottom, and deliberately unequal — when every section looked the same, a
+duration toggle carried the weight of the prompt:
+
+1. **Poster** — a 16:9 still, the quality name over it, spec and Naira beneath,
+   and a Change button. The first thing read is what you get and what it costs.
+   Quality used to be the third section down, so the price arrived last in a
+   product whose whole argument is that you see it first.
+2. **Media** — a dashed `RailWell` where the tool takes a photo or video, with
+   an *Optional* chip. It renders only when the chosen quality can accept media;
+   a labelled section with nothing in it reads as something that failed to load.
+3. **Prompt** — label in ink, placeholder as body copy. Reads as a document
+   field, not a form input.
+4. **Chips** — `RailSection weight="chips"`: aspect, duration, resolution on one
+   line with a quieter label. The settings that matter least look like it.
+
 ### Settings rail
 370px, `--sunk`, hairline right border. A scrolling body of labelled sections and a
 pinned footer holding the cost meter and one full-width action. Every studio has one;
@@ -174,6 +191,17 @@ work never competes with our examples.
 
 The nesting is the point. A single flat rectangle on the canvas reads as a patch
 of different colour; a core inside a shell reads as an object.
+
+### Work-area tabs
+
+`Results · History · How it works`. History used to *replace* the examples —
+make one thing and the explanation vanished — and the guide was a dialog that
+opened over the tool on arrival. Now history has a home, the guide never blocks,
+and the default tab is How it works while there is nothing to show.
+
+Six of the eight railified studios have them. Snip Reel and Vibe Reel keep their
+own work areas: their result view is a single preview rather than a gallery, and
+restructuring a working one for consistency is not worth the risk.
 
 ### Tool guide dialog
 `--scrim` behind, `--slab` panel at `min(840px, 100%)`, 8px radius. Order: tool name
@@ -211,7 +239,10 @@ Transparent on a 1px `--line`, text `--paper-ink`, `--radius-tag`, 4/8 padding, 
 - Do not use an opaque scrim — `--scrim` and `--veil` are translucent on purpose
 - Do not write a hex literal in a component; every colour comes from a token
 - Do not apply Tailwind's `/NN` opacity modifier to a `var()` colour — it is silently dropped. Use `color-mix(in_srgb,var(--x)_NN%,transparent)`
+- **Indigo belongs to the control that spends money, and nothing else.** Selection is a near-white edge on a filled grey; focus is the neutral ring; the sidebar's active row is a fill. A colour used five ways stops saying "press this" — this system spent it 271 times before the rule
 - Do not introduce a second radius; `--radius` is the only one, and `rounded-full` is for circles only
+- Do not write a placeholder that instructs ("Type your prompt here"); write one that shows what good looks like, in this market's register
+- Do not illustrate a step with stock photography; capture the interface doing it (`scripts/capture-steps.mjs`)
 - Do not use a lighter background to separate one thing from another; a card is a hairline on the page colour
 - Do not show a vendor model name outside the Advanced drawer — it is opt-in, labelled, and the only place they belong
 - Do not import `@meerah/studio` for a value at the top of a shell file; it drags the whole 700KB catalogue into that page's first load. Register inside the `dynamic()` chain instead

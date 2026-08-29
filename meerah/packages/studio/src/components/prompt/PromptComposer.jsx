@@ -15,22 +15,22 @@ const DEFAULT_PANEL_CLASS =
   "w-full bg-gradient-to-b from-[color-mix(in_srgb,var(--surface)_90%,transparent)] via-[color-mix(in_srgb,var(--night)_90%,transparent)] to-[color-mix(in_srgb,var(--night)_95%,transparent)] backdrop-blur-2xl rounded-[2rem] border border-[var(--line)] p-4 flex flex-col gap-3 shadow-[0_15px_50px_rgba(0,0,0,0.8)]";
 
 const DEFAULT_TEXTAREA_CLASS =
-  "w-full bg-[var(--surface)] border border-[var(--line)] rounded-button px-3 py-2.5 text-[var(--chalk)] text-sm placeholder:text-[var(--ash)] focus:outline-none focus:border-[var(--peri)] resize-none leading-relaxed min-h-[92px] max-h-[150px] md:max-h-[250px] overflow-y-auto custom-scrollbar transition-colors disabled:opacity-40";
+  "w-full bg-[var(--surface)] border border-[var(--line)] rounded-button px-3 py-2.5 text-[var(--chalk)] text-sm placeholder:text-[var(--ash)] focus:outline-none focus:border-[var(--ring-solid)] resize-none leading-relaxed min-h-[92px] max-h-[150px] md:max-h-[250px] overflow-y-auto custom-scrollbar transition-colors disabled:opacity-40";
 
 const DEFAULT_ACTION_CLASS =
-  "bg-[var(--action)] text-[var(--on-action)] px-7 py-3 rounded-full font-bold text-sm hover:opacity-95 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 w-full sm:w-auto shadow-lg shadow-[color-mix(in_srgb,var(--action)_20%,transparent)] hover:shadow-[color-mix(in_srgb,var(--action)_35%,transparent)] border border-[color-mix(in_srgb,var(--line-hi)_10%,transparent)] z-10 disabled:opacity-50 disabled:cursor-not-allowed";
+  "bg-[var(--action)] text-[var(--on-action)] px-7 py-3 rounded-full font-bold text-sm hover:opacity-95 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 w-full sm:w-auto shadow-lg shadow-black/40 hover:shadow-black/40 border border-[color-mix(in_srgb,var(--line-hi)_10%,transparent)] z-10 disabled:opacity-50 disabled:cursor-not-allowed";
 
 const CONTROL_LAYOUT_CLASS =
-  "h-[38px] flex items-center gap-2 rounded-md transition-all border group whitespace-nowrap shadow-inner focus:outline-none focus-visible:border-[color-mix(in_srgb,var(--line-hi)_45%,transparent)] focus-visible:ring-1 focus-visible:ring-[color-mix(in_srgb,var(--action)_30%,transparent)]";
+  "h-[38px] flex items-center gap-2 rounded-md transition-all border group whitespace-nowrap shadow-inner focus:outline-none focus-visible:border-[color-mix(in_srgb,var(--line-hi)_45%,transparent)] focus-visible:ring-1 focus-visible:ring-[var(--ring-solid)]";
 
 const CONTROL_IDLE_CLASS =
   "text-[var(--chalk)] bg-[color-mix(in_srgb,var(--surface)_60%,transparent)] hover:bg-[color-mix(in_srgb,var(--slab)_80%,transparent)] border-[var(--line)]/[0.06]";
 
 const CONTROL_ACTIVE_CLASS =
-  "text-[var(--chalk)] bg-[color-mix(in_srgb,var(--action)_10%,transparent)] hover:bg-[color-mix(in_srgb,var(--action)_15%,transparent)] border-[color-mix(in_srgb,var(--line-hi)_25%,transparent)]";
+  "text-[var(--chalk)] bg-[var(--slab-hi)] hover:bg-[var(--slab-hi)] border-[color-mix(in_srgb,var(--line-hi)_25%,transparent)]";
 
 const MEDIA_CONTROL_LAYOUT_CLASS =
-  "w-10 h-10 shrink-0 rounded-full border transition-all flex items-center justify-center relative overflow-hidden group focus:outline-none focus-visible:border-[color-mix(in_srgb,var(--line-hi)_45%,transparent)] focus-visible:ring-1 focus-visible:ring-[color-mix(in_srgb,var(--action)_30%,transparent)]";
+  "w-10 h-10 shrink-0 rounded-full border transition-all flex items-center justify-center relative overflow-hidden group focus:outline-none focus-visible:border-[color-mix(in_srgb,var(--line-hi)_45%,transparent)] focus-visible:ring-1 focus-visible:ring-[var(--ring-solid)]";
 
 const DEFAULT_POPOVER_POSITION_CLASS =
   "absolute bottom-[calc(100%+12px)] left-0 z-50";
@@ -67,7 +67,7 @@ export function promptMediaButtonClassName({
   return joinClasses(
     MEDIA_CONTROL_LAYOUT_CLASS,
     active
-      ? "border-[color-mix(in_srgb,var(--line-hi)_60%,transparent)] bg-[color-mix(in_srgb,var(--action)_5%,transparent)] hover:border-[color-mix(in_srgb,var(--line-hi)_70%,transparent)]"
+      ? "border-[color-mix(in_srgb,var(--line-hi)_60%,transparent)] bg-[var(--slab-hi)] hover:border-[color-mix(in_srgb,var(--line-hi)_70%,transparent)]"
       : "border-[var(--line)] bg-[var(--sunk)] hover:bg-white/[0.06] hover:border-[color-mix(in_srgb,var(--line-hi)_40%,transparent)]",
     className,
   );
@@ -221,7 +221,7 @@ export function PromptMenuItem({
       role="menuitemradio"
       className={joinClasses(
         "w-full min-h-10 flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl text-left cursor-pointer transition-all group/menu-item",
-        "text-xs font-semibold text-[var(--iron)] hover:bg-[color-mix(in_srgb,var(--action)_10%,transparent)] hover:text-[var(--chalk)] focus:outline-none focus-visible:bg-[color-mix(in_srgb,var(--action)_10%,transparent)] focus-visible:text-[var(--chalk)]",
+        "text-xs font-semibold text-[var(--iron)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] focus:outline-none focus-visible:bg-[var(--slab-hi)] focus-visible:text-[var(--chalk)]",
         className,
       )}
     >
@@ -278,9 +278,9 @@ export function PromptSegmentOption({
       aria-pressed={selected}
       className={joinClasses(
         "min-h-7 px-3 py-1 rounded-full text-xs font-semibold transition-all flex items-center justify-center gap-1.5",
-        "focus:outline-none focus-visible:ring-1 focus-visible:ring-[color-mix(in_srgb,var(--action)_40%,transparent)]",
+        "focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--ring-solid)]",
         selected
-          ? "bg-[var(--action)] text-[var(--chalk)] shadow-md shadow-[color-mix(in_srgb,var(--action)_20%,transparent)]"
+          ? "bg-[var(--slab-hi)] text-[var(--chalk)]"
           : "text-[var(--fog)] hover:text-[var(--iron)]",
         className,
       )}

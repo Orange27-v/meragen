@@ -1243,7 +1243,7 @@ export default function DrawModal({
                   {/* Unified Outline Handles Overlay for Selected Object */}
                   {activeTool === "pointer" && selectedObjectId && bbox && (
                     <div
-                      className="absolute border border-dashed border-[var(--peri)] pointer-events-auto z-20 cursor-move"
+                      className="absolute border border-dashed border-[var(--ring-solid)] pointer-events-auto z-20 cursor-move"
                       style={{
                         left: `${(bbox.x / canvasDimensions.width) * 100}%`,
                         top: `${(bbox.y / canvasDimensions.height) * 100}%`,
@@ -1254,37 +1254,37 @@ export default function DrawModal({
                     >
                       {/* Corner handles */}
                       <div
-                        className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-[var(--surface)] border border-[var(--peri)] cursor-nwse-resize rounded-full"
+                        className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-[var(--surface)] border border-[var(--ring-solid)] cursor-nwse-resize rounded-full"
                         onMouseDown={(e) => handleStartResizeSelected(e, "tl")}
                       />
                       <div
-                        className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-[var(--surface)] border border-[var(--peri)] cursor-nesw-resize rounded-full"
+                        className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-[var(--surface)] border border-[var(--ring-solid)] cursor-nesw-resize rounded-full"
                         onMouseDown={(e) => handleStartResizeSelected(e, "tr")}
                       />
                       <div
-                        className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-[var(--surface)] border border-[var(--peri)] cursor-nesw-resize rounded-full"
+                        className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-[var(--surface)] border border-[var(--ring-solid)] cursor-nesw-resize rounded-full"
                         onMouseDown={(e) => handleStartResizeSelected(e, "bl")}
                       />
                       <div
-                        className="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-[var(--surface)] border border-[var(--peri)] cursor-nwse-resize rounded-full"
+                        className="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-[var(--surface)] border border-[var(--ring-solid)] cursor-nwse-resize rounded-full"
                         onMouseDown={(e) => handleStartResizeSelected(e, "br")}
                       />
 
                       {/* Edge handles */}
                       <div
-                        className="absolute -top-1.5 left-[calc(50%-6px)] w-3 h-3 bg-[var(--surface)] border border-[var(--peri)] cursor-ns-resize rounded-full"
+                        className="absolute -top-1.5 left-[calc(50%-6px)] w-3 h-3 bg-[var(--surface)] border border-[var(--ring-solid)] cursor-ns-resize rounded-full"
                         onMouseDown={(e) => handleStartResizeSelected(e, "t")}
                       />
                       <div
-                        className="absolute -bottom-1.5 left-[calc(50%-6px)] w-3 h-3 bg-[var(--surface)] border border-[var(--peri)] cursor-ns-resize rounded-full"
+                        className="absolute -bottom-1.5 left-[calc(50%-6px)] w-3 h-3 bg-[var(--surface)] border border-[var(--ring-solid)] cursor-ns-resize rounded-full"
                         onMouseDown={(e) => handleStartResizeSelected(e, "b")}
                       />
                       <div
-                        className="absolute top-[calc(50%-6px)] -left-1.5 w-3 h-3 bg-[var(--surface)] border border-[var(--peri)] cursor-ew-resize rounded-full"
+                        className="absolute top-[calc(50%-6px)] -left-1.5 w-3 h-3 bg-[var(--surface)] border border-[var(--ring-solid)] cursor-ew-resize rounded-full"
                         onMouseDown={(e) => handleStartResizeSelected(e, "l")}
                       />
                       <div
-                        className="absolute top-[calc(50%-6px)] -right-1.5 w-3 h-3 bg-[var(--surface)] border border-[var(--peri)] cursor-ew-resize rounded-full"
+                        className="absolute top-[calc(50%-6px)] -right-1.5 w-3 h-3 bg-[var(--surface)] border border-[var(--ring-solid)] cursor-ew-resize rounded-full"
                         onMouseDown={(e) => handleStartResizeSelected(e, "r")}
                       />
                     </div>
@@ -1684,7 +1684,7 @@ export default function DrawModal({
                       max="100"
                       value={brushSize}
                       onChange={(e) => setBrushSize(parseInt(e.target.value))}
-                      className="w-full h-1 bg-[var(--night)] rounded-lg appearance-none cursor-pointer accent-[var(--peri)]"
+                      className="w-full h-1 bg-[var(--night)] rounded-lg appearance-none cursor-pointer accent-[var(--iron)]"
                     />
                     <span className="text-[11px] font-bold text-[var(--steel)] text-right">
                       {brushSize}px
@@ -1702,7 +1702,7 @@ export default function DrawModal({
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !generating) handleGenerateClick();
               }}
-              placeholder="Describe what you want to generate…"
+              placeholder="Packshot of a shea butter jar on white, soft studio light"
               className="flex-1 mx-3 h-[38px] bg-[color-mix(in_srgb,var(--surface)_80%,transparent)] border border-[var(--line)] rounded-xl px-3 text-xs text-[var(--iron)] placeholder-[color-mix(in_srgb,var(--chalk)_25%,transparent)] outline-none focus:border-[color-mix(in_srgb,var(--peri)_40%,transparent)] focus:ring-1 focus:ring-[color-mix(in_srgb,var(--indigo)_20%,transparent)] transition-all"
             />
 

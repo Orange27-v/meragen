@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { SettingsRail, RailSection } from "./rail/SettingsRail";
 import ToolShowcase from "./rail/ToolShowcase";
 import { QualityPicker, useQualityTiers } from "./rail/QualityPicker";
+import { QualityPoster } from "./rail/QualityPoster";
 import { CostMeter } from "./rail/CostMeter";
 import toast, { Toaster } from "react-hot-toast";
 import { runClipping, uploadFile, getUserBalance } from "../muapi.js";
@@ -573,6 +574,13 @@ export default function ClippingStudio({
         />
       }
     >
+      <QualityPoster
+        toolId="snipreel"
+        tiers={qualityTiers}
+        value={selectedTierId}
+        onChange={handleTierSelect}
+        kind="video"
+      />
       <RailSection label="Your video">
           
           {/* Inline list of uploaded media files */}
@@ -647,7 +655,7 @@ export default function ClippingStudio({
               <PromptTextarea
                 value={prompt}
                 onChange={handlePromptInput}
-                placeholder="Describe prompt / highlights to extract"
+                placeholder="The parts where he answers questions from the congregation"
               />
             </div>
           </div>
@@ -655,16 +663,13 @@ export default function ClippingStudio({
           {/* Bottom row: controls + generate button */}
       </RailSection>
 
-      <RailSection label="Quality" hint="Every price is the full cost of one video. Nothing else is added.">
-        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} kind="video" />
-      </RailSection>
 
-      <RailSection label="Settings">
+      <RailSection label="Settings" weight="chips">
             <div className="flex flex-wrap items-center gap-2">
               
               {/* Model Identifier (C) */}
               <div className={promptControlClassName()}>
-                <div className="w-4 h-4 bg-[var(--action)] rounded flex items-center justify-center shadow-lg shadow-[color-mix(in_srgb,var(--action)_10%,transparent)]">
+                <div className="w-4 h-4 bg-[var(--iron)] rounded flex items-center justify-center shadow-lg shadow-[color-mix(in_srgb,var(--action)_10%,transparent)]">
                   <span className="text-[9px] font-bold text-[var(--chalk)] uppercase">C</span>
                 </div>
                 <span className={PROMPT_CONTROL_LABEL_CLASS}>
@@ -731,7 +736,7 @@ export default function ClippingStudio({
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-[var(--steel)]">Limit:</span>
-                        <span className="text-xs font-black text-[var(--lilac)] bg-primary/10 px-2.5 py-0.5 rounded">
+                        <span className="text-xs font-black text-[var(--lilac)] bg-[var(--slab-hi)] px-2.5 py-0.5 rounded">
                           {numHighlights}
                         </span>
                       </div>
@@ -813,7 +818,7 @@ export default function ClippingStudio({
                 <div
                   key={entry.id || idx}
                   onClick={() => handleSelectHistory(entry)}
-                  className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-primary/50 transition-all duration-300 flex flex-col cursor-pointer"
+                  className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-[var(--line-hi)] transition-all duration-300 flex flex-col cursor-pointer"
                 >
                   <div className="aspect-video bg-[var(--void)] flex items-center justify-center border-b border-[var(--line)] relative overflow-hidden">
                     <video
@@ -868,7 +873,7 @@ export default function ClippingStudio({
                       </p>
                     </div>
                     <div className="flex items-center justify-between mt-1">
-                      <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-primary/10 rounded border border-primary/20">
+                      <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-[var(--slab-hi)] rounded border border-[var(--line)]">
                         {entry.aspectRatio}
                       </span>
                       <span className="text-[10px] text-[var(--fog)]">
@@ -899,7 +904,7 @@ export default function ClippingStudio({
                 Back to History
               </button>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-[var(--lilac)] bg-primary/10 border border-primary/20 px-2.5 py-0.5 rounded">
+                <span className="text-[10px] font-bold text-[var(--lilac)] bg-[var(--slab-hi)] border border-[var(--line)] px-2.5 py-0.5 rounded">
                   {result.returnCoordinatesOnly ? "Timeline Seek Mode" : "Clips Gallery Mode"}
                 </span>
                 <span className="text-[10px] text-[var(--steel)] bg-[var(--sunk)] border border-[var(--line)] px-2.5 py-0.5 rounded">
@@ -953,7 +958,7 @@ export default function ClippingStudio({
                             }}
                             className={`w-full p-4 border rounded-lg text-left transition-all hover:bg-[color-mix(in_srgb,var(--slab-hi)_60%,transparent)] flex flex-col gap-2 group/hl ${
                               isActive 
-                                ? "border-primary bg-primary/5 shadow-[0_0_12px_rgba(34,211,238,0.03)]" 
+                                ? "border-[var(--chalk)] bg-[var(--slab-hi)] shadow-[0_0_12px_rgba(34,211,238,0.03)]" 
                                 : "border-[var(--line)] bg-[color-mix(in_srgb,var(--sunk)_30%,transparent)] hover:border-zinc-700"
                             }`}
                           >
@@ -1006,7 +1011,7 @@ export default function ClippingStudio({
                       <div
                         key={i}
                         onClick={() => setFullscreenUrl(clipUrl)}
-                        className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-primary/50 transition-all duration-300 flex flex-col cursor-pointer"
+                        className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-[var(--line-hi)] transition-all duration-300 flex flex-col cursor-pointer"
                       >
                         <div className="relative group/vid border-b border-[var(--line)] overflow-hidden bg-[var(--night)]">
                           <video
@@ -1036,7 +1041,7 @@ export default function ClippingStudio({
                                 e.stopPropagation();
                                 copyToClipboard(clipUrl);
                               }}
-                              className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-primary hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                              className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
                             >
                               <CopyIcon />
                             </button>
@@ -1047,7 +1052,7 @@ export default function ClippingStudio({
                                 e.stopPropagation();
                                 downloadVideo(clipUrl, `clip-${i + 1}.mp4`);
                               }}
-                              className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-primary hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                              className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
                             >
                               <DownloadIcon />
                             </button>
@@ -1083,7 +1088,7 @@ export default function ClippingStudio({
                           )}
                           <div className="flex items-center justify-between mt-1">
                             <div className="flex items-center gap-2">
-                              <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap">
+                              <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-[var(--slab-hi)] rounded border border-[var(--line)] whitespace-nowrap">
                                 AI Clipping
                               </span>
                               <span className="text-[10px] text-[var(--fog)]">{result.aspectRatio || `Clip #${i + 1}`}</span>

@@ -76,7 +76,7 @@ function ScalarInput({ schema, value, onChange, label }) {
         onClick={() => onChange(!value)}
         className={`relative h-6 w-11 shrink-0 rounded-full border transition-colors ${
           value
-            ? "border-[color-mix(in_srgb,var(--line-hi)_50%,transparent)] bg-[color-mix(in_srgb,var(--action)_30%,transparent)]"
+            ? "border-[color-mix(in_srgb,var(--line-hi)_50%,transparent)] bg-[var(--slab-hi)]"
             : "border-[var(--line)] bg-[var(--surface)]/[0.06]"
         }`}
       >

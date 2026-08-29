@@ -78,9 +78,28 @@ export const DESTINATIONS: Partial<Record<ToolGroup, DestinationInfo[]>> = {
   ],
 };
 
-/** Where this tool's example stills live. Three per tool, seeded by id. */
+/**
+ * Where this tool's example stills live — pictures of the *output*.
+ *
+ * Still placeholders. They are the one set that has to be replaced with
+ * consented customer work; nothing else in the product uses stock.
+ */
 export function exampleImage(toolId: string, n: number): string {
   return `/examples/${toolId}-${n}.jpg`;
+}
+
+/**
+ * A frame of the interface performing a step, captured from the running app by
+ * `scripts/capture-steps.mjs`.
+ *
+ * One set per kind rather than per tool: the three moves are the same for every
+ * video tool, and fifteen honest frames beat thirty-six near-duplicates. This
+ * is what a step card should show — a photograph of a beach never explained
+ * what pressing Generate does.
+ */
+export function stepImage(kind: ToolInfo['kind'], n: number): string {
+  const set = kind === 'upscale' ? 'image' : kind;
+  return `/steps/${set}-${n}.jpg`;
 }
 
 export function toolById(id: string): ToolInfo | undefined {

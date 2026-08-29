@@ -169,7 +169,7 @@ export default function CalendarPage() {
               <div className="field">
                 <label htmlFor="caption">Caption <span style={{ textTransform: 'none', letterSpacing: 0 }}>(optional)</span></label>
                 <input id="caption" value={caption} onChange={(e) => setCaption(e.target.value)}
-                  placeholder="What you'll post alongside it" />
+                  placeholder="New stock landed. Ankara sets, 15k. DM to reserve." />
               </div>
 
               <button className="btn btn-primary" type="button"

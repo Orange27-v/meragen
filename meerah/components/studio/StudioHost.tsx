@@ -9,7 +9,7 @@ import { useSession } from '@/lib/useSession';
 import { TOOLS, toolById } from '@/lib/tools';
 import { GUIDES } from '@/lib/guides';
 import DashboardShell from '@/components/DashboardShell';
-import HowItWorks, { useGuideOnFirstVisit } from '@/components/studio/HowItWorks';
+import HowItWorks from '@/components/studio/HowItWorks';
 
 
 /**
@@ -98,11 +98,11 @@ export default function StudioHost({ toolId }: { toolId: string }) {
 
   const tool = toolById(toolId) ?? TOOLS[0];
 
-  // Each tool explains itself the first time it is opened, then stays quiet.
-  // Closing the dialog is what marks it read, so a guide that was never seen —
-  // a page loaded and abandoned — still shows up next time.
-  const markGuideSeen = useGuideOnFirstVisit(tool.id, () => setGuideOpen(true));
-  const closeGuide = useCallback(() => { setGuideOpen(false); markGuideSeen(); }, [markGuideSeen]);
+  // The guide lives in the work area's How-it-works tab, permanently. This
+  // dialog is only what the header button opens — it no longer appears
+  // uninvited, because an interruption that repeats what is already on screen
+  // is just an interruption.
+  const closeGuide = useCallback(() => setGuideOpen(false), []);
 
   // Everything this account has ever made, so the work survives a refresh. The
   // studios have always accepted these props; nothing ever passed them, so a

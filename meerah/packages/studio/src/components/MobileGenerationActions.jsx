@@ -171,7 +171,7 @@ export function GenerationCopyButtons({
           title={copiedKind === "text" ? "Prompt copied" : "Copy prompt"}
           aria-label={copiedKind === "text" ? "Prompt copied" : "Copy prompt"}
           onClick={(event) => runCopy(event, "text")}
-          className={`flex h-8 w-8 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface)] backdrop-blur-md transition-all hover:bg-[var(--action)] hover:text-[var(--chalk)] ${
+          className={`flex h-8 w-8 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface)] backdrop-blur-md transition-all hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] ${
             copiedKind === "text" ? "text-[var(--chalk)]" : "text-[var(--chalk)]"
           }`}
         >
@@ -188,7 +188,7 @@ export function GenerationCopyButtons({
           title={copiedKind === "image" ? "Image copied" : "Copy image"}
           aria-label={copiedKind === "image" ? "Image copied" : "Copy image"}
           onClick={(event) => runCopy(event, "image")}
-          className={`flex h-8 w-8 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface)] backdrop-blur-md transition-all hover:bg-[var(--action)] hover:text-[var(--chalk)] ${
+          className={`flex h-8 w-8 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface)] backdrop-blur-md transition-all hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] ${
             copiedKind === "image" ? "text-[var(--chalk)]" : "text-[var(--chalk)]"
           }`}
         >

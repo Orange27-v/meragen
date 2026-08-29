@@ -15,7 +15,9 @@
  *      downloaded costs nothing.
  */
 
-const SHELL_CACHE = 'meerah-shell-v1';
+// Bump SHELL_CACHE on any change to this file. Old caches are deleted on
+// activate, which is what evicts build chunks from a previous deploy.
+const SHELL_CACHE = 'meerah-shell-v2';
 const MEDIA_CACHE = 'meerah-media-v1';
 
 /** Media kept offline, so a customer's own work re-opens without re-downloading. */
@@ -77,17 +79,36 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 3. Everything else: network first, cache as a fallback for a dropped
+  // 3. Build output: hashed by content, so a stale copy is a *different* file
+  //    rather than an old version of the same one. Serving one is how a page
+  //    ends up running half of yesterday's bundle, so these are never given a
+  //    fallback — a failed chunk must fail, and the page reloads clean.
+  const isBuildAsset = url.pathname.startsWith('/_next/static/');
+
+  // 4. Everything else: network first, cache as a fallback for a dropped
   //    connection. Fresh when there is signal, still usable when there is not.
   event.respondWith(
     fetch(request)
       .then((response) => {
-        if (response.ok && response.type === 'basic') {
+        if (response.ok && response.type === 'basic' && !isBuildAsset) {
           const copy = response.clone();
           void caches.open(SHELL_CACHE).then((cache) => cache.put(request, copy));
         }
         return response;
       })
-      .catch(async () => (await caches.match(request)) ?? caches.match('/studio')),
+      .catch(async () => {
+        const hit = await caches.match(request);
+        if (hit) return hit;
+
+        // The shell is only ever a substitute for a *page*. Returning it for a
+        // script or a stylesheet hands the browser HTML where it expects
+        // JavaScript, which it reports as "a client-side exception" — the
+        // failure looks like a bug in the app rather than a dropped
+        // connection, and a hard refresh does not clear it.
+        if (request.mode === 'navigate') {
+          return (await caches.match('/studio')) ?? Response.error();
+        }
+        return Response.error();
+      }),
   );
 });

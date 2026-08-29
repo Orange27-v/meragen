@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { GUIDES } from '@/lib/guides';
-import { exampleImage } from '@/lib/tools';
+import { stepImage } from '@/lib/tools';
 import type { ToolInfo } from '@/lib/tools';
 import type { Tier } from '@/lib/api';
 
@@ -109,9 +109,10 @@ export default function HowItWorks({
               background: 'var(--slab-hi)', border: '1px solid var(--line)',
               borderRadius: 'var(--radius)', padding: 6, overflow: 'hidden',
             }}>
-              {/* The step, pictured. Reuses this tool's own stills rather than
-                  introducing a second set to keep in step with the first. */}
-              <img src={exampleImage(tool.id, i + 1)} alt="" aria-hidden
+              {/* The step, pictured — the actual interface doing it. Stock
+                  photography here explained nothing: a picture of a beach does
+                  not show what pressing Generate does. */}
+              <img src={stepImage(tool.kind, i + 1)} alt="" aria-hidden
                 width={640} height={360} loading="lazy" decoding="async"
                 style={{
                   width: '100%', aspectRatio: '16 / 9', objectFit: 'cover',
@@ -166,31 +167,6 @@ export default function HowItWorks({
       </div>
     </div>
   );
-}
-
-/**
- * Whether this account has read a given tool's guide.
- *
- * Kept beside the dialog rather than in the host so the key format has one
- * owner. Storage can throw in a private window; a throw means "not seen", which
- * shows the guide — the safe direction to fail in.
- */
-export function useGuideOnFirstVisit(toolId: string, onOpen: () => void) {
-  const key = `meerah.guide.seen.${toolId}`;
-
-  const markSeen = useCallback(() => {
-    try { localStorage.setItem(key, '1'); } catch { /* private window */ }
-  }, [key]);
-
-  useEffect(() => {
-    let seen = false;
-    try { seen = localStorage.getItem(key) === '1'; } catch { /* private window */ }
-    if (!seen) onOpen();
-    // `onOpen` is a setter from the host and stable enough; the key is what matters.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key]);
-
-  return markSeen;
 }
 
 function Block({ label, children }: { label: string; children: React.ReactNode }) {

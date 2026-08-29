@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { SettingsRail, RailSection } from "./rail/SettingsRail";
-import ToolShowcase from "./rail/ToolShowcase";
+import { WorkTabs } from "./rail/WorkTabs";
 import { QualityPicker, useQualityTiers } from "./rail/QualityPicker";
+import { QualityPoster } from "./rail/QualityPoster";
 import { CostMeter } from "./rail/CostMeter";
 import { uploadFile, generateMarketingStudioAd, getUserBalance } from "../muapi.js";
 import { scopedPersistKey, migrateLegacyPersistKey } from "../persistKey.js";
@@ -197,7 +198,7 @@ function Dropdown({ isOpen, title, items, selectedId, onSelect, onClose, isVideo
             key={item.id}
             onClick={() => onSelect(item)}
             className={`relative rounded overflow-hidden border-2 transition-all group cursor-pointer ${
-              selectedId === item.id || selectedId === item.url ? 'border-primary shadow-glow' : 'border-[var(--line)] hover:border-[var(--line)]'
+              selectedId === item.id || selectedId === item.url ? 'border-[var(--chalk)] shadow-black/40' : 'border-[var(--line)] hover:border-[var(--line)]'
             }`}
           >
             {onPreview && !isVideo && (
@@ -208,7 +209,7 @@ function Dropdown({ isOpen, title, items, selectedId, onSelect, onClose, isVideo
                   e.stopPropagation();
                   onPreview(item);
                 }}
-                className="absolute top-1.5 left-1.5 w-6 h-6 bg-[var(--surface)] rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-[var(--action)] hover:text-[var(--chalk)] transition-all border border-[var(--line)] z-20 text-[var(--iron)]"
+                className="absolute top-1.5 left-1.5 w-6 h-6 bg-[var(--surface)] rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)] z-20 text-[var(--iron)]"
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <circle cx="11" cy="11" r="8" />
@@ -228,7 +229,7 @@ function Dropdown({ isOpen, title, items, selectedId, onSelect, onClose, isVideo
               <span className="text-[9px] font-black text-[var(--chalk)] uppercase tracking-tight">{item.name}</span>
             </div>
             {(selectedId === item.id || selectedId === item.url) && (
-              <div className="absolute top-1.5 right-1.5 w-4 h-4 bg-primary rounded-full flex items-center justify-center shadow-lg">
+              <div className="absolute top-1.5 right-1.5 w-4 h-4 bg-[var(--slab-hi)] rounded-full flex items-center justify-center shadow-lg">
                 <CheckSvg />
               </div>
             )}
@@ -465,6 +466,13 @@ export default function MarketingStudio({
         />
       }
     >
+      <QualityPoster
+        toolId="salesreel"
+        tiers={qualityTiers}
+        value={selectedTierId}
+        onChange={handleTierSelect}
+        kind="video"
+      />
       <RailSection label="Your product">
           {additionalImages.length > 0 && (
             <div className="flex items-center gap-1.5">
@@ -487,18 +495,15 @@ export default function MarketingStudio({
               ref={textareaRef}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Describe your ad script... Use @image1 for product, @image2 for avatar."
+              placeholder="Hold up @image1 and say the Saturday price, then smile — 15 seconds"
             />
           </div>
 
           {/* Bottom Row: Uploads + Controls + Generate */}
       </RailSection>
 
-      <RailSection label="Quality" hint="Every price is the full cost of one video. Nothing else is added.">
-        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} kind="video" />
-      </RailSection>
 
-      <RailSection label="Settings">
+      <RailSection label="Settings" weight="chips">
             <div className="flex flex-wrap items-center gap-2">
               
               {/* Asset Uploads Group */}
@@ -545,7 +550,7 @@ export default function MarketingStudio({
                     active: dropdown === "format",
                   })}
                 >
-                  <div className="w-4 h-4 bg-primary/10 rounded flex items-center justify-center border border-primary/20">
+                  <div className="w-4 h-4 bg-[var(--slab-hi)] rounded flex items-center justify-center border border-[var(--line)]">
                     <span className="text-[8px] font-black text-[var(--lilac)] uppercase">U</span>
                   </div>
                   <span className={PROMPT_CONTROL_LABEL_CLASS}>{params.format}</span>
@@ -675,13 +680,16 @@ export default function MarketingStudio({
       
       {/* ── MAIN CONTENT AREA ── */}
       <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-8 px-2">
-        {history.length > 0 ? (
+        <WorkTabs
+          toolId="salesreel"
+          hasResults={history.length > 0}
+          results={<>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
             {history.map(entry => (
               <div
                 key={entry.id}
                 onClick={() => setFullscreenUrl(entry.url)}
-                className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-primary/50 transition-all duration-300 flex flex-col cursor-pointer"
+                className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-[var(--line-hi)] transition-all duration-300 flex flex-col cursor-pointer"
               >
                 <video 
                   src={entry.url} 
@@ -697,7 +705,7 @@ export default function MarketingStudio({
                   />
                    <button
                     onClick={(e) => { e.stopPropagation(); downloadFile(entry.url, `marketing-ad-${entry.id}.mp4`); }}
-                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-primary hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
                     title="Download"
                    >
                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -754,7 +762,7 @@ export default function MarketingStudio({
 
                 <div className="p-3 bg-[var(--surface)] backdrop-blur-sm border-t border-[var(--line)] flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-black text-[var(--lilac)] px-2 py-0.5 bg-primary/10 rounded border border-primary/20 uppercase tracking-tighter">
+                    <span className="text-[9px] font-black text-[var(--lilac)] px-2 py-0.5 bg-[var(--slab-hi)] rounded border border-[var(--line)] uppercase tracking-tighter">
                       Marketing Studio
                     </span>
                     {entry.format && (
@@ -765,9 +773,99 @@ export default function MarketingStudio({
               </div>
             ))}
           </div>
-        ) : (
-          <ToolShowcase toolId="salesreel" />
-        )}
+          </>}
+          history={history.length > 0 ? <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
+            {history.map(entry => (
+              <div
+                key={entry.id}
+                onClick={() => setFullscreenUrl(entry.url)}
+                className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-[var(--line-hi)] transition-all duration-300 flex flex-col cursor-pointer"
+              >
+                <video 
+                  src={entry.url} 
+                  className="w-full aspect-video object-cover hover:opacity-80 transition-opacity" 
+                  muted loop onMouseOver={e => e.target.play()} onMouseOut={e => { e.target.pause(); e.target.currentTime = 0; }}
+                />
+                
+                {/* Actions Overlay */}
+                <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <GenerationCopyButtons
+                    prompt={entry.prompt}
+                    onCopyError={onGenerationError}
+                  />
+                   <button
+                    onClick={(e) => { e.stopPropagation(); downloadFile(entry.url, `marketing-ad-${entry.id}.mp4`); }}
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                    title="Download"
+                   >
+                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                       <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                     </svg>
+                   </button>
+                   <button
+                    type="button"
+                    title="Delete"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (confirm("Are you sure you want to delete this generated item?")) {
+                        if (!historyItems) {
+                          setLocalHistory(prev => prev.filter(h => h.id !== entry.id));
+                        }
+                      }
+                    }}
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                      <line x1="10" y1="11" x2="10" y2="17" />
+                      <line x1="14" y1="11" x2="14" y2="17" />
+                    </svg>
+                   </button>
+                </div>
+                <MobileGenerationActions
+                  prompt={entry.prompt}
+                  onCopyError={onGenerationError}
+                  actions={[
+                    {
+                      kind: "download",
+                      label: "Download",
+                      onSelect: () =>
+                        downloadFile(entry.url, `marketing-ad-${entry.id}.mp4`),
+                    },
+                    {
+                      kind: "delete",
+                      label: "Delete",
+                      danger: true,
+                      onSelect: () => {
+                        if (confirm("Are you sure you want to delete this generated item?")) {
+                          if (!historyItems) {
+                            setLocalHistory((prev) =>
+                              prev.filter((item) => item.id !== entry.id),
+                            );
+                          }
+                        }
+                      },
+                    },
+                  ]}
+                />
+
+                <div className="p-3 bg-[var(--surface)] backdrop-blur-sm border-t border-[var(--line)] flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-black text-[var(--lilac)] px-2 py-0.5 bg-[var(--slab-hi)] rounded border border-[var(--line)] uppercase tracking-tighter">
+                      Marketing Studio
+                    </span>
+                    {entry.format && (
+                      <span className="text-[9px] text-[var(--fog)] font-bold">{entry.format}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          </> : null}
+        />
       </div>
 
       {/* ── BOTTOM PROMPT BAR ── */}
@@ -928,7 +1026,7 @@ export default function MarketingStudio({
                       setPreviewAvatar(null);
                       setDropdown(null);
                     }}
-                    className="bg-[var(--action)] text-[var(--chalk)] px-6 py-2.5 rounded-full font-bold text-sm hover:opacity-95 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-[color-mix(in_srgb,var(--action)_20%,transparent)]"
+                    className="bg-[var(--iron)] text-[var(--chalk)] px-6 py-2.5 rounded-full font-bold text-sm hover:opacity-95 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-black/40"
                   >
                     <CheckSvg />
                     Select Avatar

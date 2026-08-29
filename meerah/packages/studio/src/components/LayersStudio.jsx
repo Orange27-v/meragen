@@ -1322,7 +1322,7 @@ export default function LayersStudio({
         >
           {uploading ? (
             <div className="flex flex-col items-center justify-center p-12 bg-[color-mix(in_srgb,var(--surface)_80%,transparent)] backdrop-blur-md rounded-3xl border border-[var(--line)]">
-              <div className="w-12 h-12 border-4 border-[color-mix(in_srgb,var(--peri)_20%,transparent)] border-t-[var(--peri)] rounded-full animate-spin mb-4" />
+              <div className="w-12 h-12 border-4 border-[color-mix(in_srgb,var(--peri)_20%,transparent)] border-t-[var(--ring-solid)] rounded-full animate-spin mb-4" />
               <p className="text-sm font-semibold text-[var(--iron)]">
                 Uploading image... {uploadProgress}%
               </p>
@@ -1414,7 +1414,7 @@ export default function LayersStudio({
                 regionalBox.width > 0 &&
                 regionalBox.height > 0 && (
                   <div
-                    className="absolute border-2 border-dashed border-[var(--line-hi)] bg-[color-mix(in_srgb,var(--action)_10%,transparent)] rounded-lg pointer-events-auto shadow-[0_0_25px_rgba(56,189,248,0.5)] z-30"
+                    className="absolute border-2 border-dashed border-[var(--line-hi)] bg-[var(--slab-hi)] rounded-lg pointer-events-auto shadow-[0_0_25px_rgba(56,189,248,0.5)] z-30"
                     style={{
                       left: `${regionalBox.x}%`,
                       top: `${regionalBox.y}%`,
@@ -1422,10 +1422,10 @@ export default function LayersStudio({
                       height: `${regionalBox.height}%`,
                     }}
                   >
-                    <div className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-[var(--action)] border border-[var(--line)] rounded-full" />
-                    <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-[var(--action)] border border-[var(--line)] rounded-full" />
-                    <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-[var(--action)] border border-[var(--line)] rounded-full" />
-                    <div className="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-[var(--action)] border border-[var(--line)] rounded-full" />
+                    <div className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-[var(--iron)] border border-[var(--line)] rounded-full" />
+                    <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-[var(--iron)] border border-[var(--line)] rounded-full" />
+                    <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-[var(--iron)] border border-[var(--line)] rounded-full" />
+                    <div className="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-[var(--iron)] border border-[var(--line)] rounded-full" />
                   </div>
                 )}
 
@@ -1450,7 +1450,7 @@ export default function LayersStudio({
                     onKeyDown={(e) =>
                       e.key === "Enter" && handleRunRegionalEdit()
                     }
-                    placeholder="Type your prompt here..."
+                    placeholder="Ankara dress on a rail, camera pushes in slowly, warm evening light"
                     className="flex-1 bg-transparent text-xs text-[var(--chalk)] placeholder-[color-mix(in_srgb,var(--chalk)_40%,transparent)] focus:outline-none min-w-0 font-medium"
                   />
                   <button
@@ -1524,7 +1524,7 @@ export default function LayersStudio({
                 <div className="absolute inset-0 bg-[var(--veil)] backdrop-blur-sm flex flex-col items-center justify-center p-6 z-40">
                   <div className="relative w-16 h-16 mb-4">
                     <div className="absolute inset-0 border-4 border-[color-mix(in_srgb,var(--peri)_20%,transparent)] rounded-full" />
-                    <div className="absolute inset-0 border-4 border-[var(--peri)] border-t-transparent rounded-full animate-spin" />
+                    <div className="absolute inset-0 border-4 border-[var(--ring-solid)] border-t-transparent rounded-full animate-spin" />
                   </div>
                   <p className="text-sm font-bold tracking-wide text-[var(--chalk)]">
                     Processing Image...
@@ -1590,7 +1590,7 @@ export default function LayersStudio({
                   onClick={() => setActiveShape("line")}
                   className={`p-1.5 rounded-lg border transition-all ${
                     activeShape === "line"
-                      ? "bg-[var(--indigo)] text-[var(--chalk)] border-[var(--peri)]"
+                      ? "bg-[var(--indigo)] text-[var(--chalk)] border-[var(--ring-solid)]"
                       : "text-[var(--iron)] hover:text-[var(--chalk)] border-transparent"
                   }`}
                   title="Line"
@@ -1611,7 +1611,7 @@ export default function LayersStudio({
                   onClick={() => setActiveShape("arrow")}
                   className={`p-1.5 rounded-lg border transition-all ${
                     activeShape === "arrow"
-                      ? "bg-[var(--indigo)] text-[var(--chalk)] border-[var(--peri)]"
+                      ? "bg-[var(--indigo)] text-[var(--chalk)] border-[var(--ring-solid)]"
                       : "text-[var(--iron)] hover:text-[var(--chalk)] border-transparent"
                   }`}
                   title="Arrow"
@@ -1633,7 +1633,7 @@ export default function LayersStudio({
                   onClick={() => setActiveShape("rect")}
                   className={`p-1.5 rounded-lg border transition-all ${
                     activeShape === "rect"
-                      ? "bg-[var(--indigo)] text-[var(--chalk)] border-[var(--peri)]"
+                      ? "bg-[var(--indigo)] text-[var(--chalk)] border-[var(--ring-solid)]"
                       : "text-[var(--iron)] hover:text-[var(--chalk)] border-transparent"
                   }`}
                   title="Rectangle"
@@ -1654,7 +1654,7 @@ export default function LayersStudio({
                   onClick={() => setActiveShape("circle")}
                   className={`p-1.5 rounded-lg border transition-all ${
                     activeShape === "circle"
-                      ? "bg-[var(--indigo)] text-[var(--chalk)] border-[var(--peri)]"
+                      ? "bg-[var(--indigo)] text-[var(--chalk)] border-[var(--ring-solid)]"
                       : "text-[var(--iron)] hover:text-[var(--chalk)] border-transparent"
                   }`}
                   title="Circle"
@@ -1732,7 +1732,7 @@ export default function LayersStudio({
                   max="40"
                   value={brushSize}
                   onChange={(e) => setBrushSize(Number(e.target.value))}
-                  className="w-20 accent-[var(--peri)] cursor-pointer"
+                  className="w-20 accent-[var(--iron)] cursor-pointer"
                 />
                 <span className="text-xs font-bold text-[var(--chalk)] min-w-[20px]">
                   {brushSize}px
@@ -2269,7 +2269,7 @@ export default function LayersStudio({
                         max="16"
                         value={layerCount}
                         onChange={(e) => setLayerCount(Number(e.target.value))}
-                        className="w-full accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                        className="w-full accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                       />
                       <span className="text-[10px] font-bold text-[var(--fog)]">
                         16
@@ -2296,7 +2296,7 @@ export default function LayersStudio({
                           onClick={() => setIsSoloMode(!isSoloMode)}
                           className={`px-2 py-0.5 rounded-lg text-[10px] font-bold border transition-all ${
                             isSoloMode
-                              ? "bg-[var(--indigo)] text-[var(--chalk)] border-[var(--peri)]"
+                              ? "bg-[var(--indigo)] text-[var(--chalk)] border-[var(--ring-solid)]"
                               : "bg-[var(--sunk)] text-[var(--steel)] hover:text-[var(--chalk)] border-[var(--line)]"
                           }`}
                           title="View only active layer"
@@ -2399,7 +2399,7 @@ export default function LayersStudio({
                           onClick={() => setCarouselIndex(idx)}
                           className={`relative flex-shrink-0 w-14 h-12 rounded-xl overflow-hidden border transition-all p-1 bg-[var(--surface)] ${
                             carouselIndex === idx
-                              ? "border-[var(--peri)] ring-2 ring-[color-mix(in_srgb,var(--indigo)_50%,transparent)] scale-105"
+                              ? "border-[var(--ring-solid)] ring-2 ring-[color-mix(in_srgb,var(--indigo)_50%,transparent)] scale-105"
                               : "border-[var(--line)] opacity-60 hover:opacity-100"
                           }`}
                         >
@@ -2687,7 +2687,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.colorCorrect.temp}
@@ -2716,7 +2716,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.colorCorrect.hue.toFixed(1)}
@@ -2744,7 +2744,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.colorCorrect.saturation}
@@ -2772,7 +2772,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.colorCorrect.contrast}
@@ -2801,7 +2801,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.colorCorrect.splitTone.toFixed(1)}
@@ -2887,7 +2887,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.softenDetails.radius}
@@ -2915,7 +2915,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.softenDetails.detail.toFixed(2)}
@@ -3001,7 +3001,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.bloom.radius}
@@ -3029,7 +3029,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.bloom.bright.toFixed(1)}
@@ -3057,7 +3057,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.bloom.fade.toFixed(2)}
@@ -3170,7 +3170,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.halation.strength.toFixed(2)}
@@ -3198,7 +3198,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.halation.threshold.toFixed(2)}
@@ -3225,7 +3225,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.halation.radius}
@@ -3312,7 +3312,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.lensInstructions.strength.toFixed(3)}
@@ -3339,7 +3339,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.lensInstructions.radius}
@@ -3367,7 +3367,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.lensInstructions.vignette.toFixed(2)}
@@ -3395,7 +3395,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.lensInstructions.distortion.toFixed(
@@ -3484,7 +3484,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.exposure.stops.toFixed(2)}
@@ -3571,7 +3571,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.filmGrain.strength.toFixed(2)}
@@ -3599,7 +3599,7 @@ export default function LayersStudio({
                                 },
                               }))
                             }
-                            className="w-24 accent-[var(--peri)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
+                            className="w-24 accent-[var(--iron)] cursor-pointer h-1.5 bg-[var(--night)] rounded-lg"
                           />
                           <span className="text-xs font-bold text-[var(--chalk)] min-w-[28px] text-right">
                             {colorGrading.filmGrain.bias.toFixed(2)}
@@ -3847,8 +3847,8 @@ export default function LayersStudio({
                   type="text"
                   value={textEditPrompt}
                   onChange={(e) => setTextEditPrompt(e.target.value)}
-                  placeholder="Enter text modification prompt..."
-                  className="w-full bg-[var(--night)] border border-[var(--line)] rounded-xl p-2.5 text-xs text-[var(--chalk)] placeholder-[color-mix(in_srgb,var(--chalk)_40%,transparent)] focus:outline-none focus:border-[var(--peri)]"
+                  placeholder="Swap the background for a plain cream wall"
+                  className="w-full bg-[var(--night)] border border-[var(--line)] rounded-xl p-2.5 text-xs text-[var(--chalk)] placeholder-[color-mix(in_srgb,var(--chalk)_40%,transparent)] focus:outline-none focus:border-[var(--ring-solid)]"
                 />
                 <button
                   onClick={() => handleExecuteSideTool("edit-text")}

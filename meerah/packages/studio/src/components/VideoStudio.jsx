@@ -34,7 +34,8 @@ import {
   OptionRow,
 } from "./rail/SettingsRail";
 import { QualityPicker, useQualityTiers } from "./rail/QualityPicker";
-import ToolShowcase from "./rail/ToolShowcase";
+import { QualityPoster } from "./rail/QualityPoster";
+import { WorkTabs } from "./rail/WorkTabs";
 import { CostMeter } from "./rail/CostMeter";
 import {
   buildReferenceParams,
@@ -1885,10 +1886,29 @@ export default function VideoStudio({
         />
       }
     >
+      <QualityPoster
+        toolId="videngine"
+        tiers={qualityTiers}
+        value={selectedTierId}
+        onChange={handleTierSelect}
+        kind="video"
+        onPickModel={setSelectedModel}
+      />
       {/* Only when this quality can actually take a photo or video. A labelled
           section with nothing inside it reads as something that failed to load. */}
       {canStartFromMedia && (
       <RailSection label="Start from a photo or video" hint="Optional. Leave it empty to make a video from words alone.">
+          {!selectedWorkflowId && (
+            <RailWell
+              label="Add a photo or video"
+              hint="PNG, JPG or MP4 — or leave it and describe the shot"
+              badge="Optional"
+              onClick={() => {
+                workflowMenuFocusTargetRef.current = "selected";
+                setOpenDropdown("workflow");
+              }}
+            />
+          )}
           <div className="flex flex-col gap-3">
             {/* Inline list of uploaded media files */}
             <div className="flex items-start gap-2.5 flex-wrap">
@@ -2099,7 +2119,7 @@ export default function VideoStudio({
 
           {/* Extend banner */}
           {isExtendMode && (
-            <div className="flex items-center gap-2 px-3 py-1.5 mx-3 bg-primary/5 border border-primary/10 rounded-lg text-[10px] text-[var(--lilac)]/80 font-medium tracking-tight">
+            <div className="flex items-center gap-2 px-3 py-1.5 mx-3 bg-[var(--slab-hi)] border border-[var(--line)] rounded-lg text-[10px] text-[var(--lilac)]/80 font-medium tracking-tight">
               <svg
                 width="13"
                 height="13"
@@ -2114,18 +2134,9 @@ export default function VideoStudio({
             </div>
           )}
 
-      <RailSection label="Quality" hint="Every price is the full cost of one video. Nothing else is added.">
-        <QualityPicker
-          tiers={qualityTiers}
-          value={selectedTierId}
-          onChange={handleTierSelect}
-          kind="video"
-          onPickModel={setSelectedModel}
-        />
-      </RailSection>
 
       {/* The controls the chosen quality actually supports. */}
-      <RailSection label="Video settings">
+      <RailSection label="Video settings" weight="chips">
             <div ref={dropdownRef} className="flex flex-wrap items-center gap-2">
               {workflowControlState.kind !== "hidden" && (
                 <div className="relative flex items-center gap-1">
@@ -2476,14 +2487,17 @@ export default function VideoStudio({
       {/* ── RIGHT: THE WORK ── */}
       <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
       <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar px-4 pb-8">
-        {history.length > 0 ? (
+        <WorkTabs
+          toolId="videngine"
+          hasResults={history.length > 0}
+          results={<>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
             {history.map((entry, idx) => {
               const isSeedance2 = entry.model === "seedance-v2.0-t2v" || entry.model === "seedance-v2.0-i2v";
               return (
                 <div
                   key={entry.id || idx}
-                  className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-primary/50 transition-all duration-300 flex flex-col cursor-pointer"
+                  className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-[var(--line-hi)] transition-all duration-300 flex flex-col cursor-pointer"
                   onClick={() => setFullscreenUrl(entry.url)}
                 >
                   <video
@@ -2513,7 +2527,7 @@ export default function VideoStudio({
                         e.stopPropagation();
                         downloadFile(entry.url, `video-${entry.id || idx}.mp4`);
                       }}
-                      className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-primary hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                      className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                         <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
@@ -2527,7 +2541,7 @@ export default function VideoStudio({
                           e.stopPropagation();
                           handleExtend(entry.id, entry.model);
                         }}
-                        className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-primary hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                        className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
                       >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                           <path d="M5 12h14M12 5l7 7-7 7" />
@@ -2592,7 +2606,7 @@ export default function VideoStudio({
                     </p>
                     <div className="flex items-center justify-between mt-1 flex-wrap gap-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap capitalize">
+                        <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-[var(--slab-hi)] rounded border border-[var(--line)] whitespace-nowrap capitalize">
                           {entry.model?.replace("-", " ") || "Video Studio"}
                         </span>
                         <div className="flex gap-2">
@@ -2610,9 +2624,143 @@ export default function VideoStudio({
               );
             })}
           </div>
-        ) : (
-          <ToolShowcase toolId="videngine" />
-        )}
+          </>}
+          history={history.length > 0 ? <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
+            {history.map((entry, idx) => {
+              const isSeedance2 = entry.model === "seedance-v2.0-t2v" || entry.model === "seedance-v2.0-i2v";
+              return (
+                <div
+                  key={entry.id || idx}
+                  className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-[var(--line-hi)] transition-all duration-300 flex flex-col cursor-pointer"
+                  onClick={() => setFullscreenUrl(entry.url)}
+                >
+                  <video
+                    src={entry.url}
+                    className="w-full aspect-video object-cover bg-[var(--night)] hover:opacity-80 transition-opacity"
+                    controls={false}
+                    loop
+                    muted
+                    playsInline
+                    onMouseOver={(e) => e.target.play()}
+                    onMouseOut={(e) => {
+                      e.target.pause();
+                      e.target.currentTime = 0;
+                    }}
+                  />
+                  
+                  {/* Overlay actions */}
+                  <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <GenerationCopyButtons
+                      prompt={entry.prompt}
+                      onCopyError={onGenerationError}
+                    />
+                    <button
+                      type="button"
+                      title="Download"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        downloadFile(entry.url, `video-${entry.id || idx}.mp4`);
+                      }}
+                      className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                      </svg>
+                    </button>
+                    {isSeedance2 && (
+                      <button
+                        type="button"
+                        title="Extend this video using Seedance 2.0 Extend"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleExtend(entry.id, entry.model);
+                        }}
+                        className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      title="Delete"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (confirm("Are you sure you want to delete this generated item?")) {
+                          handleDeleteEntry(entry, idx).catch((err) => {
+                            onGenerationError?.(err.message || "Failed to delete item");
+                          });
+                        }
+                      }}
+                      className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                        <line x1="10" y1="11" x2="10" y2="17" />
+                        <line x1="14" y1="11" x2="14" y2="17" />
+                      </svg>
+                    </button>
+                  </div>
+                  <MobileGenerationActions
+                    prompt={entry.prompt}
+                    onCopyError={onGenerationError}
+                    actions={[
+                      {
+                        kind: "download",
+                        label: "Download",
+                        onSelect: () =>
+                          downloadFile(entry.url, `video-${entry.id || idx}.mp4`),
+                      },
+                      isSeedance2 && {
+                        kind: "extend",
+                        label: "Extend",
+                        onSelect: () => handleExtend(entry.id, entry.model),
+                      },
+                      {
+                        kind: "delete",
+                        label: "Delete",
+                        danger: true,
+                        onSelect: () => {
+                          if (confirm("Are you sure you want to delete this generated item?")) {
+                            handleDeleteEntry(entry, idx).catch((err) => {
+                              onGenerationError?.(err.message || "Failed to delete item");
+                            });
+                          }
+                        },
+                      },
+                    ]}
+                  />
+
+                  {/* Prompt & Details */}
+                  <div className="p-3 bg-[var(--surface)] backdrop-blur-sm border-t border-[var(--line)] flex-1 flex flex-col justify-between gap-2">
+                    <p className="text-[var(--iron)] text-xs line-clamp-3 leading-relaxed" title={entry.prompt}>
+                      {entry.prompt || "No prompt provided"}
+                    </p>
+                    <div className="flex items-center justify-between mt-1 flex-wrap gap-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-[var(--slab-hi)] rounded border border-[var(--line)] whitespace-nowrap capitalize">
+                          {entry.model?.replace("-", " ") || "Video Studio"}
+                        </span>
+                        <div className="flex gap-2">
+                          {entry.resolution && (
+                            <span className="text-[10px] text-[var(--fog)]">{entry.resolution}</span>
+                          )}
+                          {entry.duration && (
+                            <span className="text-[10px] text-[var(--fog)]">{entry.duration}s</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          </> : null}
+        />
       </div>
 
       </div>

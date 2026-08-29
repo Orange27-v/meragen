@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { SettingsRail, RailSection } from "./rail/SettingsRail";
-import ToolShowcase from "./rail/ToolShowcase";
+import { WorkTabs } from "./rail/WorkTabs";
 import { QualityPicker, useQualityTiers } from "./rail/QualityPicker";
+import { QualityPoster } from "./rail/QualityPoster";
 import { CostMeter } from "./rail/CostMeter";
 import toast, { Toaster } from "react-hot-toast";
 import { processLipSync, uploadFile, getUserBalance } from "../muapi.js";
@@ -139,7 +140,7 @@ function MediaPickerButton({
 
       {/* Ready state */}
       {uploadState === UPLOAD_STATE.READY && (
-        <div className="flex flex-col items-center justify-center gap-1 w-full h-full absolute inset-0 bg-primary/10 rounded-full group-hover:bg-primary/20 transition-all">
+        <div className="flex flex-col items-center justify-center gap-1 w-full h-full absolute inset-0 bg-[var(--slab-hi)] rounded-full group-hover:bg-[var(--slab-hi)]/20 transition-all">
           {previewUrl ? (
             isVideo ? (
               <video
@@ -244,7 +245,7 @@ function HistoryThumb({ entry, isActive, onSelect, onDownload }) {
       onClick={onSelect}
       className={`relative group/thumb cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-300 ${
         isActive
-          ? "border-primary shadow-glow"
+          ? "border-[var(--chalk)] shadow-black/40"
           : "border-[var(--line)] hover:border-[var(--line)]"
       }`}
     >
@@ -261,7 +262,7 @@ function HistoryThumb({ entry, isActive, onSelect, onDownload }) {
             e.stopPropagation();
             onDownload(entry);
           }}
-          className="p-1.5 bg-primary rounded-lg text-[var(--chalk)] hover:scale-110 transition-transform"
+          className="p-1.5 bg-[var(--slab-hi)] rounded-lg text-[var(--chalk)] hover:scale-110 transition-transform"
           title="Download"
         >
           <svg
@@ -795,6 +796,14 @@ export default function LipSyncStudio({
         />
       }
     >
+      <QualityPoster
+        toolId="talksync"
+        tiers={qualityTiers}
+        value={selectedTierId}
+        onChange={handleTierSelect}
+        kind="lipsync"
+        onPickModel={setSelectedModelId}
+      />
       <RailSection label="Face and script">
           {/* Mode toggle row */}
           <div className="flex items-center px-1">
@@ -914,7 +923,7 @@ export default function LipSyncStudio({
                 ref={textareaRef}
                 value={prompt}
                 onChange={handlePromptInput}
-                placeholder="Describe speech style..."
+                placeholder="Warm and confident, like explaining a price to a regular customer"
               />
             </div>
           </div>
@@ -922,11 +931,8 @@ export default function LipSyncStudio({
           {/* Bottom controls row */}
       </RailSection>
 
-      <RailSection label="Quality" hint="The price covers one lip-synced clip.">
-        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} kind="lipsync" onPickModel={setSelectedModelId} />
-      </RailSection>
 
-      <RailSection label="Settings">
+      <RailSection label="Settings" weight="chips">
             <div className="flex flex-wrap items-center gap-2">
               {/* Resolution selector */}
               {showResolution && (
@@ -976,12 +982,15 @@ export default function LipSyncStudio({
       
       {/* ── CENTRAL GALLERY AREA ── */}
       <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-8 px-2">
-        {history.length > 0 ? (
+        <WorkTabs
+          toolId="talksync"
+          hasResults={history.length > 0}
+          results={<>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
             {history.map((entry, idx) => (
               <div
                 key={entry.id || idx}
-                className="relative group rounded-2xl overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-primary/50 transition-all duration-300 flex flex-col cursor-pointer"
+                className="relative group rounded-2xl overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-[var(--line-hi)] transition-all duration-300 flex flex-col cursor-pointer"
                 onClick={() => setFullscreenUrl(entry.url)}
               >
                 <video
@@ -1011,7 +1020,7 @@ export default function LipSyncStudio({
                       e.stopPropagation();
                       downloadFile(entry.url, `lipsync-${entry.id || idx}.mp4`);
                     }}
-                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-primary hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
@@ -1068,7 +1077,7 @@ export default function LipSyncStudio({
                   )}
                   <div className="flex items-center justify-between flex-wrap gap-1 mt-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap">
+                      <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-[var(--slab-hi)] rounded border border-[var(--line)] whitespace-nowrap">
                         Lip Sync
                       </span>
                       {entry.resolution && (
@@ -1080,9 +1089,113 @@ export default function LipSyncStudio({
               </div>
             ))}
           </div>
-        ) : (
-          <ToolShowcase toolId="talksync" />
-        )}
+          </>}
+          history={history.length > 0 ? <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
+            {history.map((entry, idx) => (
+              <div
+                key={entry.id || idx}
+                className="relative group rounded-2xl overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-[var(--line-hi)] transition-all duration-300 flex flex-col cursor-pointer"
+                onClick={() => setFullscreenUrl(entry.url)}
+              >
+                <video
+                  src={entry.url}
+                  className="w-full aspect-video object-cover bg-[var(--night)] hover:opacity-80 transition-opacity"
+                  controls={false}
+                  loop
+                  muted
+                  playsInline
+                  onMouseOver={(e) => e.target.play()}
+                  onMouseOut={(e) => {
+                    e.target.pause();
+                    e.target.currentTime = 0;
+                  }}
+                />
+                
+                {/* Overlay actions */}
+                <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <GenerationCopyButtons
+                    prompt={entry.prompt}
+                    onCopyError={onGenerationError}
+                  />
+                  <button
+                    type="button"
+                    title="Download"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      downloadFile(entry.url, `lipsync-${entry.id || idx}.mp4`);
+                    }}
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    title="Delete"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (confirm("Are you sure you want to delete this generated item?")) {
+                        setInternalHistory(prev => prev.filter((_, i) => i !== idx));
+                      }
+                    }}
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                      <line x1="10" y1="11" x2="10" y2="17" />
+                      <line x1="14" y1="11" x2="14" y2="17" />
+                    </svg>
+                  </button>
+                </div>
+                <MobileGenerationActions
+                  prompt={entry.prompt}
+                  onCopyError={onGenerationError}
+                  actions={[
+                    {
+                      kind: "download",
+                      label: "Download",
+                      onSelect: () =>
+                        downloadFile(entry.url, `lipsync-${entry.id || idx}.mp4`),
+                    },
+                    {
+                      kind: "delete",
+                      label: "Delete",
+                      danger: true,
+                      onSelect: () => {
+                        if (confirm("Are you sure you want to delete this generated item?")) {
+                          setInternalHistory((prev) => prev.filter((_, i) => i !== idx));
+                        }
+                      },
+                    },
+                  ]}
+                />
+
+                {/* Details */}
+                <div className="p-3 bg-[var(--surface)] backdrop-blur-sm border-t border-[var(--line)] flex-1 flex flex-col justify-between gap-2">
+                  {entry.prompt && (
+                    <p className="text-[var(--iron)] text-xs line-clamp-2 leading-relaxed" title={entry.prompt}>
+                      {entry.prompt}
+                    </p>
+                  )}
+                  <div className="flex items-center justify-between flex-wrap gap-1 mt-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-[var(--slab-hi)] rounded border border-[var(--line)] whitespace-nowrap">
+                        Lip Sync
+                      </span>
+                      {entry.resolution && (
+                        <span className="text-[10px] text-[var(--fog)]">{entry.resolution}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          </> : null}
+        />
       </div>
 
       {/* ── BOTTOM PROMPT BAR ── */}

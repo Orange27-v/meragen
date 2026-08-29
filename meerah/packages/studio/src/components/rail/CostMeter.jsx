@@ -60,7 +60,7 @@ export function CostMeter({
         <button
           type="button"
           onClick={onBuyCredits}
-          className="w-full h-[46px] rounded-button bg-[var(--action)] text-[var(--chalk)] text-[14px] font-semibold hover:bg-[var(--slab-hi)] transition-colors"
+          className="w-full h-[46px] rounded-button bg-[var(--action)] text-[var(--on-action)] text-[14px] font-semibold hover:bg-[var(--indigo-hi)] transition-colors"
         >
           Buy credits
         </button>
@@ -69,7 +69,7 @@ export function CostMeter({
           type="button"
           onClick={onGenerate}
           disabled={busy || disabled || credits === null}
-          className="w-full h-[46px] rounded-button bg-[var(--action)] text-[var(--chalk)] text-[14px] font-semibold hover:bg-[var(--slab-hi)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+          className="w-full h-[46px] rounded-button bg-[var(--action)] text-[var(--on-action)] text-[14px] font-semibold hover:bg-[var(--indigo-hi)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
         >
           {busy ? (
             <>

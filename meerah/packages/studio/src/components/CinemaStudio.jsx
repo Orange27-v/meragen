@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { SettingsRail, RailSection } from "./rail/SettingsRail";
-import ToolShowcase from "./rail/ToolShowcase";
+import { WorkTabs } from "./rail/WorkTabs";
 import { QualityPicker, useQualityTiers } from "./rail/QualityPicker";
+import { QualityPoster } from "./rail/QualityPoster";
 import { CostMeter } from "./rail/CostMeter";
 import { generateImage, uploadFile, getUserBalance } from "../muapi.js";
 import { scopedPersistKey, migrateLegacyPersistKey } from "../persistKey.js";
@@ -857,6 +858,13 @@ export default function CinemaStudio({
         />
       }
     >
+      <QualityPoster
+        toolId="shotdirect"
+        tiers={qualityTiers}
+        value={selectedTierId}
+        onChange={handleTierSelect}
+        kind="video"
+      />
       <RailSection label="Your scene">
           {/* Upper Row: Image Upload & Textarea */}
           <div className="flex items-start gap-4 w-full px-1">
@@ -938,18 +946,15 @@ export default function CinemaStudio({
               onChange={(e) =>
                 setSettings((prev) => ({ ...prev, prompt: e.target.value }))
               }
-              placeholder="Describe your cinema scene..."
+              placeholder="Wide of the shop front at dusk, then close on hands wrapping the parcel"
             />
           </div>
 
           {/* Bottom Row: Controls & Generate */}
       </RailSection>
 
-      <RailSection label="Quality" hint="Every price is the full cost of one video. Nothing else is added.">
-        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} kind="video" />
-      </RailSection>
 
-      <RailSection label="Settings">
+      <RailSection label="Settings" weight="chips">
             <div className="flex flex-wrap items-center gap-2">
               {/* Aspect Ratio Button */}
               <div className="relative">
@@ -1014,7 +1019,7 @@ export default function CinemaStudio({
                 })}
                 onClick={() => setIsOverlayOpen(true)}
               >
-                <div className="w-1.5 h-1.5 bg-[var(--action)] rounded-full shadow-lg shadow-[color-mix(in_srgb,var(--action)_20%,transparent)] shrink-0" />
+                <div className="w-1.5 h-1.5 bg-[var(--iron)] rounded-full shadow-lg shadow-black/40 shrink-0" />
                 <span className="max-w-[120px] truncate text-xs font-semibold text-[var(--iron)] group-hover:text-[var(--chalk)] transition-colors">
                   {settings.camera} · {formatSummaryValue()}
                 </span>
@@ -1037,7 +1042,10 @@ export default function CinemaStudio({
       
       {/* ── CENTRAL GALLERY AREA ── */}
       <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-8 px-2">
-        {history.length > 0 ? (
+        <WorkTabs
+          toolId="shotdirect"
+          hasResults={history.length > 0}
+          results={<>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
             {history.map((entry, idx) => (
               <div
@@ -1061,7 +1069,7 @@ export default function CinemaStudio({
                       event.stopPropagation();
                       handleCopyPrompt(entry.settings?.prompt, idx);
                     }}
-                    className={`flex h-8 w-8 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface)] font-black backdrop-blur-md transition-all hover:bg-[var(--action)] hover:text-[var(--chalk)] ${
+                    className={`flex h-8 w-8 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface)] font-black backdrop-blur-md transition-all hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] ${
                       copiedPromptIndex === idx ? "text-[var(--chalk)]" : "text-[var(--chalk)]"
                     }`}
                   >
@@ -1081,7 +1089,7 @@ export default function CinemaStudio({
                       event.stopPropagation();
                       handleCopyImage(entry.url, idx);
                     }}
-                    className={`flex h-8 w-8 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface)] backdrop-blur-md transition-all hover:bg-[var(--action)] hover:text-[var(--chalk)] ${
+                    className={`flex h-8 w-8 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface)] backdrop-blur-md transition-all hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] ${
                       copiedImageIndex === idx ? "text-[var(--chalk)]" : "text-[var(--chalk)]"
                     }`}
                   >
@@ -1113,7 +1121,7 @@ export default function CinemaStudio({
                         window.open(entry.url, "_blank");
                       }
                     }}
-                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--iron)] hover:bg-[var(--action)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--iron)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
@@ -1201,7 +1209,7 @@ export default function CinemaStudio({
                   </span>
                   <div className="flex items-center mt-1 flex-wrap gap-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-[var(--chalk)] px-2 py-0.5 bg-[color-mix(in_srgb,var(--action)_10%,transparent)] rounded border border-[color-mix(in_srgb,var(--line-hi)_20%,transparent)]">
+                      <span className="text-[10px] font-bold text-[var(--chalk)] px-2 py-0.5 bg-[var(--slab-hi)] rounded border border-[color-mix(in_srgb,var(--line-hi)_20%,transparent)]">
                         Cinema Studio
                       </span>
                       {entry.settings?.camera && (
@@ -1213,9 +1221,185 @@ export default function CinemaStudio({
               </div>
             ))}
           </div>
-        ) : (
-          <ToolShowcase toolId="shotdirect" />
-        )}
+          </>}
+          history={history.length > 0 ? <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
+            {history.map((entry, idx) => (
+              <div
+                key={entry.timestamp ?? idx}
+                className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-[color-mix(in_srgb,var(--line-hi)_50%,transparent)] transition-all duration-300 flex flex-col cursor-pointer"
+                onClick={() => setFullscreenUrl(entry.url)}
+              >
+                <img
+                  src={entry.url}
+                  alt={`History item ${idx + 1}`}
+                  className="w-full aspect-[4/3] object-cover bg-[var(--night)]"
+                />
+                
+                {/* Overlay actions */}
+                <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    type="button"
+                    title={copiedPromptIndex === idx ? "Prompt copied" : "Copy prompt"}
+                    aria-label={copiedPromptIndex === idx ? "Prompt copied" : "Copy prompt"}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleCopyPrompt(entry.settings?.prompt, idx);
+                    }}
+                    className={`flex h-8 w-8 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface)] font-black backdrop-blur-md transition-all hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] ${
+                      copiedPromptIndex === idx ? "text-[var(--chalk)]" : "text-[var(--chalk)]"
+                    }`}
+                  >
+                    {copiedPromptIndex === idx ? (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M5 12l4 4L19 6" />
+                      </svg>
+                    ) : (
+                      <CopyContentIcon kind="text" size={17} />
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    title={copiedImageIndex === idx ? "Image copied" : "Copy image"}
+                    aria-label={copiedImageIndex === idx ? "Image copied" : "Copy image"}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleCopyImage(entry.url, idx);
+                    }}
+                    className={`flex h-8 w-8 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface)] backdrop-blur-md transition-all hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] ${
+                      copiedImageIndex === idx ? "text-[var(--chalk)]" : "text-[var(--chalk)]"
+                    }`}
+                  >
+                    {copiedImageIndex === idx ? (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M5 12l4 4L19 6" />
+                      </svg>
+                    ) : (
+                      <CopyContentIcon kind="image" size={17} />
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    title="Download"
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      try {
+                        const response = await fetch(entry.url);
+                        const blob = await response.blob();
+                        const blobUrl = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = blobUrl;
+                        a.download = `cinema-shot-${entry.id || idx}.jpg`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(blobUrl);
+                      } catch {
+                        window.open(entry.url, "_blank");
+                      }
+                    }}
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--iron)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    title="Delete"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (confirm("Are you sure you want to delete this generated item?")) {
+                        setInternalHistory(prev => prev.filter((_, i) => i !== idx));
+                      }
+                    }}
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                      <line x1="10" y1="11" x2="10" y2="17" />
+                      <line x1="14" y1="11" x2="14" y2="17" />
+                    </svg>
+                  </button>
+                </div>
+                <MobileGenerationActions
+                  actions={[
+                    {
+                      kind: "text",
+                      label: "Copy prompt",
+                      onSelect: () =>
+                        handleCopyPrompt(entry.settings?.prompt, idx),
+                    },
+                    {
+                      kind: "image",
+                      label: "Copy image",
+                      onSelect: () => handleCopyImage(entry.url, idx),
+                    },
+                    {
+                      kind: "download",
+                      label: "Download",
+                      onSelect: async () => {
+                        try {
+                          const response = await fetch(entry.url);
+                          const blob = await response.blob();
+                          const blobUrl = URL.createObjectURL(blob);
+                          const anchor = document.createElement("a");
+                          anchor.href = blobUrl;
+                          anchor.download = `cinema-shot-${entry.id || idx}.jpg`;
+                          document.body.appendChild(anchor);
+                          anchor.click();
+                          document.body.removeChild(anchor);
+                          URL.revokeObjectURL(blobUrl);
+                        } catch {
+                          window.open(entry.url, "_blank");
+                        }
+                      },
+                    },
+                    {
+                      kind: "delete",
+                      label: "Delete",
+                      danger: true,
+                      onSelect: () => {
+                        if (confirm("Are you sure you want to delete this generated item?")) {
+                          setInternalHistory((prev) => prev.filter((_, i) => i !== idx));
+                        }
+                      },
+                    },
+                  ]}
+                />
+
+                {/* Details */}
+                <div className="p-3 bg-[var(--surface)] backdrop-blur-sm border-t border-[var(--line)] flex-1 flex flex-col justify-between gap-2">
+                  <p
+                    className="w-full text-left text-xs line-clamp-3 leading-relaxed text-[var(--iron)]"
+                    title={entry.settings?.prompt || "No prompt"}
+                  >
+                    {entry.settings?.prompt || "No prompt"}
+                  </p>
+                  <span className="sr-only" aria-live="polite">
+                    {copiedPromptIndex === idx
+                      ? "Prompt copied"
+                      : copiedImageIndex === idx
+                        ? "Image copied"
+                        : ""}
+                  </span>
+                  <div className="flex items-center mt-1 flex-wrap gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-[var(--chalk)] px-2 py-0.5 bg-[var(--slab-hi)] rounded border border-[color-mix(in_srgb,var(--line-hi)_20%,transparent)]">
+                        Cinema Studio
+                      </span>
+                      {entry.settings?.camera && (
+                        <span className="text-[10px] text-[var(--fog)]">{entry.settings.camera}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          </> : null}
+        />
       </div>
 
       {/* ── BOTTOM PROMPT BAR ── */}
