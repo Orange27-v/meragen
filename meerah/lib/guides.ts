@@ -284,6 +284,38 @@ export const GUIDES: Record<string, Guide> = {
     ],
   },
 
+  myvoice: {
+    headline: 'Your own voice, in your own language',
+    tagline: 'Record five seconds once. It reads anything you write, in Pidgin, Yorùbá, Igbo or Hausa.',
+    about:
+      'MyVoice is the part of Meerah nobody else has. Every other voice tool speaks English with an ' +
+      'American accent; this one speaks the four languages your customers actually buy in, and it can ' +
+      'speak them in your voice. Record yourself for five seconds, and from then on any script you type ' +
+      'is read aloud as you. Use it for adverts, for WhatsApp broadcasts, for the voiceover under a ' +
+      'video you made here. Registering a voice is free — you are only charged for what it says.',
+    steps: [
+      { title: 'Pick a language',
+        body: 'Nigerian Pidgin, Yorùbá, Igbo or Hausa. The voice is trained on each, not translated into it.' },
+      { title: 'Use a preset, or your own voice',
+        body: 'Record five seconds to register yours. It is free, and you only do it once.' },
+      { title: 'Write and listen',
+        body: 'Type the script. The price is exact before you press anything — this is charged per character.' },
+    ],
+    needs: 'The words you want spoken. To use your own voice, a five-second recording and your consent.',
+    takes: 'Seconds. A long script takes a little longer.',
+    tips: [
+      'Punctuation controls the pacing — a comma becomes a pause, a full stop a longer one.',
+      'Record your sample somewhere quiet; background noise is learned along with your voice.',
+      'Write the way you speak. A script that reads like writing sounds like reading.',
+    ],
+    panel: 'The language, whose voice is speaking, your script, and the exact price for it.',
+    examples: [
+      'An advert read in your own voice',
+      'A WhatsApp broadcast in Pidgin',
+      'The voiceover under a product reel',
+    ],
+  },
+
   salesreel: {
     headline: 'Turn a product into an advert',
     tagline: 'Built for the shape and pace of Instagram and TikTok.',

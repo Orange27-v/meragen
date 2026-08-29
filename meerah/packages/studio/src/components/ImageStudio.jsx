@@ -406,11 +406,11 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
           {/* Header */}
           <div className="flex items-center justify-between px-1 pb-3 mb-2 border-b border-[var(--line)]">
             <div className="flex flex-col gap-0.5">
-              <span className="text-xs font-bold text-secondary">
+              <span className="text-xs font-bold text-[var(--steel)]">
                 Reference Images
               </span>
               {isMulti && (
-                <span className="text-[9px] text-muted">
+                <span className="text-[9px] text-[var(--fog)]">
                   Select up to {maxImages} images
                 </span>
               )}
@@ -432,7 +432,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
                   setPanelOpen(false);
                   fileInputRef.current?.click();
                 }}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-full text-xs font-bold transition-all border border-primary/20"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-[var(--lilac)] rounded-full text-xs font-bold transition-all border border-primary/20"
               >
                 <svg
                   width="11"
@@ -461,13 +461,13 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1.5"
-                className="text-secondary"
+                className="text-[var(--steel)]"
               >
                 <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
                 <polyline points="17 8 12 3 7 8" />
                 <line x1="12" y1="3" x2="12" y2="15" />
               </svg>
-              <span className="text-xs text-secondary">No uploads yet</span>
+              <span className="text-xs text-[var(--steel)]">No uploads yet</span>
             </div>
           ) : (
             <div className="grid grid-cols-3 gap-2 max-h-56 overflow-y-auto custom-scrollbar pr-0.5">
@@ -499,7 +499,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
                     ) : (
                       <div className="w-full h-full bg-[var(--sunk)] flex flex-col items-center justify-center">
                         <div className="w-8 h-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin mb-1" />
-                        <span className="text-[10px] font-black text-primary">
+                        <span className="text-[10px] font-black text-[var(--lilac)]">
                           {entry.progress}%
                         </span>
                       </div>
@@ -559,7 +559,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
           {/* Bottom bar for multi-select */}
           {isMulti && hasSelection && (
             <div className="mt-3 pt-3 border-t border-[var(--line)] flex items-center justify-between">
-              <span className="text-xs text-secondary">
+              <span className="text-xs text-[var(--steel)]">
                 {count} of {maxImages} selected
               </span>
               <button
@@ -1210,7 +1210,7 @@ export default function ImageStudio({
       </RailSection>
 
       <RailSection label="Quality" hint="The price covers one picture at this quality.">
-        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} />
+        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} kind="image" onPickModel={setSelectedModelId} />
       </RailSection>
 
       <RailSection label="Picture settings">
@@ -1458,7 +1458,7 @@ export default function ImageStudio({
                   </p>
                   <div className="flex items-center justify-between mt-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded border border-primary/20 capitalize">
+                      <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-primary/10 rounded border border-primary/20 capitalize">
                         {entry.model?.replace("-", " ") || "Image Studio"}
                       </span>
                       <span className="text-[10px] text-[var(--fog)]">{entry.aspect_ratio}</span>

@@ -185,6 +185,45 @@ export interface Metrics {
   daily: Array<{ date: string; signups: number; naira: number; generations: number }>;
 }
 
+/** One priced model in the Advanced catalogue. Names are joined in the browser. */
+export interface PricedModel {
+  modelId: string;
+  credits: number;
+  naira: number;
+}
+
+export interface ModelCatalogue {
+  groups: Array<{ category: string; models: PricedModel[] }>;
+  total: number;
+}
+
+/** What MyVoice can do right now, and whether it is switched on at all. */
+export interface VoiceStatus {
+  available: boolean;
+  provider: string;
+  languages: Array<{ code: string; name: string }>;
+}
+
+export interface VoiceQuote {
+  characters: number;
+  cloned: boolean;
+  credits: number;
+  naira: number;
+}
+
+export interface ClonedVoice {
+  id: string;
+  name: string;
+  language: string;
+}
+
+export interface SpokenAudio {
+  url: string;
+  credits: number;
+  naira: number;
+  characters: number;
+}
+
 export const api = {
   google: (idToken: string) =>
     request<AuthResult>('/api/v1/auth/google', {
@@ -204,6 +243,59 @@ export const api = {
 
   /** The authoritative balance, for after a charge lands. */
   balance: () => request<{ balance: number }>('/api/v1/account/balance'),
+
+  /**
+   * The whole sellable catalogue, priced and grouped.
+   *
+   * Signed-in only, and only read by the Advanced drawer — this is the single
+   * place a customer meets a vendor model name, and they have to open it.
+   */
+  models: () => request<ModelCatalogue>('/api/v1/models'),
+
+  /**
+   * MyVoice.
+   *
+   * The only vendor here bills in Naira per character, so a quote is exact
+   * rather than an estimate: what `quote()` returns is what the ledger will
+   * take, to the credit.
+   */
+  voice: {
+    status: () => request<VoiceStatus>('/api/v1/voice'),
+
+    quote: (text: string, cloned: boolean) =>
+      request<VoiceQuote>(
+        `/api/v1/voice/quote?text=${encodeURIComponent(text)}&cloned=${cloned}`,
+      ),
+
+    /**
+     * Registers a voice from a recording. Free — the vendor charges for speech,
+     * not registration.
+     *
+     * Sent as multipart, so `request` is bypassed: it sets a JSON content type,
+     * and a boundary has to be chosen by the browser.
+     */
+    clone: async (form: FormData): Promise<ClonedVoice> => {
+      const token = getToken();
+      const res = await fetch('/api/v1/voice/clone', {
+        method: 'POST',
+        headers: token ? { 'x-api-key': token } : undefined,
+        body: form,
+      });
+      const body: unknown = await res.json().catch(() => null);
+      if (!res.ok) {
+        const message =
+          (body as { message?: string | string[] })?.message ?? 'Could not register that voice.';
+        throw new ApiError(res.status, Array.isArray(message) ? message[0] : message, body);
+      }
+      return body as ClonedVoice;
+    },
+
+    speak: (text: string, language: string, voiceAssetId?: string) =>
+      request<SpokenAudio>('/api/v1/voice/speak', {
+        method: 'POST',
+        body: JSON.stringify({ text, language, voiceAssetId }),
+      }),
+  },
 
   /**
    * What a job would cost before committing to it. Only needed where cost

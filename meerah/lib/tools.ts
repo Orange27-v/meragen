@@ -1,7 +1,7 @@
 /**
  * The tool catalogue — names, descriptions and grouping.
  *
- * Eleven tools. App Shelf used to be a twelfth: it generated nothing, it was
+ * Twelve tools. App Shelf used to be one of them: it generated nothing, it was
  * upstream's page rather than ours, and a voting form sitting in a row of things
  * that make videos taught people the wrong thing about what this product is.
  *
@@ -19,7 +19,7 @@ export interface ToolInfo {
   blurb: string;
   group: ToolGroup;
   /** Which price applies. Drives the Quality column of the nav menu. */
-  kind: 'video' | 'image' | 'lipsync' | 'upscale' | 'audio';
+  kind: 'video' | 'image' | 'lipsync' | 'upscale' | 'audio' | 'voice';
 }
 
 export type ToolGroup = 'Video' | 'Image' | 'People' | 'Selling' | 'More';
@@ -47,6 +47,8 @@ export const TOOLS: ToolInfo[] = [
     blurb: 'Keep the face, change the body and the clothes' },
   { id: 'starmaker',  label: 'Star Maker',   group: 'People',  kind: 'image',
     blurb: 'Build one face that stays the same in every post' },
+  { id: 'myvoice',    label: 'MyVoice',      group: 'People',  kind: 'voice',
+    blurb: 'Your own voice, speaking Pidgin, Yorùbá, Igbo or Hausa' },
 
   { id: 'salesreel',  label: 'Sales Reel',   group: 'Selling', kind: 'video',
     blurb: 'Advert-ready video for Instagram and TikTok' },

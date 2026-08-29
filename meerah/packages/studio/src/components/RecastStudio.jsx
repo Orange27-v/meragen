@@ -123,10 +123,10 @@ function MediaPickerButton({
               fill="transparent"
               strokeDasharray={88}
               strokeDashoffset={88 - (88 * progress) / 100}
-              className="text-primary transition-all duration-300"
+              className="text-[var(--lilac)] transition-all duration-300"
             />
           </svg>
-          <span className="absolute text-[9px] font-black text-primary leading-none">
+          <span className="absolute text-[9px] font-black text-[var(--lilac)] leading-none">
             {progress}%
           </span>
         </div>
@@ -375,7 +375,7 @@ function Dropdown({
 // SVG icons
 // ---------------------------------------------------------------------------
 const VideoIcon = ({
-  className = "text-[var(--fog)] group-hover:text-primary transition-colors",
+  className = "text-[var(--fog)] group-hover:text-[var(--lilac)] transition-colors",
 }) => (
   <svg
     width="16"
@@ -392,7 +392,7 @@ const VideoIcon = ({
 );
 
 const ImageIcon = ({
-  className = "text-[var(--fog)] group-hover:text-primary transition-colors",
+  className = "text-[var(--fog)] group-hover:text-[var(--lilac)] transition-colors",
 }) => (
   <svg
     width="16"
@@ -884,7 +884,7 @@ export default function RecastStudio({
       </RailSection>
 
       <RailSection label="Quality" hint="Every price is the full cost of one video. Nothing else is added.">
-        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} />
+        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} kind="video" onPickModel={setSelectedModelId} />
       </RailSection>
 
       <RailSection label="Settings">
@@ -1126,7 +1126,7 @@ export default function RecastStudio({
                     </p>
                   )}
                   <div className="flex items-center justify-between flex-wrap gap-1 mt-1">
-                    <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap">
+                    <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap">
                       Body Swap
                     </span>
                   </div>

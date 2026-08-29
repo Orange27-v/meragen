@@ -656,7 +656,7 @@ export default function ClippingStudio({
       </RailSection>
 
       <RailSection label="Quality" hint="Every price is the full cost of one video. Nothing else is added.">
-        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} />
+        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} kind="video" />
       </RailSection>
 
       <RailSection label="Settings">
@@ -731,7 +731,7 @@ export default function ClippingStudio({
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-[var(--steel)]">Limit:</span>
-                        <span className="text-xs font-black text-primary bg-primary/10 px-2.5 py-0.5 rounded">
+                        <span className="text-xs font-black text-[var(--lilac)] bg-primary/10 px-2.5 py-0.5 rounded">
                           {numHighlights}
                         </span>
                       </div>
@@ -800,7 +800,7 @@ export default function ClippingStudio({
           <div className="space-y-6 pt-4">
             <div className="flex items-center justify-between border-b border-[var(--line)] pb-4">
               <h2 className="text-sm font-black text-[var(--chalk)] uppercase tracking-widest flex items-center gap-2">
-                <ScissorsIcon className="text-primary w-4 h-4" />
+                <ScissorsIcon className="text-[var(--lilac)] w-4 h-4" />
                 Clipping History Runs
               </h2>
               <span className="text-xs font-bold text-[var(--steel)] bg-[var(--sunk)] border border-[var(--line)] px-2.5 py-1 rounded">
@@ -868,7 +868,7 @@ export default function ClippingStudio({
                       </p>
                     </div>
                     <div className="flex items-center justify-between mt-1">
-                      <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded border border-primary/20">
+                      <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-primary/10 rounded border border-primary/20">
                         {entry.aspectRatio}
                       </span>
                       <span className="text-[10px] text-[var(--fog)]">
@@ -899,7 +899,7 @@ export default function ClippingStudio({
                 Back to History
               </button>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-primary bg-primary/10 border border-primary/20 px-2.5 py-0.5 rounded">
+                <span className="text-[10px] font-bold text-[var(--lilac)] bg-primary/10 border border-primary/20 px-2.5 py-0.5 rounded">
                   {result.returnCoordinatesOnly ? "Timeline Seek Mode" : "Clips Gallery Mode"}
                 </span>
                 <span className="text-[10px] text-[var(--steel)] bg-[var(--sunk)] border border-[var(--line)] px-2.5 py-0.5 rounded">
@@ -913,7 +913,7 @@ export default function ClippingStudio({
               <div className="flex-1 flex flex-col lg:flex-row gap-6 min-h-0">
                 {/* Left Side: Original Player */}
                 <div className="flex-1 bg-[var(--surface)] border border-[var(--line)] rounded-lg overflow-hidden flex flex-col shadow-2xl relative min-h-[300px] lg:min-h-0">
-                  <div className="absolute top-4 left-4 bg-[var(--surface)] backdrop-blur-md px-3 py-1.5 rounded-md border border-[var(--line)] z-10 text-[10px] uppercase font-bold tracking-wider text-primary">
+                  <div className="absolute top-4 left-4 bg-[var(--surface)] backdrop-blur-md px-3 py-1.5 rounded-md border border-[var(--line)] z-10 text-[10px] uppercase font-bold tracking-wider text-[var(--lilac)]">
                     Original Video Player
                   </div>
                   <video
@@ -958,7 +958,7 @@ export default function ClippingStudio({
                             }`}
                           >
                             <div className="flex items-center justify-between w-full">
-                              <span className={`text-xs font-bold transition-colors ${isActive ? "text-primary" : "text-[var(--chalk)]"}`}>
+                              <span className={`text-xs font-bold transition-colors ${isActive ? "text-[var(--lilac)]" : "text-[var(--chalk)]"}`}>
                                 {hl.label || `Highlight #${i + 1}`}
                               </span>
                               {hl.score && (
@@ -971,10 +971,10 @@ export default function ClippingStudio({
                               <ClockIcon />
                               <span>{formatSeconds(start)} - {formatSeconds(end)}</span>
                               <span className="text-[var(--fog)]">•</span>
-                              <span className="text-primary/80 font-bold">{(end - start).toFixed(0)}s duration</span>
+                              <span className="text-[var(--lilac)]/80 font-bold">{(end - start).toFixed(0)}s duration</span>
                             </div>
                             
-                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-primary mt-1 opacity-0 group-hover/hl:opacity-100 transition-opacity">
+                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-[var(--lilac)] mt-1 opacity-0 group-hover/hl:opacity-100 transition-opacity">
                               <PlayIcon /> Seek & Play
                             </div>
                           </button>
@@ -1070,7 +1070,7 @@ export default function ClippingStudio({
                             ]}
                           />
 
-                          <div className="absolute top-2 left-2 bg-[var(--surface)] backdrop-blur-md px-2 py-1 rounded border border-[var(--line)] text-[9px] uppercase font-black tracking-wider text-primary">
+                          <div className="absolute top-2 left-2 bg-[var(--surface)] backdrop-blur-md px-2 py-1 rounded border border-[var(--line)] text-[9px] uppercase font-black tracking-wider text-[var(--lilac)]">
                             Clip #{i + 1}
                           </div>
                         </div>
@@ -1083,7 +1083,7 @@ export default function ClippingStudio({
                           )}
                           <div className="flex items-center justify-between mt-1">
                             <div className="flex items-center gap-2">
-                              <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap">
+                              <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap">
                                 AI Clipping
                               </span>
                               <span className="text-[10px] text-[var(--fog)]">{result.aspectRatio || `Clip #${i + 1}`}</span>

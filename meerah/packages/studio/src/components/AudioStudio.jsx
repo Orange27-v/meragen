@@ -213,12 +213,12 @@ function AudioFileUploader({ label, value, onChange, apiKey }) {
 
         {uploadState === UPLOAD_STATE.READY && (
           <>
-            <div className="w-10 h-10 rounded bg-primary/20 flex items-center justify-center text-primary border border-primary/30">
-              <MusicIcon className="text-primary" />
+            <div className="w-10 h-10 rounded bg-primary/20 flex items-center justify-center text-[var(--lilac)] border border-primary/30">
+              <MusicIcon className="text-[var(--lilac)]" />
             </div>
             <div className="text-left flex-1 min-w-0">
               <div className="text-xs font-bold text-[var(--chalk)] truncate">{fileName}</div>
-              <div className="text-[11px] text-primary font-bold mt-0.5">Ready to generate</div>
+              <div className="text-[11px] text-[var(--lilac)] font-bold mt-0.5">Ready to generate</div>
             </div>
           </>
         )}
@@ -420,7 +420,7 @@ function PremiumAudioPlayer({ url, title }) {
           ))}
         </div>
         <div className="text-center px-4 max-w-full relative z-10">
-          <span className="text-xs font-black text-primary uppercase tracking-[0.2em] block mb-1">
+          <span className="text-xs font-black text-[var(--lilac)] uppercase tracking-[0.2em] block mb-1">
             Now Playing
           </span>
           <p className="text-[var(--chalk)] font-bold text-base truncate max-w-xs">{title || "Generated Track"}</p>
@@ -786,7 +786,7 @@ export default function AudioStudio({
                       setOpenDropdown(false);
                     }}
                     className={`w-full text-left px-4 py-2.5 rounded text-xs font-bold transition-all flex flex-col gap-1.5 border ${
-                      model.id === selectedModelId ? "text-primary bg-primary/10 border-primary/20" : "text-[var(--chalk)] border-transparent hover:bg-[var(--sunk)] hover:text-[var(--chalk)]"
+                      model.id === selectedModelId ? "text-[var(--lilac)] bg-primary/10 border-primary/20" : "text-[var(--chalk)] border-transparent hover:bg-[var(--sunk)] hover:text-[var(--chalk)]"
                     }`}
                   >
                     <span>{audioLabel(model).name}</span>
@@ -804,7 +804,7 @@ export default function AudioStudio({
           {/* Model Description */}
           {selectedModel && audioLabel(selectedModel).blurb && (
             <div className="">
-              <span className="text-[10px] font-bold text-primary uppercase tracking-wider block mb-1.5">Description</span>
+              <span className="text-[10px] font-bold text-[var(--lilac)] uppercase tracking-wider block mb-1.5">Description</span>
               <p className="text-[var(--fog)] text-xs leading-relaxed">{audioLabel(selectedModel).blurb}</p>
             </div>
           )}
@@ -904,7 +904,7 @@ export default function AudioStudio({
                               }}
                               className={`w-full text-left px-4 py-2.5 rounded text-xs font-bold transition-all border ${
                                 params[key] === optionValue
-                                  ? "text-primary bg-primary/10 border-primary/20"
+                                  ? "text-[var(--lilac)] bg-primary/10 border-primary/20"
                                   : "text-[var(--chalk)] border-transparent hover:bg-[var(--sunk)] hover:text-[var(--chalk)]"
                               }`}
                             >
@@ -932,7 +932,7 @@ export default function AudioStudio({
                   <div key={key} className="space-y-3 bg-[var(--sunk)] border border-[var(--line)] rounded p-4 transition-all hover:border-[var(--line)]">
                     <div className="flex items-center justify-between text-xs font-bold">
                       <span className="text-[var(--chalk)] tracking-tight">{schema.title || key}</span>
-                      <span className="text-primary font-mono bg-primary/10 px-2 py-0.5 rounded border border-primary/20">{params[key] !== undefined ? params[key] : schema.default}</span>
+                      <span className="text-[var(--lilac)] font-mono bg-primary/10 px-2 py-0.5 rounded border border-primary/20">{params[key] !== undefined ? params[key] : schema.default}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] text-[var(--iron)] font-medium w-6 text-right">{schema.minValue}</span>
@@ -1062,12 +1062,12 @@ export default function AudioStudio({
               <div className="flex flex-col items-center gap-6 animate-fade-in">
                 <div className="relative">
                   <div className="w-24 h-24 border-[3px] border-[var(--line)] border-t-primary rounded-full animate-spin shadow-glow" />
-                  <div className="absolute inset-0 flex items-center justify-center text-primary">
-                    <MusicIcon className="animate-pulse text-primary" />
+                  <div className="absolute inset-0 flex items-center justify-center text-[var(--lilac)]">
+                    <MusicIcon className="animate-pulse text-[var(--lilac)]" />
                   </div>
                 </div>
                 <div className="text-center space-y-2">
-                  <div className="text-xs font-black text-primary uppercase tracking-[0.3em] animate-pulse">
+                  <div className="text-xs font-black text-[var(--lilac)] uppercase tracking-[0.3em] animate-pulse">
                     Generating Soundtrack
                   </div>
                   <div className="text-sm text-[var(--chalk)] font-bold">
@@ -1088,7 +1088,7 @@ export default function AudioStudio({
                 <div className="flex items-center justify-between px-1">
                   <button
                     onClick={handleNew}
-                    className="text-xs font-bold text-[var(--chalk)] hover:text-primary flex items-center gap-2 transition-all bg-[var(--sunk)] border border-[var(--line)] hover:border-primary/30 px-4 py-2 rounded-full"
+                    className="text-xs font-bold text-[var(--chalk)] hover:text-[var(--lilac)] flex items-center gap-2 transition-all bg-[var(--sunk)] border border-[var(--line)] hover:border-primary/30 px-4 py-2 rounded-full"
                     type="button"
                   >
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -1126,13 +1126,13 @@ export default function AudioStudio({
                   >
                     <div className="flex items-center gap-2">
                       <div className={`w-8 h-8 rounded flex items-center justify-center flex-shrink-0 ${
-                        activeResultUrl === entry.url && view === "result" ? "bg-primary/20 text-primary" : "bg-[var(--night)] text-[var(--chalk)]"
+                        activeResultUrl === entry.url && view === "result" ? "bg-primary/20 text-[var(--lilac)]" : "bg-[var(--night)] text-[var(--chalk)]"
                       }`}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                           <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
                         </svg>
                       </div>
-                      <span className="text-[10px] font-bold text-primary uppercase tracking-wider truncate">
+                      <span className="text-[10px] font-bold text-[var(--lilac)] uppercase tracking-wider truncate">
                         {entry.model ? entry.model.split('-').slice(0, 2).join(' ') : 'Audio'}
                       </span>
                     </div>

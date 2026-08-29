@@ -19,3 +19,6 @@ export * from './meerah';
 
 // The empty-state showcase, plus the setter the app uses to hand it tool copy.
 export { default as ToolShowcase, setShowcase } from './components/rail/ToolShowcase';
+
+// The model catalogue, for the Advanced picker in the app shell.
+export { modelCatalogue } from './catalogue';

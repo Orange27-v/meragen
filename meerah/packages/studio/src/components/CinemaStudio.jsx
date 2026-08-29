@@ -902,7 +902,7 @@ export default function CinemaStudio({
                         fill="transparent"
                         strokeDasharray={88}
                         strokeDashoffset={88 - (88 * imageUploadProgress) / 100}
-                        className="text-primary transition-all duration-300"
+                        className="text-[var(--lilac)] transition-all duration-300"
                       />
                     </svg>
                     <span className="absolute text-[8px] font-bold text-[var(--chalk)]">
@@ -946,7 +946,7 @@ export default function CinemaStudio({
       </RailSection>
 
       <RailSection label="Quality" hint="Every price is the full cost of one video. Nothing else is added.">
-        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} />
+        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} kind="video" />
       </RailSection>
 
       <RailSection label="Settings">

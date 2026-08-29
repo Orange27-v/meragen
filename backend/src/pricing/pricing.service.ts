@@ -142,6 +142,68 @@ export class PricingService {
   }
 
   /**
+   * Every model we can sell, priced, grouped by what it makes.
+   *
+   * This is what the Advanced picker lists. It is deliberately a different
+   * shape from `quoteAll`: tiers are five curated things with fixed prices,
+   * this is the whole catalogue quoted live.
+   *
+   * One query, then the arithmetic in memory — `quoteTier` skips its own cost
+   * lookup when a cost is passed in, so six hundred models cost one round trip
+   * rather than six hundred. A model that breaches the margin floor is dropped
+   * rather than listed at a loss, exactly as a tier would be.
+   *
+   * The names customers read are not here. This returns model ids and prices;
+   * the browser already holds the catalogue that maps an id to a human name and
+   * to the controls it accepts, and the server has no business knowing either.
+   */
+  async listModels(): Promise<{
+    groups: Array<{ category: string; models: Array<{ modelId: string; credits: number; naira: number }> }>;
+    total: number;
+  }> {
+    const priced = await this.prisma.modelPrice.findMany({
+      select: { modelId: true, category: true, costUsdMicros: true },
+      orderBy: [{ category: 'asc' }, { modelId: 'asc' }],
+    });
+
+    const byCategory = new Map<string, Array<{ modelId: string; credits: number; naira: number }>>();
+    let total = 0;
+
+    for (const row of priced) {
+      let quote: Quote;
+      try {
+        quote = await this.quoteTier(
+          {
+            id: row.modelId,
+            label: row.modelId,
+            kind: 'video',
+            spec: row.category,
+            vendor: Vendor.muapi,
+            modelId: row.modelId,
+            targetMargin: marginForCost(row.costUsdMicros),
+            roundToNaira: roundingForCost(row.costUsdMicros),
+          },
+          row.costUsdMicros,
+        );
+      } catch {
+        // Below the floor at today's rate. Not sellable, so not listed.
+        continue;
+      }
+
+      const list = byCategory.get(row.category) ?? [];
+      list.push({ modelId: row.modelId, credits: quote.credits, naira: quote.naira });
+      byCategory.set(row.category, list);
+      total += 1;
+    }
+
+    const groups = [...byCategory.entries()]
+      .map(([category, models]) => ({ category, models }))
+      .sort((a, b) => b.models.length - a.models.length);
+
+    return { groups, total };
+  }
+
+  /**
    * The customer-facing name for whatever a job ran on.
    *
    * Anything shown to a customer goes through here. Vendor model ids are a

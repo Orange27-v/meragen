@@ -5,13 +5,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { ComponentType } from 'react';
 import type { StudioProps } from '@meerah/studio';
-import { setShowcase } from '@meerah/studio';
 import { api, type Tier } from '@/lib/api';
 import { useSession } from '@/lib/useSession';
 import { TOOLS, toolById } from '@/lib/tools';
 import { GUIDES } from '@/lib/guides';
 import DashboardShell from '@/components/DashboardShell';
 import HowItWorks, { useGuideOnFirstVisit } from '@/components/studio/HowItWorks';
+
 
 /**
  * The studio, for one tool.
@@ -31,27 +31,38 @@ type StudioName = {
 }[keyof StudioExports];
 
 /**
- * Hand the studio package the tool copy its empty state renders.
+ * The tool copy the studios' empty state renders.
  *
- * Done at module scope, before any studio mounts, so the showcase is never
- * briefly blank. The studios cannot import from `@/lib` — they are a separate
- * package — and duplicating the copy there would give customer-facing words two
- * owners, which is how they drift.
+ * The studios cannot import from `@/lib` — they are a separate package — and
+ * duplicating the copy there would give customer-facing words two owners, which
+ * is how they drift. So it is handed over at load time instead.
  */
-setShowcase(
-  Object.fromEntries(
-    TOOLS.map((tool) => [tool.id, {
-      headline: GUIDES[tool.id]?.headline ?? tool.label,
-      tagline: GUIDES[tool.id]?.tagline ?? tool.blurb,
-      examples: GUIDES[tool.id]?.examples ?? [],
-      kind: tool.kind,
-    }]),
-  ),
+const SHOWCASE = Object.fromEntries(
+  TOOLS.map((tool) => [tool.id, {
+    headline: GUIDES[tool.id]?.headline ?? tool.label,
+    tagline: GUIDES[tool.id]?.tagline ?? tool.blurb,
+    examples: GUIDES[tool.id]?.examples ?? [],
+    kind: tool.kind,
+  }]),
 );
 
 function studio(name: StudioName) {
-  return dynamic(() => import('@meerah/studio').then((m) => m[name]), { ssr: false, loading: Loading });
+  return dynamic(
+    () => import('@meerah/studio').then((m) => {
+      // Registered inside the same dynamic import the studio arrives on, so the
+      // copy is in place before it mounts and the package still loads lazily.
+      // A plain `import { setShowcase }` at the top of this file would drag the
+      // whole barrel — models.js included — into the first load of every tool.
+      m.setShowcase(SHOWCASE);
+      return m[name];
+    }),
+    { ssr: false, loading: Loading },
+  );
 }
+
+/** Loaded when it is opened, not when the page is. It costs cmdk plus the dialog
+ *  primitives, and most visits never open it. */
+const ModelPicker = dynamic(() => import('@/components/models/ModelPicker'), { ssr: false });
 
 function Loading() {
   return <p className="muted" style={{ padding: 32 }}>Loading…</p>;
@@ -71,6 +82,8 @@ const COMPONENTS: Record<string, ComponentType<StudioProps>> = {
   starmaker:  studio('AiInfluencerStudio'),
   salesreel:  studio('MarketingStudio'),
   soundtrack: studio('AudioStudio'),
+  // Ours, not the fork's — so it is built on the shell's own components.
+  myvoice: dynamic(() => import('@/components/voice/VoiceStudio'), { ssr: false, loading: Loading }),
 };
 
 export default function StudioHost({ toolId }: { toolId: string }) {
@@ -78,6 +91,7 @@ export default function StudioHost({ toolId }: { toolId: string }) {
   const { token, user, loading, refresh, signOut } = useSession();
   /** The entry shape the forked studio cards already render. */
   const [guideOpen, setGuideOpen] = useState(false);
+  const [modelsOpen, setModelsOpen] = useState(false);
   const [tiers, setTiers] = useState<Tier[]>([]);
   const [history, setHistory] = useState<Array<{
     id: string; url: string; prompt: string; model: string;
@@ -121,8 +135,13 @@ export default function StudioHost({ toolId }: { toolId: string }) {
   // sheet.
   useEffect(() => {
     const show = () => setGuideOpen(true);
+    const models = () => setModelsOpen(true);
     window.addEventListener('meerah:show-guide', show);
-    return () => window.removeEventListener('meerah:show-guide', show);
+    window.addEventListener('meerah:pick-model', models);
+    return () => {
+      window.removeEventListener('meerah:show-guide', show);
+      window.removeEventListener('meerah:pick-model', models);
+    };
   }, []);
 
   useEffect(() => {
@@ -149,6 +168,17 @@ export default function StudioHost({ toolId }: { toolId: string }) {
       />
 
       <HowItWorks tool={tool} tiers={tiers} open={guideOpen} onClose={closeGuide} />
+
+      {/* The chosen model goes back to the rail as an event: the studio owns
+          that state, and threading a setter up through eleven components to
+          come back down again would be worse than a message. */}
+      <ModelPicker
+        open={modelsOpen}
+        onOpenChange={setModelsOpen}
+        onPick={(modelId) =>
+          window.dispatchEvent(new CustomEvent('meerah:model-picked', { detail: { modelId } }))
+        }
+      />
     </DashboardShell>
   );
 }

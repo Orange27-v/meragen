@@ -371,7 +371,7 @@ export default function VibeMotionStudio({
       </RailSection>
 
       <RailSection label="Quality" hint="Every price is the full cost of one video. Nothing else is added.">
-        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} />
+        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} kind="video" />
       </RailSection>
 
       <RailSection label="Settings">
@@ -688,7 +688,7 @@ export default function VibeMotionStudio({
                   </p>
                   <div className="flex items-center justify-between mt-1 flex-wrap gap-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap">
+                      <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap">
                         Vibe Motion
                       </span>
                       <div className="flex gap-2">

@@ -145,14 +145,14 @@ function UploadSlot({ icon, url, progress, label, onUpload, onClear, multiple = 
         
         {progress > 0 && progress < 100 ? (
           <div className="absolute inset-0 bg-[var(--surface)] rounded-full flex items-center justify-center z-10">
-            <span className="text-[8px] font-black text-primary">{progress}%</span>
+            <span className="text-[8px] font-black text-[var(--lilac)]">{progress}%</span>
           </div>
         ) : url ? (
           <div className="w-full h-full rounded-full overflow-hidden border border-black/20">
             <img src={url} className="w-full h-full object-cover" alt={label} />
           </div>
         ) : (
-          <div className="text-[var(--fog)] group-hover:text-primary transition-colors">
+          <div className="text-[var(--fog)] group-hover:text-[var(--lilac)] transition-colors">
             {icon}
           </div>
         )}
@@ -495,7 +495,7 @@ export default function MarketingStudio({
       </RailSection>
 
       <RailSection label="Quality" hint="Every price is the full cost of one video. Nothing else is added.">
-        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} />
+        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} kind="video" />
       </RailSection>
 
       <RailSection label="Settings">
@@ -546,7 +546,7 @@ export default function MarketingStudio({
                   })}
                 >
                   <div className="w-4 h-4 bg-primary/10 rounded flex items-center justify-center border border-primary/20">
-                    <span className="text-[8px] font-black text-primary uppercase">U</span>
+                    <span className="text-[8px] font-black text-[var(--lilac)] uppercase">U</span>
                   </div>
                   <span className={PROMPT_CONTROL_LABEL_CLASS}>{params.format}</span>
                   <PromptChevronIcon />
@@ -754,7 +754,7 @@ export default function MarketingStudio({
 
                 <div className="p-3 bg-[var(--surface)] backdrop-blur-sm border-t border-[var(--line)] flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-black text-primary px-2 py-0.5 bg-primary/10 rounded border border-primary/20 uppercase tracking-tighter">
+                    <span className="text-[9px] font-black text-[var(--lilac)] px-2 py-0.5 bg-primary/10 rounded border border-primary/20 uppercase tracking-tighter">
                       Marketing Studio
                     </span>
                     {entry.format && (
@@ -837,7 +837,7 @@ export default function MarketingStudio({
           {previewAvatar.id !== "custom" && (
             <button
               type="button"
-              className="absolute left-6 p-4 bg-[var(--sunk)] hover:bg-[var(--night)] hover:text-primary rounded-full text-[var(--chalk)] transition-all border border-[var(--line)] z-50"
+              className="absolute left-6 p-4 bg-[var(--sunk)] hover:bg-[var(--night)] hover:text-[var(--lilac)] rounded-full text-[var(--chalk)] transition-all border border-[var(--line)] z-50"
               onClick={(e) => {
                 e.stopPropagation();
                 const currentIndex = ASSETS.avatar.findIndex(a => a.id === previewAvatar.id);
@@ -858,7 +858,7 @@ export default function MarketingStudio({
           {previewAvatar.id !== "custom" && (
             <button
               type="button"
-              className="absolute right-6 p-4 bg-[var(--sunk)] hover:bg-[var(--night)] hover:text-primary rounded-full text-[var(--chalk)] transition-all border border-[var(--line)] z-50"
+              className="absolute right-6 p-4 bg-[var(--sunk)] hover:bg-[var(--night)] hover:text-[var(--lilac)] rounded-full text-[var(--chalk)] transition-all border border-[var(--line)] z-50"
               onClick={(e) => {
                 e.stopPropagation();
                 const currentIndex = ASSETS.avatar.findIndex(a => a.id === previewAvatar.id);

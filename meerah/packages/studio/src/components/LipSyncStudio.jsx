@@ -128,10 +128,10 @@ function MediaPickerButton({
               fill="transparent"
               strokeDasharray={88}
               strokeDashoffset={88 - (88 * progress) / 100}
-              className="text-primary transition-all duration-300"
+              className="text-[var(--lilac)] transition-all duration-300"
             />
           </svg>
-          <span className="absolute text-[9px] font-black text-primary leading-none">
+          <span className="absolute text-[9px] font-black text-[var(--lilac)] leading-none">
             {progress}%
           </span>
         </div>
@@ -156,12 +156,12 @@ function MediaPickerButton({
             )
           ) : (
             <div className="flex flex-col items-center justify-center w-full px-1">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-primary mb-0.5">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-[var(--lilac)] mb-0.5">
                 <path d="M9 18V5l12-2v13" />
                 <circle cx="6" cy="18" r="3" />
                 <circle cx="18" cy="16" r="3" />
               </svg>
-              <span className="text-[7px] font-black text-primary uppercase truncate w-full text-center">
+              <span className="text-[7px] font-black text-[var(--lilac)] uppercase truncate w-full text-center">
                 {fileName?.split('.').pop() || "AUD"}
               </span>
             </div>
@@ -284,7 +284,7 @@ function HistoryThumb({ entry, isActive, onSelect, onDownload }) {
 // SVG icons
 // ---------------------------------------------------------------------------
 const MicIcon = ({
-  className = "text-muted group-hover:text-primary transition-colors",
+  className = "text-[var(--fog)] group-hover:text-[var(--lilac)] transition-colors",
 }) => (
   <svg
     width="16"
@@ -302,7 +302,7 @@ const MicIcon = ({
 );
 
 const VideoIcon = ({
-  className = "text-muted group-hover:text-primary transition-colors",
+  className = "text-[var(--fog)] group-hover:text-[var(--lilac)] transition-colors",
 }) => (
   <svg
     width="16"
@@ -740,13 +740,13 @@ export default function LipSyncStudio({
         : "No video";
   const mediaStatusClass =
     (inputMode === "image" ? imageState : videoState) === UPLOAD_STATE.READY
-      ? "text-primary"
-      : "text-muted";
+      ? "text-[var(--lilac)]"
+      : "text-[var(--fog)]";
 
   const audioStatusText =
     audioState === UPLOAD_STATE.READY ? `✓ ${audioName}` : "No audio";
   const audioStatusClass =
-    audioState === UPLOAD_STATE.READY ? "text-primary" : "text-muted";
+    audioState === UPLOAD_STATE.READY ? "text-[var(--lilac)]" : "text-[var(--fog)]";
 
   const hasHistory = history.length > 0;
 
@@ -923,7 +923,7 @@ export default function LipSyncStudio({
       </RailSection>
 
       <RailSection label="Quality" hint="The price covers one lip-synced clip.">
-        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} />
+        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} kind="lipsync" onPickModel={setSelectedModelId} />
       </RailSection>
 
       <RailSection label="Settings">
@@ -1068,7 +1068,7 @@ export default function LipSyncStudio({
                   )}
                   <div className="flex items-center justify-between flex-wrap gap-1 mt-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap">
+                      <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap">
                         Lip Sync
                       </span>
                       {entry.resolution && (

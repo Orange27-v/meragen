@@ -60,3 +60,11 @@ export interface ShowcaseEntry {
 }
 export declare function setShowcase(data: Record<string, ShowcaseEntry>): void;
 export declare const ToolShowcase: ComponentType<{ toolId: string; compact?: boolean }>;
+
+/** One model the UI can drive: its id, its human name, and the job it does. */
+export interface CatalogueModel {
+  id: string;
+  name: string;
+  group: string;
+}
+export declare function modelCatalogue(): CatalogueModel[];

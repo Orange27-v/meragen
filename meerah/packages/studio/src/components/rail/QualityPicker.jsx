@@ -61,7 +61,21 @@ export function useQualityTiers(kind = "video") {
   return tiers;
 }
 
-export function QualityPicker({ tiers, value, onChange }) {
+export function QualityPicker({ tiers, value, onChange, kind = "video", onPickModel }) {
+  // The Advanced drawer lives in the app shell, so the request goes out as an
+  // event and the answer comes back as one. It is only offered where the studio
+  // has somewhere to put the answer: four of these tools drive a fixed model,
+  // and a row that silently did nothing would be worse than no row.
+  useEffect(() => {
+    if (!onPickModel) return undefined;
+    const picked = (event) => {
+      const id = event.detail?.modelId;
+      if (id) onPickModel(id);
+    };
+    window.addEventListener("meerah:model-picked", picked);
+    return () => window.removeEventListener("meerah:model-picked", picked);
+  }, [onPickModel]);
+
   if (!tiers.length) {
     return <p className="text-[11px] text-[var(--ash)]">Loading prices…</p>;
   }
@@ -102,6 +116,33 @@ export function QualityPicker({ tiers, value, onChange }) {
           </button>
         );
       })}
+
+      {onPickModel && (
+      <>
+      {/* The way out of the curated ladder.
+          Everything above is a quality with a fixed price. This row hands the
+          whole priced catalogue to anyone who wants to choose the engine
+          themselves — the only place in the product that shows a vendor's name,
+          and you have to ask for it. The picker itself lives in the app shell,
+          so the request goes out as an event rather than a prop threaded
+          through eleven studios. */}
+      <button
+        type="button"
+        onClick={() =>
+          window.dispatchEvent(new CustomEvent("meerah:pick-model", { detail: { kind } }))
+        }
+        className="w-full flex items-center gap-2 px-3 py-2.5 rounded text-left text-[12.5px]
+                   text-[var(--steel)] hover:text-[var(--chalk)] hover:bg-[var(--slab-hi)]
+                   transition-colors"
+      >
+        <span>Advanced — choose the model yourself</span>
+        <svg width="9" height="9" viewBox="0 0 10 10" aria-hidden className="ml-auto opacity-60">
+          <path d="M3.5 1.5 7 5l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.5"
+            strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      </>
+      )}
     </div>
   );
 }

@@ -17,7 +17,7 @@ import { join } from 'node:path';
 
 const TOOLS = [
   'videngine', 'vibereel', 'shotdirect', 'snipreel', 'pixcraft', 'patchup',
-  'talksync', 'bodydouble', 'starmaker', 'salesreel', 'soundtrack',
+  'talksync', 'bodydouble', 'starmaker', 'myvoice', 'salesreel', 'soundtrack',
 ];
 
 const OUT = join(process.cwd(), 'public', 'examples');

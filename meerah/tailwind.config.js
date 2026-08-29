@@ -27,9 +27,43 @@ module.exports = {
         'card-bg':  'var(--sunk)',       // recessed
         scrim:      'var(--scrim)',      // behind a dialog
         veil:       'var(--veil)',       // over a card while it renders
-        primary:    'var(--indigo)',     // the filled action
-        secondary:  'var(--steel)',
-        muted:      'var(--fog)',
+
+        // shadcn/ui's semantic names. HSL triplets, so `bg-card/60` and the
+        // rest of Tailwind's opacity modifiers work — they silently drop the
+        // alpha on a plain var() colour, which is how 136 tints died earlier.
+        background:  'hsl(var(--background) / <alpha-value>)',
+        foreground:  'hsl(var(--foreground) / <alpha-value>)',
+        card: {
+          DEFAULT:    'hsl(var(--card) / <alpha-value>)',
+          foreground: 'hsl(var(--card-foreground) / <alpha-value>)',
+        },
+        popover: {
+          DEFAULT:    'hsl(var(--popover) / <alpha-value>)',
+          foreground: 'hsl(var(--popover-foreground) / <alpha-value>)',
+        },
+        destructive: {
+          DEFAULT:    'hsl(var(--destructive) / <alpha-value>)',
+          foreground: 'hsl(var(--destructive-foreground) / <alpha-value>)',
+        },
+        border: 'hsl(var(--border) / <alpha-value>)',
+        input:  'hsl(var(--input) / <alpha-value>)',
+        ring:   'hsl(var(--ring) / <alpha-value>)',
+        primary: {
+          DEFAULT:    'hsl(var(--primary) / <alpha-value>)',
+          foreground: 'hsl(var(--primary-foreground) / <alpha-value>)',
+        },
+        secondary: {
+          DEFAULT:    'hsl(var(--secondary) / <alpha-value>)',
+          foreground: 'hsl(var(--secondary-foreground) / <alpha-value>)',
+        },
+        muted: {
+          DEFAULT:    'hsl(var(--muted-bg) / <alpha-value>)',
+          foreground: 'hsl(var(--muted-foreground) / <alpha-value>)',
+        },
+        accent: {
+          DEFAULT:    'hsl(var(--accent) / <alpha-value>)',
+          foreground: 'hsl(var(--accent-foreground) / <alpha-value>)',
+        },
         // Our scale, available to the fork by name.
         void:       'var(--void)',
         sunk:       'var(--sunk)',
@@ -77,5 +111,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require('tailwindcss-animate')],
 };

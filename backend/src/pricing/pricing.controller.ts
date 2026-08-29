@@ -2,6 +2,7 @@ import { Controller, Get, Post, Param, UseGuards } from '@nestjs/common';
 import { PricingService } from './pricing.service';
 import { CatalogService } from './catalog.service';
 import { AdminGuard } from '../common/admin.guard';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('api/v1')
 export class PricingController {
@@ -20,6 +21,19 @@ export class PricingController {
       tiers: sellable,
       unavailable: blocked,
     };
+  }
+
+  /**
+   * The whole sellable catalogue, grouped and priced.
+   *
+   * Signed-in only. This is the one place a customer meets a vendor model name,
+   * and it is opt-in — the Advanced drawer inside a studio. Everywhere else
+   * they see a quality tier.
+   */
+  @Get('models')
+  @UseGuards(AuthGuard)
+  async models() {
+    return this.pricing.listModels();
   }
 
   /** Live quote for one tier — what the studio calls as options change. */

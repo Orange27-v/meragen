@@ -157,7 +157,7 @@ function ReferencePreview({
         ) : type === "video" ? (
           <video src={url} className="w-full h-full object-cover" muted />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-[var(--sunk)] text-primary">
+          <div className="w-full h-full flex items-center justify-center bg-[var(--sunk)] text-[var(--lilac)]">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M9 18V5l10-2v13" />
               <circle cx="6" cy="18" r="3" />
@@ -312,7 +312,7 @@ const VideoReadySvg = () => (
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
-    className="text-primary"
+    className="text-[var(--lilac)]"
   >
     <polygon points="23 7 16 12 23 17 23 7" />
     <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
@@ -2099,7 +2099,7 @@ export default function VideoStudio({
 
           {/* Extend banner */}
           {isExtendMode && (
-            <div className="flex items-center gap-2 px-3 py-1.5 mx-3 bg-primary/5 border border-primary/10 rounded-lg text-[10px] text-primary/80 font-medium tracking-tight">
+            <div className="flex items-center gap-2 px-3 py-1.5 mx-3 bg-primary/5 border border-primary/10 rounded-lg text-[10px] text-[var(--lilac)]/80 font-medium tracking-tight">
               <svg
                 width="13"
                 height="13"
@@ -2119,6 +2119,8 @@ export default function VideoStudio({
           tiers={qualityTiers}
           value={selectedTierId}
           onChange={handleTierSelect}
+          kind="video"
+          onPickModel={setSelectedModel}
         />
       </RailSection>
 
@@ -2590,7 +2592,7 @@ export default function VideoStudio({
                     </p>
                     <div className="flex items-center justify-between mt-1 flex-wrap gap-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap capitalize">
+                        <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap capitalize">
                           {entry.model?.replace("-", " ") || "Video Studio"}
                         </span>
                         <div className="flex gap-2">

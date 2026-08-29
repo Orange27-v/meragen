@@ -193,7 +193,7 @@ export default function ModelParameterControls({
         onClick={onToggle}
         className={promptControlClassName({ active: open })}
       >
-        <span className="text-[10px] font-black text-primary/80">PARAMS</span>
+        <span className="text-[10px] font-black text-[var(--lilac)]/80">PARAMS</span>
         <span className={PROMPT_CONTROL_LABEL_CLASS}>{inputs.length}</span>
         <PromptChevronIcon />
       </button>
