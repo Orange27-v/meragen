@@ -17,6 +17,13 @@ components rather than the forked studio package.
 studio fork keeps its own Tailwind; rebuilding working generation code is not a
 design task.
 
+**Surface model: shadcn's.** `--card` is the *same* colour as `--background`, and
+a hairline is what makes it a card. This replaced a five-step tonal ladder, and
+the two approaches do not mix — reaching for a lighter background to separate
+one thing from another undoes the whole system. There are three surfaces and no
+more: the ground, one mid-slate for hover and muted fills, and a slightly raised
+tone for popovers.
+
 Meerah is a pay-as-you-go AI studio for Nigerian creators and small businesses. The
 interface is a workbench, not a brochure: a deep navy-slate ground (`#12182a`) that
 video and image results sit on without competing, near-white ink, and one indigo
@@ -38,34 +45,25 @@ Nothing else on a studio page competes for attention.
 
 | Name | Value | Token | Role |
 |------|-------|-------|------|
-| Void | `#04070e` | `--void` | The page behind the app; base of the modal scrim |
-| Sunk | `#0a0f1b` | `--sunk` | Header and settings rail — recessed from the canvas |
-| Night | `#12182a` | `--night` | The canvas everything sits on |
-| Slab | `#1e263a` | `--slab` | Cards, inputs, popovers |
-| Slab Hi | `#2a3349` | `--slab-hi` | Hover, pressed, selected |
-| Hair | `#3a445c` | `--hair` / `--line-soft` | A divider inside a surface, and an input's resting line |
-| Hair Lit | `#5f6d8d` | `--hair-lit` / `--line-hi` | Focus, and the selected control — 3.6:1 |
-| — | `transparent` | `--line` | A card's edge. There isn't one. |
+| Background | `#0b111e` | `--background` | Canvas, rail, header **and card** — all the same |
+| Raised | `#101728` | `--popover` | Popovers and dialogs, a touch lifted |
+| Secondary | `#1f2a3d` | `--secondary` / `--muted` / `--accent` | Hover, pressed, muted fills, nested cores |
+| Border | `#374862` | `--border` / `--input` | The hairline that makes a card a card |
 
-Only three strokes survive anywhere in the product, and each carries meaning: an
-input rest (without it a field and the card behind it are the same shape), a
-focus ring (an accessibility requirement, not decoration), and the selected
-quality tier. Everything else separates by tone.
+The border measures **2.04:1** against the page. shadcn's own ships at 1.37:1,
+which is too quiet here — this product was told twice that its edges were hard
+to find. 2.0 keeps shadcn's restraint while being an edge you can actually see.
 
 ### Ink
 
 | Name | Value | Token | Role |
 |------|-------|-------|------|
-| Chalk | `#fbfbfb` | `--chalk` | Headlines, primary text, values |
-| Paper Ink | `#e2e6ee` | `--paper-ink` | Body copy |
-| Iron | `#b4bccb` | `--iron` | Labels, outlined-button text |
-| Steel | `#a4adc0` | `--steel` | Supporting metadata |
-| Fog | `#949db0` | `--fog` | Helper text, uppercase section labels |
-| Ash | `#7b8499` | `--ash` | Placeholders and disabled **only** — 3.4:1 |
+| Foreground | `#f8fafc` | `--foreground` | Headlines, primary text — 13.8:1 |
+| Muted foreground | `#94a3b8` | `--muted-foreground` | All secondary text — 5.6:1 worst case |
+| Subtle | `#6b7788` | `--ash` | Placeholders and disabled **only** — 3.4:1 |
 
-Every token above `--ash` clears **4.5:1 on all three surfaces**, checked against
-the ladder rather than assumed. Two of them were lifted when the ground got
-lighter: `--ash` from `#6b7488` (2.68:1) and `--fog` from `#828b9f` (3.68:1).
+Two ink steps, not six. shadcn's scale is deliberately short, and a six-step ramp
+on a three-surface system produced distinctions nobody could see.
 
 ### Accent — one family, three jobs
 
@@ -214,11 +212,12 @@ Transparent on a 1px `--line`, text `--paper-ink`, `--radius-tag`, 4/8 padding, 
 - Do not write a hex literal in a component; every colour comes from a token
 - Do not apply Tailwind's `/NN` opacity modifier to a `var()` colour — it is silently dropped. Use `color-mix(in_srgb,var(--x)_NN%,transparent)`
 - Do not introduce a second radius; `--radius` is the only one, and `rounded-full` is for circles only
-- Do not put a border on a card, panel or dropdown; tone separates surfaces. A stroke is for an input rest, a focus ring, or a selected control
+- Do not use a lighter background to separate one thing from another; a card is a hairline on the page colour
 - Do not show a vendor model name outside the Advanced drawer — it is opt-in, labelled, and the only place they belong
 - Do not import `@meerah/studio` for a value at the top of a shell file; it drags the whole 700KB catalogue into that page's first load. Register inside the `dynamic()` chain instead
 - Do not put a flat card straight on the canvas — nest a core inside a shell, separated by tone, with a concentric radius
 - Do not ship a border below 1.8:1 against the surface behind it; measure, do not eyeball
+- Do not add a second stroke inside a bordered card; a nested core uses `--secondary` as a fill
 - Do not leave a work area empty — an empty state is the cheapest place to show what a tool makes
 - Do not show a vendor or model name anywhere a customer can read it — including error text, and including the network tab: vendor assets go through the `/vendor-img` and `/vendor-asset` rewrites, never a direct URL
 - Do not use a Tailwind palette hue (`violet-500`, `emerald-400`); every colour comes from a token
@@ -323,23 +322,27 @@ moves; there is no second source.
 
 ```css
 :root {
-  /* Raw palette as HSL triplets; every named token derives from one, and
-     shadcn's semantic names alias the same values. Hex shown for reference. */
-  --void: #04070e;  --sunk: #0a0f1b;  --night: #12182a;
-  --slab: #1e263a;  --slab-hi: #2a3349;
-  --hair: #3a445c;  --hair-lit: #5f6d8d;
+  /* shadcn's names are the interface; the hex is for reference only.
+     A card is the background plus --border. There is no lighter card fill. */
+  --background:       222 47% 8%;    /* #0b111e — canvas, rail, header, card */
+  --popover:          222 44% 11%;   /* #101728 — dialogs and dropdowns */
+  --secondary:        217 33% 18%;   /* #1f2a3d — hover, muted, nested cores */
+  --border:           217 28% 30%;   /* #374862 — 2.0:1 */
+  --input:            217 28% 30%;
 
-  --chalk: #fbfbfb; --paper-ink: #e2e6ee; --iron: #b4bccb;
-  --steel: #a4adc0; --fog: #949db0;       --ash: #7b8499;
+  --foreground:       210 40% 98%;   /* #f8fafc */
+  --muted-foreground: 215 20% 65%;   /* #94a3b8 */
 
-  --indigo: #4f46e5; --indigo-hi: #6d64f0;
-  --peri: #7d76ff;   --lilac: #a5a1ff;    --on-action: #ffffff;
-
-  --scrim: hsl(var(--void-hsl) / .82);
-  --veil:  hsl(var(--sunk-hsl) / .76);
-  --ok: #34d399; --danger: #fb7185;
+  --primary:          243 75% 59%;   /* #4f46e5 — Meerah's, not shadcn's */
+  --ring:             243 100% 73%;  /* #7d76ff */
+  --radius:           8px;
 }
 ```
+
+Everything else — `--chalk`, `--slab`, `--fog` and the rest of the older names —
+aliases one of the above. They survive so the forked studios keep compiling;
+nothing new should reach for them.
+
 
 ## Similar Brands
 

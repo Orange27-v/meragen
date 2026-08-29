@@ -4,9 +4,9 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 /**
- * The system has no card borders, so the outline variant that shadcn ships by
- * default would be the only stroked thing on a page. It is replaced by a filled
- * `secondary` step instead — depth comes from tone here, not from lines.
+ * shadcn's variants, with one change: `default` keeps Meerah's indigo rather
+ * than shadcn's near-white primary, because the indigo is the brand and a white
+ * button on this ground reads as a system dialog.
  */
 const buttonVariants = cva(
   'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded font-medium ' +
@@ -18,8 +18,9 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:     'bg-primary text-primary-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,0.22)] hover:bg-[var(--indigo-hi)]',
-        secondary:   'bg-secondary text-secondary-foreground hover:bg-[var(--slab-hi)]',
-        ghost:       'text-[var(--iron)] hover:bg-secondary hover:text-[var(--chalk)]',
+        secondary:   'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        outline:     'border border-input bg-transparent hover:bg-accent hover:text-accent-foreground',
+        ghost:       'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
         link:        'text-[var(--lilac)] underline-offset-4 hover:underline',
       },

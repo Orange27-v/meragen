@@ -121,7 +121,7 @@ export default function ToolShowcase({ toolId, compact = false }) {
         {guide.examples.slice(0, 3).map((caption, i) => (
           <figure
             key={caption}
-            className="group bg-[var(--sunk)] border border-[var(--line)] rounded p-1.5 transition-[border-color,transform] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-[var(--line-hi)] hover:-translate-y-0.5"
+            className="group bg-[var(--slab-hi)] border border-[var(--line)] rounded p-1.5 transition-[border-color,transform] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-[var(--line-hi)] hover:-translate-y-0.5"
           >
             <img
               src={exampleImage(toolId, i + 1)}

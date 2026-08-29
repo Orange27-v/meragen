@@ -10,101 +10,106 @@
    Indigo is too dark to read as text on the ground, so the family splits by
    job — indigo fills, periwinkle outlines, lilac ink.
 
-   Surfaces separate by tone, not by strokes. Every step on the ground ladder is
-   at least 4 L* from its neighbour, which is what makes a border unnecessary;
-   the previous ladder left only 2 L* between the rail and the canvas, so a
-   line was doing work the colour should have done.
+   Built on shadcn/ui's surface model: a card is the *same* colour as the page,
+   and a hairline is what makes it a card. Only three surfaces exist — the
+   ground, one mid-slate for hover and muted fills, and a slightly raised tone
+   for popovers.
 
    Three rules the system insists on, kept here:
      · one accent family only — indigo → periwinkle → lilac, nothing else
-     · no card borders — tone separates surfaces; a hairline is reserved for
-       dividers, input rests and focus, where it carries meaning
+     · a card is a hairline, not a fill — never reach for a lighter background
+       to separate one thing from another
      · one radius — 8px on every container; only pills and avatars are round
    --------------------------------------------------------------------------- */
 
 :root {
-  /* --- The raw palette, as HSL triplets. --------------------------------- */
-  /* Published this way because Tailwind's `/NN` opacity modifier silently
-     drops the alpha on a var() colour — it needs `hsl(var(--x) / <alpha>)` to
-     work. Every named token below derives from one of these, so there is still
-     exactly one place a colour is decided. */
+  /* --- shadcn's surface model, in Meerah's colours. ----------------------
+     The structural idea, taken as given: `--card` is the *same* colour as
+     `--background`, and a hairline is what makes it a card. That is the
+     opposite of tonal separation, and it is why every value below is either
+     the ground, the one mid-slate that does secondary/muted/accent duty, or
+     a border.
 
-  /* Ground. Each step is at least 4 L* from its neighbour, which is what lets
-     the borders come off: two surfaces this far apart read as separate without
-     a line between them. The previous ladder put only 2 L* between the rail and
-     the canvas, so a stroke was doing all the work. */
-  --void-hsl:      222 56% 4%;    /* #04070e — behind the app, scrim base */
-  --sunk-hsl:      222 46% 7%;    /* #0a0f1b — header and settings rail */
-  --night-hsl:     225 40% 12%;   /* #12182a — the canvas */
-  --slab-hsl:      223 32% 17%;   /* #1e263a — cards, inputs, popovers */
-  --slab-hi-hsl:   223 27% 23%;   /* #2a3349 — hover and pressed */
+     Kept from before: the indigo primary lifted from novapresenterpro.com,
+     8px radius, DM Sans. shadcn supplies the structure, not the palette.
 
-  /* Ink. Re-measured against the lighter ground above; body text clears
-     4.5:1 on all three surfaces. */
-  --chalk-hsl:     0 0% 98%;      /* #fbfbfb — headlines, primary text */
-  --paper-ink-hsl: 220 26% 91%;   /* #e2e6ee — body copy */
-  --iron-hsl:      219 21% 75%;   /* #b4bccb — labels, 6.6:1 worst case */
-  --steel-hsl:     220 19% 70%;   /* #a4adc0 — supporting metadata, 5.6:1 */
-  --fog-hsl:       221 15% 64%;   /* #949db0 — helper text and section labels.
-                                     Lifted from #828b9f, which measured 3.68:1
-                                     on the hover surface: below the floor for
-                                     text this size, and these labels are read,
-                                     not decoration. */
-  --ash-hsl:       220 12% 54%;   /* #7b8499 — placeholders only, 3.4:1;
-                                     lifted from #6b7488 (2.68:1) when the
-                                     surfaces got lighter */
+     Published as HSL triplets because Tailwind's `/NN` opacity modifier
+     silently drops the alpha on a plain var() colour and works correctly on
+     `hsl(var(--x) / <alpha>)`. */
 
-  /* Accent. One family, three jobs — indigo fills, periwinkle outlines,
-     lilac writes, because indigo is unreadable as text on this ground. */
-  --indigo-hsl:    243 75% 59%;   /* #4f46e5 — filled primary actions */
-  --indigo-hi-hsl: 244 82% 67%;   /* #6d64f0 — its hover */
-  --peri-hsl:      243 100% 73%;  /* #7d76ff — outlines, rings, tracks */
-  --lilac-hsl:     243 100% 82%;  /* #a5a1ff — accent text */
+  --background-hsl:  222 47% 8%;    /* #0b111e — canvas, rail and card alike */
+  --raised-hsl:      222 44% 11%;   /* #101728 — popovers and dialogs, a touch lifted */
+  --secondary-hsl:   217 33% 18%;   /* #1f2a3d — hover, pressed, muted fills */
+  --border-hsl:      217 28% 30%;   /* #374862 — 2.0:1: quiet, but an edge you can find */
 
-  --ok-hsl:        158 64% 52%;   /* #34d399 */
-  --danger-hsl:    351 95% 71%;   /* #fb7185 */
+  --foreground-hsl:  210 40% 98%;   /* #f8fafc — primary text */
+  --muted-fg-hsl:    215 20% 65%;   /* #94a3b8 — secondary text, 5.6:1 worst case */
+  --subtle-fg-hsl:   215 16% 50%;   /* #6b7788 — placeholders and disabled only */
 
-  /* Hairlines. Only three survive the move to tonal separation: a divider
-     inside a surface, an input rest, and a focus ring — which is an
-     accessibility requirement, not decoration. */
-  --hair-hsl:      222 24% 30%;   /* #3a445c — dividers and input rests */
-  --hair-lit-hsl:  221 21% 46%;   /* #5f6d8d — focus, 3.6:1 */
+  --primary-hsl:     243 75% 59%;   /* #4f46e5 — the filled action */
+  --primary-hi-hsl:  244 82% 67%;   /* #6d64f0 — its hover */
+  --ring-hsl:        243 100% 73%;  /* #7d76ff — focus, and the selected control */
+  --lilac-hsl:       243 100% 82%;  /* #a5a1ff — accent text; indigo is 2.5:1 here */
 
-  /* --- Named colours. --------------------------------------------------- */
-  --void:     hsl(var(--void-hsl));
-  --sunk:     hsl(var(--sunk-hsl));
-  --night:    hsl(var(--night-hsl));
-  --slab:     hsl(var(--slab-hsl));
-  --slab-hi:  hsl(var(--slab-hi-hsl));
+  --ok-hsl:          158 64% 52%;   /* #34d399 */
+  --danger-hsl:      351 95% 71%;   /* #fb7185 */
 
-  --chalk:    hsl(var(--chalk-hsl));
-  --paper-ink:hsl(var(--paper-ink-hsl));
-  --iron:     hsl(var(--iron-hsl));
-  --steel:    hsl(var(--steel-hsl));
-  --fog:      hsl(var(--fog-hsl));
-  --ash:      hsl(var(--ash-hsl));
+  /* --- shadcn's semantic names. Components in components/ui use only these. */
+  --background:            var(--background-hsl);
+  --foreground:            var(--foreground-hsl);
+  --card:                  var(--background-hsl);   /* deliberately the same */
+  --card-foreground:       var(--foreground-hsl);
+  --popover:               var(--raised-hsl);
+  --popover-foreground:    var(--foreground-hsl);
+  --primary:               var(--primary-hsl);
+  --primary-foreground:    0 0% 100%;
+  --secondary:             var(--secondary-hsl);
+  --secondary-foreground:  var(--foreground-hsl);
+  --muted-bg:              var(--secondary-hsl);
+  --muted-foreground:      var(--muted-fg-hsl);
+  --accent:                var(--secondary-hsl);
+  --accent-foreground:     var(--foreground-hsl);
+  --destructive:           var(--danger-hsl);
+  --destructive-foreground: 222 47% 8%;
+  --border:                var(--border-hsl);
+  --input:                 var(--border-hsl);
+  --ring:                  var(--ring-hsl);
 
-  --indigo:   hsl(var(--indigo-hsl));
-  --indigo-hi:hsl(var(--indigo-hi-hsl));
-  --peri:     hsl(var(--peri-hsl));
-  --lilac:    hsl(var(--lilac-hsl));
-  --on-action:#ffffff;
+  /* --- Named colours, for everything written before shadcn arrived. ------
+     The five-step tonal ladder collapses here: three of its rungs are now the
+     same colour, because a card is no longer a lighter rectangle. Anything
+     that needs to sit *on* a card uses `--slab-hi` (shadcn's `muted`). */
+  --void:      hsl(var(--background-hsl));
+  --sunk:      hsl(var(--background-hsl));
+  --night:     hsl(var(--background-hsl));
+  --slab:      hsl(var(--background-hsl));
+  --slab-hi:   hsl(var(--secondary-hsl));
 
-  --hair:     hsl(var(--hair-hsl));
-  --hair-lit: hsl(var(--hair-lit-hsl));
-  /* Kept so the fork keeps compiling. Both now resolve to nothing, which is
-     the point — a card has no edge any more. */
-  --hair-hi:   transparent;
-  --hair-inner:transparent;
+  --chalk:     hsl(var(--foreground-hsl));
+  --paper-ink: hsl(var(--foreground-hsl) / .92);
+  --iron:      hsl(var(--muted-fg-hsl));
+  --steel:     hsl(var(--muted-fg-hsl));
+  --fog:       hsl(var(--muted-fg-hsl));
+  --ash:       hsl(var(--subtle-fg-hsl));
+
+  --indigo:    hsl(var(--primary-hsl));
+  --indigo-hi: hsl(var(--primary-hi-hsl));
+  --peri:      hsl(var(--ring-hsl));
+  --lilac:     hsl(var(--lilac-hsl));
+  --on-action: #ffffff;
+
+  --hair:      hsl(var(--border-hsl));
+  --hair-lit:  hsl(var(--ring-hsl));
+  --hair-hi:   hsl(var(--border-hsl));
+  --hair-inner:hsl(var(--border-hsl));
 
   --ok:     hsl(var(--ok-hsl));
   --danger: hsl(var(--danger-hsl));
 
-  /* --- Veils. Translucent, so what is behind stays legible. -------------- */
-  --scrim:    hsl(var(--void-hsl) / .82);  /* behind a dialog */
-  --veil:     hsl(var(--sunk-hsl) / .76);  /* over a card while it renders */
+  --scrim:  hsl(var(--background-hsl) / .8);
+  --veil:   hsl(var(--background-hsl) / .78);
 
-  /* --- Legacy scale names, repointed. Nothing new should use these. ------ */
+  /* --- Legacy scale names. Nothing new should use these. ----------------- */
   --obsidian: var(--chalk);
   --graphite: var(--paper-ink);
   --slate:    var(--slab-hi);
@@ -114,45 +119,20 @@
   --snow:     var(--slab);
   --ember:    var(--lilac);
 
-  /* --- Roles. Components reference these, never the scale above. ---------
-     `--line` is transparent on purpose: surfaces separate by tone now, and a
-     component asking for a card edge should get nothing. The two that remain
-     are the ones that carry meaning. */
+  /* --- Roles. `--line` is a real hairline again: with card and background
+         the same colour, it is the only thing that makes a card. ---------- */
   --ink:        var(--night);
-  --ink-deep:   var(--sunk);
+  --ink-deep:   var(--night);
+  --card-bg:    var(--night);   /* shadcn: a card is the page colour plus an edge */
   --surface:    var(--slab);
   --surface-hi: var(--slab-hi);
-  --muted:      var(--steel);
-  --line:       transparent;      /* cards and panels have no edge */
-  --line-hi:    var(--hair-lit);  /* focus, and the selected control */
-  --line-soft:  var(--hair);      /* a divider inside a surface */
-  --line-inner: transparent;
+  --muted:      var(--iron);
+  --line:       var(--hair);
+  --line-hi:    var(--hair-lit);
+  --line-soft:  var(--hair);
+  --line-inner: transparent;  /* a nested core reads by fill, not a second stroke */
   --action:     var(--indigo);
   --marigold:   var(--lilac);
-
-  /* --- shadcn/ui semantic names, mapped onto the palette above. ----------
-     shadcn components are added as source into components/ui and style
-     themselves through these. They are aliases, not a second palette — change
-     a colour above and both worlds move together. */
-  --background:          var(--night-hsl);
-  --foreground:          var(--paper-ink-hsl);
-  --card:                var(--slab-hsl);
-  --card-foreground:     var(--paper-ink-hsl);
-  --popover:             var(--slab-hsl);
-  --popover-foreground:  var(--paper-ink-hsl);
-  --primary:             var(--indigo-hsl);
-  --primary-foreground:  0 0% 100%;
-  --secondary:           var(--slab-hi-hsl);
-  --secondary-foreground:var(--chalk-hsl);
-  --muted-bg:            var(--slab-hi-hsl);
-  --muted-foreground:    var(--steel-hsl);
-  --accent:              var(--slab-hi-hsl);
-  --accent-foreground:   var(--chalk-hsl);
-  --destructive:         var(--danger-hsl);
-  --destructive-foreground: var(--void-hsl);
-  --border:              var(--hair-hsl);
-  --input:               var(--hair-hsl);
-  --ring:                var(--peri-hsl);
 
   /* --- Type. One family for every role, 10px badge to 64px display. ------ */
   --font: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -236,8 +216,9 @@ a { color: var(--chalk); }
 }
 .btn-primary:hover:not(:disabled) { background: var(--indigo-hi); }
 .btn-ghost {
-  background: var(--surface);
+  background: transparent;
   color: var(--iron);
+  border-color: var(--line);
 }
 .btn-ghost:hover:not(:disabled) { background: var(--surface-hi); border-color: var(--line-hi); color: var(--chalk); }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
@@ -274,9 +255,10 @@ label {
 }
 .field { margin-bottom: 20px; }
 
-/* --- Cards. Separated by tone, never a stroke or a shadow. ------------------ */
+/* --- Cards. A hairline is what makes one: the fill is the page colour. ------ */
 .card {
-  background: var(--surface);
+  background: var(--card-bg);
+  border: 1px solid var(--line);
   border-radius: var(--radius-card);
   padding: var(--card-pad);
 }
@@ -289,8 +271,9 @@ label {
   border-radius: var(--radius-tag);
   font-size: 13px;
   font-weight: 400;
-  background: var(--surface-hi);
+  border: 1px solid var(--line);
   color: var(--paper-ink);
+  background: transparent;
   background: transparent;
 }
 /* The sole chromatic badge, reserved for credentials and emphasis. */
@@ -300,7 +283,7 @@ label {
   padding: 12px 16px;
   border-radius: var(--radius-button);
   font-size: 14px;
-  /* The one stroke that survives on a card: it names the severity. */
+  border: 1px solid var(--line);
   border-left: 3px solid var(--danger);
   background: var(--surface);
   color: var(--paper-ink);
@@ -311,8 +294,8 @@ label {
 .muted { color: var(--muted); }
 .tabular { font-variant-numeric: tabular-nums; }
 
-/* --- Navigation. Recessed from the canvas by tone, not by a line. ---------- */
-.topbar { background: var(--sunk); }
+/* --- Navigation. Same colour as the page; the hairline is the separation. -- */
+.topbar { background: var(--background); background: hsl(var(--background)); border-bottom: 1px solid var(--line); }
 .topbar-in { display: flex; align-items: center; gap: 24px; height: 68px; }
 
 .wordmark {

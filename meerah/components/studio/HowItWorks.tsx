@@ -106,7 +106,7 @@ export default function HowItWorks({
         }}>
           {guide.steps.map((step, i) => (
             <li key={step.title} style={{
-              background: 'var(--sunk)', border: '1px solid var(--line)',
+              background: 'var(--slab-hi)', border: '1px solid var(--line)',
               borderRadius: 'var(--radius)', padding: 6, overflow: 'hidden',
             }}>
               {/* The step, pictured. Reuses this tool's own stills rather than
