@@ -35,6 +35,9 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
+  // Every cache that is not one of the two current ones goes, which is what
+  // evicts a previous build's chunks — and anything a previous, buggier worker
+  // put there.
   event.waitUntil(
     caches.keys()
       .then((keys) => Promise.all(

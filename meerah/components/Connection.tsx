@@ -15,9 +15,31 @@ export default function Connection() {
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       // After load, so registration never competes with the first paint.
-      const register = () => void navigator.serviceWorker.register('/sw.js').catch(() => undefined);
-      if (document.readyState === 'complete') register();
-      else window.addEventListener('load', register, { once: true });
+      const register = async () => {
+        try {
+          const reg = await navigator.serviceWorker.register('/sw.js');
+
+          // Ask for a fresh copy on every load. Browsers throttle their own
+          // update check, so a worker that is serving something broken can keep
+          // serving it for a day — which is how a bad deploy turns into a bad
+          // week. Checking here costs one conditional request.
+          void reg.update().catch(() => undefined);
+        } catch {
+          /* no worker is a fine outcome; the app does not depend on one */
+        }
+      };
+      if (document.readyState === 'complete') void register();
+      else window.addEventListener('load', () => void register(), { once: true });
+
+      // When a new worker takes over, the page is running the old build's
+      // JavaScript against the new one's assets. Reload once, and only once —
+      // `reloading` stops the loop if the worker changes again mid-reload.
+      let reloading = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (reloading) return;
+        reloading = true;
+        window.location.reload();
+      });
     }
 
     const update = () => setOffline(!navigator.onLine);
