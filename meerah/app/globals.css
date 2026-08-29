@@ -324,3 +324,23 @@ label {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }
+
+
+
+@layer base {
+  /* sidebar-07's tokens.
+     The CLI writes a light-mode grey at :root and the dark values behind a
+     `.dark` class this app does not use — so the nav would have rendered white
+     on a dark product. These point at the same three surfaces as everything
+     else: the sidebar *is* the page, separated by a hairline. */
+  :root {
+    --sidebar-background:         var(--background-hsl);
+    --sidebar-foreground:         var(--muted-fg-hsl);
+    --sidebar-primary:            var(--primary-hsl);
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent:             var(--secondary-hsl);
+    --sidebar-accent-foreground:  var(--foreground-hsl);
+    --sidebar-border:             var(--border-hsl);
+    --sidebar-ring:               var(--ring-hsl);
+  }
+}

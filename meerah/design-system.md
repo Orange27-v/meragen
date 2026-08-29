@@ -257,8 +257,9 @@ refresh, and work with the back button.
 
 | Breakpoint | Behaviour |
 |------------|-----------|
-| ≥1100px | Rail and work area side by side; nav dropdown on hover and focus |
-| <1100px | Rail stacks above the work area; nav collapses to a sheet; dropdown opens on tap |
+| ≥1100px | Icon nav, settings rail and work area side by side |
+| <1100px | Settings rail stacks above the work area; the nav stays an icon rail |
+| mobile | The nav becomes a sheet behind the trigger in the header |
 | <420px | Single column; step cards stack; the action stays full-width and pinned |
 
 Touch targets are at least 38px. Wide content — tables, model grids — scrolls inside

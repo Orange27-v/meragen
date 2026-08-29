@@ -48,6 +48,20 @@ module.exports = {
         border: 'hsl(var(--border) / <alpha-value>)',
         input:  'hsl(var(--input) / <alpha-value>)',
         ring:   'hsl(var(--ring) / <alpha-value>)',
+
+        // sidebar-07's tokens. Its own defaults are a light-mode grey; these
+        // point at the same three surfaces everything else uses, so the nav is
+        // the page rather than a panel bolted onto it.
+        sidebar: {
+          DEFAULT:              'hsl(var(--sidebar-background) / <alpha-value>)',
+          foreground:           'hsl(var(--sidebar-foreground) / <alpha-value>)',
+          primary:              'hsl(var(--sidebar-primary) / <alpha-value>)',
+          'primary-foreground': 'hsl(var(--sidebar-primary-foreground) / <alpha-value>)',
+          accent:               'hsl(var(--sidebar-accent) / <alpha-value>)',
+          'accent-foreground':  'hsl(var(--sidebar-accent-foreground) / <alpha-value>)',
+          border:               'hsl(var(--sidebar-border) / <alpha-value>)',
+          ring:                 'hsl(var(--sidebar-ring) / <alpha-value>)',
+        },
         primary: {
           DEFAULT:    'hsl(var(--primary) / <alpha-value>)',
           foreground: 'hsl(var(--primary-foreground) / <alpha-value>)',

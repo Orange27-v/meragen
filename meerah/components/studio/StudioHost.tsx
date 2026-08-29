@@ -2,7 +2,6 @@
 
 import dynamic from 'next/dynamic';
 import { useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import type { ComponentType } from 'react';
 import type { StudioProps } from '@meerah/studio';
 import { api, type Tier } from '@/lib/api';
@@ -87,7 +86,6 @@ const COMPONENTS: Record<string, ComponentType<StudioProps>> = {
 };
 
 export default function StudioHost({ toolId }: { toolId: string }) {
-  const router = useRouter();
   const { token, user, loading, refresh, signOut } = useSession();
   /** The entry shape the forked studio cards already render. */
   const [guideOpen, setGuideOpen] = useState(false);
@@ -156,7 +154,7 @@ export default function StudioHost({ toolId }: { toolId: string }) {
 
   return (
     <DashboardShell density="app" user={user} onSignOut={signOut} refreshUser={refresh}
-      activeTool={tool.id} onPickTool={(id) => router.push(`/create/${id}`)}
+      activeTool={tool.id}
       onShowGuide={() => setGuideOpen(true)}>
       {/* The studio components take the session token in the prop they already
           call `apiKey` — no component changes were needed. */}

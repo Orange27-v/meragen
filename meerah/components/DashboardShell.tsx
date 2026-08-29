@@ -2,11 +2,13 @@
 
 import { useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { api, type Tier, type User } from '@/lib/api';
-import { GROUPS, toolsInGroup } from '@/lib/tools';
-import ToolMenu from '@/components/nav/ToolMenu';
-import UserMenu from '@/components/nav/UserMenu';
+import { toolById } from '@/lib/tools';
+import { AppSidebar } from '@/components/app-sidebar';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import TopUpSheet from '@/components/TopUpSheet';
 
 /**
@@ -18,32 +20,39 @@ import TopUpSheet from '@/components/TopUpSheet';
  * one place, `/admin` from nowhere, and Sign out from a single page. Nothing
  * felt like one application because, structurally, it was not one.
  *
- * Two densities, one header:
+ * Navigation is a sidebar rather than a header dropdown. Twelve tools behind a
+ * hover menu meant you had to already know what you were looking for; a sidebar
+ * shows all of them. It collapses to icons, which matters here more than in most
+ * products: a studio page already gives 370px to a settings rail, so the nav has
+ * to be able to get out of the way.
+ *
+ * On a studio the sidebar starts collapsed and on every other page it starts
+ * open — the width is worth more to the work than to the navigation.
+ *
+ * Two densities, one shell:
  *
  *   · `app`  — the studio. Fixed height, no page scroll, so a tool can dock its
  *              own panels to the edges of the viewport.
- *   · `page` — everything else. A normal scrolling 1200px column.
+ *   · `page` — everything else. A normal scrolling column.
  */
 export default function DashboardShell({
-  density = 'page', user, onSignOut, activeTool, onPickTool, onShowGuide, refreshUser, children,
+  density = 'page', user, onSignOut, activeTool, onShowGuide, refreshUser, children,
 }: {
   density?: 'app' | 'page';
   user: User | null;
   onSignOut: () => void;
-  /** Set on /create so the nav can mark the current tool and switch in place. */
+  /** Set on /create so the sidebar can mark the current tool and the header can
+   *  name it. The sidebar navigates with links, so there is nothing to call. */
   activeTool?: string;
-  onPickTool?: (toolId: string) => void;
   /** Set on a tool page, so the header can offer its guide. */
   onShowGuide?: () => void;
   /** Called after a top-up lands, so the balance in the header catches up. */
   refreshUser?: () => void;
   children: ReactNode;
 }) {
-  const router = useRouter();
   const pathname = usePathname();
   const [tiers, setTiers] = useState<Tier[]>([]);
   const [buying, setBuying] = useState(false);
-  const [sheetOpen, setSheetOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
 
@@ -93,131 +102,63 @@ export default function DashboardShell({
     return () => window.removeEventListener('meerah:buy-credits', onNeedCredits);
   }, []);
 
-  function pickTool(toolId: string) {
-    if (onPickTool) onPickTool(toolId);
-    else router.push(`/create/${toolId}`);
-  }
-
   const isApp = density === 'app';
+  const tool = activeTool ? toolById(activeTool) : undefined;
+  // One credit's worth of Naira, taken from the live price list rather than
+  // written down — a published rate that disagrees with the charge is worse
+  // than no rate.
+  const cheapest = tiers[0];
+  const nairaPerCredit = cheapest ? cheapest.naira / cheapest.credits : undefined;
 
   return (
-    <div style={isApp
-      ? { height: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'var(--ink)' }
-      : undefined}>
-      <header style={{
-        flexShrink: 0, display: 'flex', alignItems: 'center', gap: 14, height: 56,
-        padding: '0 16px', background: 'var(--snow)', borderBottom: '1px solid var(--line)',
-        position: isApp ? undefined : 'sticky', top: 0, zIndex: 100,
-      }}>
-        {/* Below 700px the grouped nav does not fit, so the tools move into a
-            sheet behind this button rather than disappearing. */}
-        <button type="button" className="shell-sheet-toggle" aria-label="Tools"
-          aria-expanded={sheetOpen} onClick={() => setSheetOpen((v) => !v)}
-          style={{
-            width: 32, height: 32, padding: 0, placeItems: 'center', flexShrink: 0,
-            border: '1px solid var(--line)', borderRadius: 'var(--radius-tag)',
-            background: 'var(--snow)', color: 'var(--iron)', cursor: 'pointer', font: 'inherit',
-          }}>
-          <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden>
-            <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-        </button>
+    <SidebarProvider defaultOpen={!isApp}>
+      <AppSidebar user={user} onSignOut={onSignOut} nairaPerCredit={nairaPerCredit} />
 
-        <Link className="wordmark" href="/create" style={{ fontSize: 17, flexShrink: 0 }}>
-          <span className="mark" />Meerah
-        </Link>
+      <SidebarInset className={isApp ? 'h-dvh overflow-hidden' : undefined}>
+        <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
+          <SidebarTrigger className="-ml-1" />
+          <Separator orientation="vertical" className="mr-2 h-4" />
 
-        <div className="shell-nav">
-          <ToolMenu activeTool={activeTool} tiers={tiers} onPick={pickTool} />
-        </div>
-
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-          {onShowGuide && (
-            <button type="button" onClick={onShowGuide} className="shell-guide"
-              style={{
-                padding: '5px 11px', borderRadius: 'var(--radius-pill)',
-                border: '1px solid var(--line)', background: 'var(--snow)',
-                font: 'inherit', fontSize: 12.5, color: 'var(--iron)', cursor: 'pointer',
-                whiteSpace: 'nowrap',
-              }}>
-              How it works
-            </button>
-          )}
-          <button type="button" onClick={() => setBuying(true)} className="shell-credits"
-            title="Buy credits"
-            style={{
-              display: 'flex', alignItems: 'baseline', gap: 6, padding: '5px 12px',
-              borderRadius: 'var(--radius-pill)', border: '1px solid var(--line)',
-              background: 'var(--ink-deep)', font: 'inherit', cursor: 'pointer',
-              fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap',
-            }}>
-            <span style={{ fontSize: 11, color: 'var(--fog)', letterSpacing: '.06em', textTransform: 'uppercase' }}>
-              Credits
+          <div className="min-w-0">
+            <span className="truncate text-sm font-medium text-foreground">
+              {tool?.label ?? 'Meerah'}
             </span>
-            <b style={{ fontSize: 14 }}>{user?.creditBalance.toLocaleString() ?? '—'}</b>
-          </button>
-          <UserMenu user={user} tiers={tiers}
-            onBuyCredits={() => setBuying(true)} onSignOut={onSignOut} />
-        </div>
-      </header>
+            {tool && (
+              <span className="ml-2 hidden truncate text-xs text-muted-foreground sm:inline">
+                {tool.blurb}
+              </span>
+            )}
+          </div>
 
-      {sheetOpen && (
-        <div className="shell-sheet" style={{
-          background: 'var(--snow)', borderBottom: '1px solid var(--line)',
-          padding: '4px 12px 14px', maxHeight: '70vh', overflowY: 'auto',
-        }}>
-          {GROUPS.map((group) => (
-            <div key={group} style={{ marginTop: 10 }}>
-              <div className="muted" style={{
-                fontSize: 10.5, letterSpacing: '.14em', textTransform: 'uppercase',
-                padding: '0 4px 6px', fontWeight: 500,
-              }}>{group}</div>
-              {toolsInGroup(group).map((tool) => (
-                <button key={tool.id} type="button"
-                  onClick={() => { setSheetOpen(false); pickTool(tool.id); }}
-                  style={{
-                    display: 'block', width: '100%', textAlign: 'left', font: 'inherit',
-                    padding: '8px', border: 0, borderRadius: 'var(--radius-tag)', cursor: 'pointer',
-                    background: tool.id === activeTool ? 'var(--surface-hi)' : 'transparent',
-                  }}>
-                  <span style={{ fontSize: 14, fontWeight: tool.id === activeTool ? 600 : 500 }}>{tool.label}</span>
-                  <span className="muted" style={{ display: 'block', fontSize: 11.5, marginTop: 1 }}>{tool.blurb}</span>
-                </button>
-              ))}
-            </div>
-          ))}
-        </div>
-      )}
+          <div className="ml-auto flex shrink-0 items-center gap-2">
+            {onShowGuide && (
+              <Button variant="ghost" size="sm" onClick={onShowGuide} className="hidden sm:inline-flex">
+                How it works
+              </Button>
+            )}
+            <Button variant="outline" size="sm" onClick={() => setBuying(true)}
+              className="tabular-nums" title="Buy credits">
+              <span className="hidden text-muted-foreground sm:inline">Credits</span>
+              <b>{user?.creditBalance.toLocaleString() ?? '—'}</b>
+            </Button>
+          </div>
+        </header>
 
-      {(notice || error) && (
-        <div style={{ padding: '10px 16px 0', background: isApp ? 'var(--ink)' : undefined }}>
-          {notice && <div className="alert alert-ok">{notice}</div>}
-          {error && <div className="alert">{error}</div>}
-        </div>
-      )}
+        {(notice || error) && (
+          <div className="shrink-0 px-4 pt-3">
+            {notice && <div className="alert alert-ok">{notice}</div>}
+            {error && <div className="alert">{error}</div>}
+          </div>
+        )}
 
-      {isApp ? (
-        <main style={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-          {children}
-        </main>
-      ) : (
-        <main className="shell" style={{ paddingBlock: '2rem 4rem' }}>{children}</main>
-      )}
+        {isApp ? (
+          <main className="flex min-h-0 flex-1 flex-col overflow-hidden">{children}</main>
+        ) : (
+          <main className="mx-auto w-full max-w-[1200px] px-4 pb-16 pt-8">{children}</main>
+        )}
+      </SidebarInset>
 
       <TopUpSheet open={buying} onClose={() => setBuying(false)} returnTo={pathname} />
-
-      <style>{`
-        .shell-nav { min-width: 0; overflow: visible; }
-        .shell-sheet-toggle { display: none; }
-        @media (max-width: 860px) {
-          .shell-credits span { display: none; }
-          .shell-guide { display: none; }
-        }
-        @media (max-width: 700px) {
-          .shell-nav { display: none; }
-          .shell-sheet-toggle { display: grid; }
-        }
-      `}</style>
-    </div>
+    </SidebarProvider>
   );
 }
