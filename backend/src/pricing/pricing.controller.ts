@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Param } from '@nestjs/common';
+import { Controller, Get, Post, Param, UseGuards } from '@nestjs/common';
 import { PricingService } from './pricing.service';
 import { CatalogService } from './catalog.service';
+import { AdminGuard } from '../common/admin.guard';
 
 @Controller('api/v1')
 export class PricingController {
@@ -27,8 +28,15 @@ export class PricingController {
     return this.pricing.quote(tierId);
   }
 
-  /** Pull the vendor rate card and report what moved. Scheduled in production. */
+  /**
+   * Pull the vendor rate card and report what moved. Scheduled in production.
+   *
+   * Owner-only. This rewrites the cost basis every price in the product derives
+   * from, and it spends a vendor API call each time it runs — an open endpoint
+   * would let a stranger move what we charge, or simply run up the bill.
+   */
   @Post('pricing/sync')
+  @UseGuards(AdminGuard)
   async sync() {
     return this.catalog.sync();
   }

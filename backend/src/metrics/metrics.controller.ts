@@ -1,6 +1,6 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { MetricsService } from './metrics.service';
-import { AdminGuard } from './admin.guard';
+import { AdminGuard } from '../common/admin.guard';
 
 @Controller('api/v1/metrics')
 @UseGuards(AdminGuard)

@@ -1,22 +1,27 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AuthGuard, AuthedRequest } from '../auth/auth.guard';
-import { PrismaService } from '../common/prisma.service';
-import { MetricsService } from './metrics.service';
+import { PrismaService } from './prisma.service';
+import { isAdminEmail } from './admins';
 
 /**
  * Owner-only.
  *
- * These numbers include revenue, margin and every customer's spend. Membership
- * comes from the ADMIN_EMAILS environment variable and is checked on each
- * request — there is deliberately no way for anything a customer touches to
+ * Membership comes from the ADMIN_EMAILS environment variable and is checked on
+ * each request — there is deliberately no way for anything a customer touches to
  * grant it.
+ *
+ * This lives in `common` rather than beside the metrics routes because two
+ * unrelated things need it: the dashboard that shows every customer's spend,
+ * and the catalogue sync that rewrites what we charge. A guard that answers
+ * "is this the owner?" should not have to import a metrics service to do it.
  */
 @Injectable()
 export class AdminGuard implements CanActivate {
   constructor(
     private readonly auth: AuthGuard,
     private readonly prisma: PrismaService,
-    private readonly metrics: MetricsService,
+    private readonly config: ConfigService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -29,7 +34,7 @@ export class AdminGuard implements CanActivate {
       select: { email: true },
     });
 
-    if (!user || !this.metrics.isAdminEmail(user.email)) {
+    if (!user || !isAdminEmail(user.email, this.config.get<string>('ADMIN_EMAILS', ''))) {
       // Same answer as any other forbidden route: this endpoint's existence is
       // not worth confirming to someone who cannot use it.
       throw new ForbiddenException('Not found');
