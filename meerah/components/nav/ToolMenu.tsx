@@ -2,7 +2,8 @@
 
 import { useEffect, useId, useRef, useState } from 'react';
 import Link from 'next/link';
-import { GROUPS, toolsInGroup, type ToolGroup, type ToolInfo } from '@/lib/tools';
+import { DESTINATIONS, GROUPS, exampleImage, toolsInGroup,
+  type DestinationInfo, type ToolGroup, type ToolInfo } from '@/lib/tools';
 import type { Tier } from '@/lib/api';
 
 /**
@@ -11,7 +12,8 @@ import type { Tier } from '@/lib/api';
  * Twelve tools in a flat row told a customer nothing: no idea what any of them
  * made, and no idea what any of them cost until after pressing Generate. So the
  * row collapses to five groups, and opening one shows what each tool makes and
- * what the qualities cost, side by side.
+ * what the qualities cost, side by side — with a still of the output beside
+ * each name, because a name and a line of text still leave you guessing.
  *
  * Hover opens it because that is what a pointer expects, but hover alone would
  * lock out keyboards and touch — so focus opens it too, and a tap toggles it.
@@ -122,6 +124,7 @@ function Panel({
   onPick: (toolId: string) => void;
 }) {
   const tools = toolsInGroup(group);
+  const places = DESTINATIONS[group] ?? [];
   const wanted = QUALITY_FOR[group];
   // Prices come from the API, never from a number typed in here. A published
   // price that disagrees with what someone is charged is worse than none.
@@ -141,10 +144,14 @@ function Panel({
         borderRadius: 'var(--radius-tag)', overflow: 'hidden',
       }}>
       <div style={{ padding: 10 }}>
-        <Heading>Tools</Heading>
+        {tools.length > 0 && <Heading>Tools</Heading>}
         {tools.map((tool) => (
           <ToolRow key={tool.id} tool={tool} active={tool.id === activeTool}
             onPick={onPick} />
+        ))}
+        {places.length > 0 && <Heading>Your account</Heading>}
+        {places.map((place) => (
+          <PlaceRow key={place.href} place={place} />
         ))}
       </div>
 
@@ -173,14 +180,25 @@ function Panel({
 function ToolRow({ tool, active, onPick }: { tool: ToolInfo; active: boolean; onPick: (id: string) => void }) {
   const inner = (
     <>
-      <span style={{ fontSize: 13.5, fontWeight: active ? 600 : 500 }}>{tool.label}</span>
-      <span className="muted" style={{ display: 'block', fontSize: 11.5, lineHeight: 1.45, marginTop: 1 }}>
-        {tool.blurb}
+      {/* A still of what this tool makes. Sized and decoded off the critical
+          path, so opening the menu never waits on an image. */}
+      <img src={exampleImage(tool.id, 1)} alt="" aria-hidden width={640} height={360}
+        loading="lazy" decoding="async"
+        style={{
+          width: 46, height: 30, objectFit: 'cover', flexShrink: 0,
+          borderRadius: 5, border: '1px solid var(--line-inner)',
+        }} />
+      <span style={{ minWidth: 0 }}>
+        <span style={{ display: 'block', fontSize: 13.5, fontWeight: active ? 600 : 500 }}>{tool.label}</span>
+        <span className="muted" style={{ display: 'block', fontSize: 11.5, lineHeight: 1.45, marginTop: 1 }}>
+          {tool.blurb}
+        </span>
       </span>
     </>
   );
   const style = {
-    display: 'block', width: '100%', textAlign: 'left' as const, font: 'inherit',
+    display: 'flex', alignItems: 'center', gap: 10,
+    width: '100%', textAlign: 'left' as const, font: 'inherit',
     padding: '8px', borderRadius: 'var(--radius-tag)', border: 0, cursor: 'pointer',
     color: 'var(--chalk)', textDecoration: 'none',
     background: active ? 'var(--surface-hi)' : 'transparent',
@@ -191,6 +209,24 @@ function ToolRow({ tool, active, onPick }: { tool: ToolInfo; active: boolean; on
       onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = 'var(--ink-deep)'; }}
       onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = 'transparent'; }}>
       {inner}
+    </Link>
+  );
+}
+
+/** A place in the product that is not a tool — a real navigation, not a tool pick. */
+function PlaceRow({ place }: { place: DestinationInfo }) {
+  return (
+    <Link href={place.href}
+      style={{
+        display: 'block', width: '100%', font: 'inherit', padding: '8px',
+        borderRadius: 'var(--radius-tag)', color: 'var(--chalk)', textDecoration: 'none',
+      }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--ink-deep)'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}>
+      <span style={{ display: 'block', fontSize: 13.5, fontWeight: 500 }}>{place.label}</span>
+      <span className="muted" style={{ display: 'block', fontSize: 11.5, lineHeight: 1.45, marginTop: 1 }}>
+        {place.blurb}
+      </span>
     </Link>
   );
 }

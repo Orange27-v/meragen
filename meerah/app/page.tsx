@@ -207,11 +207,6 @@ export default function Landing() {
             <div className="feat"><h4>Sales Reel</h4><p>Ad creative shaped for Instagram, WhatsApp Status and TikTok, not resized as an afterthought.</p></div>
             <div className="feat"><h4>SoundTrack</h4><p>Original music and voiceover. Nothing that gets your post muted for copyright.</p></div>
           </div>
-
-          <p className="eyebrow" style={{ marginBottom: '.75rem' }}>More</p>
-          <div className="features">
-            <div className="feat"><h4>App Shelf</h4><p>Tell us what to build next. We count the votes and build in that order.</p></div>
-          </div>
         </div>
       </section>
 

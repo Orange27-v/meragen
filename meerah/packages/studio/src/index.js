@@ -15,5 +15,7 @@ export { default as ClippingStudio } from './components/ClippingStudio';
 export { default as VibeMotionStudio } from './components/VibeMotionStudio';
 export { default as RecastStudio } from './components/RecastStudio';
 export { default as AiInfluencerStudio } from './components/AiInfluencerStudio';
-export { default as AppsStudio } from './components/AppsStudio';
 export * from './meerah';
+
+// The empty-state showcase, plus the setter the app uses to hand it tool copy.
+export { default as ToolShowcase, setShowcase } from './components/rail/ToolShowcase';

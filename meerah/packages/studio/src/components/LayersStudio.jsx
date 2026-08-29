@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import ToolShowcase from "./rail/ToolShowcase";
 import {
   decomposeLayers,
   uploadFile,
@@ -1566,6 +1567,15 @@ export default function LayersStudio({
               <p className="text-xs text-[var(--steel)]">
                 Supports PNG, JPEG, WEBP up to 20MB
               </p>
+            </div>
+          )}
+
+          {/* The drop zone already tells you what to do, so the showcase sits
+              beneath it as context rather than replacing it — a working
+              affordance is not the void the showcase exists to fill. */}
+          {!currentImageUrl && !uploading && (
+            <div className="w-full max-w-3xl mx-auto mt-8">
+              <ToolShowcase toolId="patchup" compact />
             </div>
           )}
         </div>

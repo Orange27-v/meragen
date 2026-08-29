@@ -13,7 +13,7 @@
    Three rules the system insists on, kept here:
      · one accent family only — indigo → periwinkle → lilac, nothing else
      · no drop shadows on cards — 1px hairlines against the navy instead
-     · no sharp corners — 12px is the smallest radius on any container
+     · one radius — 8px on every container; only pills and avatars are round
    --------------------------------------------------------------------------- */
 
 :root {
@@ -23,8 +23,10 @@
   --night:    #0e1422;   /* the canvas everything sits on */
   --slab:     #181d2b;   /* cards, inputs, popovers (white 4% over canvas) */
   --slab-hi:  #1f2431;   /* hover, pressed, heavier surface (white 7%) */
-  --hair:     #1f2431;   /* the 1px hairline that replaces shadow */
-  --hair-hi:  #2b3242;   /* focused and emphasised borders */
+  --hair:      #3a445c;  /* dividers and input rests — 1.9:1 on the canvas */
+  --hair-hi:   #4f5c78;  /* card edges and focus — 2.8:1, an edge you can see */
+  --hair-inner:#2b3242;  /* the inner core of a nested card, quieter than its shell */
+  --hair-lit: #5f6d8d;   /* hover and focus — 3.6:1, clears the WCAG boundary bar */
 
   /* --- Ink. Near-white down to placeholder. ------------------------------ */
   --chalk:    #fbfbfb;   /* headlines, primary text */
@@ -61,8 +63,10 @@
   --surface:    var(--slab);      /* cards sitting on the canvas */
   --surface-hi: var(--slab-hi);   /* hover and heavier fills */
   --muted:      var(--steel);     /* secondary text */
-  --line:       var(--hair);      /* the hairline */
-  --line-hi:    var(--hair-hi);
+  --line:       var(--hair-hi);   /* the edge of a card or control */
+  --line-hi:    var(--hair-lit);  /* the same edge, hovered or focused */
+  --line-soft:  var(--hair);      /* dividers inside a surface */
+  --line-inner: var(--hair-inner);
   --action:     var(--indigo);    /* filled CTA — the system's key control */
   --marigold:   var(--lilac);     /* accent ink */
 
@@ -83,11 +87,12 @@
   --text-heading-lg: 56px;
   --text-display:    64px;
 
-  /* --- Geometry. Three radii repeat everywhere. ------------------------- */
-  --radius-tag:    12px;
-  --radius-button: 14px;
-  --radius-card:   36px;
-  --radius-pill:   10000px;
+  /* --- Geometry. One radius everywhere. --------------------------------- */
+  --radius:        8px;
+  --radius-tag:    var(--radius);
+  --radius-button: var(--radius);
+  --radius-card:   var(--radius);
+  --radius-pill:   10000px;   /* pills and circles stay round */
 
   --shell:       1200px;
   --section-gap: 80px;

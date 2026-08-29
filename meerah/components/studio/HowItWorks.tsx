@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import { GUIDES } from '@/lib/guides';
+import { exampleImage } from '@/lib/tools';
 import type { ToolInfo } from '@/lib/tools';
 import type { Tier } from '@/lib/api';
 
@@ -72,7 +73,7 @@ export default function HowItWorks({
         style={{
           width: 'min(840px, 100%)', maxHeight: '100%', overflowY: 'auto',
           background: 'var(--slab)', border: '1px solid var(--line)',
-          borderRadius: 24, padding: '34px 36px 36px', position: 'relative',
+          borderRadius: 'var(--radius)', padding: '34px 36px 36px', position: 'relative',
         }}>
         <button ref={closer} type="button" onClick={onClose} aria-label="Close"
           style={{
@@ -106,14 +107,24 @@ export default function HowItWorks({
           {guide.steps.map((step, i) => (
             <li key={step.title} style={{
               background: 'var(--sunk)', border: '1px solid var(--line)',
-              borderRadius: 'var(--radius-button)', padding: '16px 18px 18px',
+              borderRadius: 'var(--radius)', padding: 6, overflow: 'hidden',
             }}>
+              {/* The step, pictured. Reuses this tool's own stills rather than
+                  introducing a second set to keep in step with the first. */}
+              <img src={exampleImage(tool.id, i + 1)} alt="" aria-hidden
+                width={640} height={360} loading="lazy" decoding="async"
+                style={{
+                  width: '100%', aspectRatio: '16 / 9', objectFit: 'cover',
+                  borderRadius: 5, border: '1px solid var(--line-inner)', display: 'block',
+                }} />
+              <div style={{ padding: '12px 12px 8px' }}>
               <span className="tabular" style={{
                 display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--peri)',
                 marginBottom: 8, letterSpacing: '.08em',
               }}>{String(i + 1).padStart(2, '0')}</span>
               <h3 style={{ fontSize: 14.5, fontWeight: 600, marginBottom: 5 }}>{step.title}</h3>
               <p style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--steel)' }}>{step.body}</p>
+              </div>
             </li>
           ))}
         </ol>

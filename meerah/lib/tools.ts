@@ -1,6 +1,10 @@
 /**
  * The tool catalogue — names, descriptions and grouping.
  *
+ * Eleven tools. App Shelf used to be a twelfth: it generated nothing, it was
+ * upstream's page rather than ours, and a voting form sitting in a row of things
+ * that make videos taught people the wrong thing about what this product is.
+ *
  * Deliberately free of any `import` from the studio package. The header renders
  * this list on every signed-in page, and pulling a studio component in here
  * would drag several megabytes of generation code onto pages that never
@@ -15,7 +19,7 @@ export interface ToolInfo {
   blurb: string;
   group: ToolGroup;
   /** Which price applies. Drives the Quality column of the nav menu. */
-  kind: 'video' | 'image' | 'lipsync' | 'upscale' | 'audio' | 'none';
+  kind: 'video' | 'image' | 'lipsync' | 'upscale' | 'audio';
 }
 
 export type ToolGroup = 'Video' | 'Image' | 'People' | 'Selling' | 'More';
@@ -48,10 +52,34 @@ export const TOOLS: ToolInfo[] = [
     blurb: 'Advert-ready video for Instagram and TikTok' },
   { id: 'soundtrack', label: 'SoundTrack',   group: 'Selling', kind: 'audio',
     blurb: 'Background music and voiceover for your videos' },
-
-  { id: 'appshelf',   label: 'App Shelf',    group: 'More',    kind: 'none',
-    blurb: 'Vote on what we build next' },
 ];
+
+/** A place in the product that is not a tool. */
+export interface DestinationInfo {
+  href: string;
+  label: string;
+  blurb: string;
+}
+
+/**
+ * Pages the nav should reach that do not generate anything.
+ *
+ * These lived only inside the account dropdown, which is where people look for
+ * sign-out — not for their saved characters. Removing App Shelf freed the More
+ * group, and this is a better use of it than four groups would have been.
+ */
+export const DESTINATIONS: Partial<Record<ToolGroup, DestinationInfo[]>> = {
+  More: [
+    { href: '/saved',    label: 'Saved',        blurb: 'Characters, voices and brand kits you keep' },
+    { href: '/calendar', label: 'Post Planner', blurb: 'Plan the week once and the posts make themselves' },
+    { href: '/pricing',  label: 'Prices',       blurb: 'What every quality costs, in Naira' },
+  ],
+};
+
+/** Where this tool's example stills live. Three per tool, seeded by id. */
+export function exampleImage(toolId: string, n: number): string {
+  return `/examples/${toolId}-${n}.jpg`;
+}
 
 export function toolById(id: string): ToolInfo | undefined {
   return TOOLS.find((t) => t.id === id);

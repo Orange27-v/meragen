@@ -5,9 +5,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { ComponentType } from 'react';
 import type { StudioProps } from '@meerah/studio';
+import { setShowcase } from '@meerah/studio';
 import { api, type Tier } from '@/lib/api';
 import { useSession } from '@/lib/useSession';
 import { TOOLS, toolById } from '@/lib/tools';
+import { GUIDES } from '@/lib/guides';
 import DashboardShell from '@/components/DashboardShell';
 import HowItWorks, { useGuideOnFirstVisit } from '@/components/studio/HowItWorks';
 
@@ -27,6 +29,25 @@ type StudioExports = typeof import('@meerah/studio');
 type StudioName = {
   [K in keyof StudioExports]: StudioExports[K] extends ComponentType<StudioProps> ? K : never;
 }[keyof StudioExports];
+
+/**
+ * Hand the studio package the tool copy its empty state renders.
+ *
+ * Done at module scope, before any studio mounts, so the showcase is never
+ * briefly blank. The studios cannot import from `@/lib` — they are a separate
+ * package — and duplicating the copy there would give customer-facing words two
+ * owners, which is how they drift.
+ */
+setShowcase(
+  Object.fromEntries(
+    TOOLS.map((tool) => [tool.id, {
+      headline: GUIDES[tool.id]?.headline ?? tool.label,
+      tagline: GUIDES[tool.id]?.tagline ?? tool.blurb,
+      examples: GUIDES[tool.id]?.examples ?? [],
+      kind: tool.kind,
+    }]),
+  ),
+);
 
 function studio(name: StudioName) {
   return dynamic(() => import('@meerah/studio').then((m) => m[name]), { ssr: false, loading: Loading });
@@ -50,7 +71,6 @@ const COMPONENTS: Record<string, ComponentType<StudioProps>> = {
   starmaker:  studio('AiInfluencerStudio'),
   salesreel:  studio('MarketingStudio'),
   soundtrack: studio('AudioStudio'),
-  appshelf:   studio('AppsStudio'),
 };
 
 export default function StudioHost({ toolId }: { toolId: string }) {
@@ -95,6 +115,15 @@ export default function StudioHost({ toolId }: { toolId: string }) {
   }, []);
 
   useEffect(() => { if (token) loadHistory(); }, [token, loadHistory]);
+
+  // The showcase sits inside the studio package, which cannot reach this state
+  // directly. It asks by event, the same way the cost meter asks for the top-up
+  // sheet.
+  useEffect(() => {
+    const show = () => setGuideOpen(true);
+    window.addEventListener('meerah:show-guide', show);
+    return () => window.removeEventListener('meerah:show-guide', show);
+  }, []);
 
   useEffect(() => {
     void api.pricing().then(({ tiers: found }) => setTiers(found)).catch(() => {});

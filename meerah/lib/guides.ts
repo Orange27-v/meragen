@@ -27,6 +27,15 @@ export interface Guide {
   tips: string[];
   /** What the settings panel on the left holds, for tools that have one. */
   panel?: string;
+  /**
+   * Three things this tool is actually used to make.
+   *
+   * The empty work area used to be a headline on bare navy, which told a
+   * first-time user nothing about the output they were about to pay for. Each
+   * caption names a real job someone in this market has; the still beside it is
+   * a placeholder until we have consented customer work to show.
+   */
+  examples: string[];
 }
 
 export const GUIDES: Record<string, Guide> = {
@@ -54,6 +63,11 @@ export const GUIDES: Record<string, Guide> = {
       'One clear action works better than three competing ones.',
     ],
     panel: 'Your prompt, the source photo, quality, aspect ratio and length — with the price updating as you change them.',
+    examples: [
+      'A jollof packshot that pushes in slowly',
+      'A market stall coming to life at dusk',
+      'A founder introducing the week ahead',
+    ],
   },
 
   vibereel: {
@@ -75,6 +89,11 @@ export const GUIDES: Record<string, Guide> = {
       'Small movements look real; large ones tend to distort.',
     ],
     panel: 'The photo you are animating, the motion note, and the quality and length of the clip.',
+    examples: [
+      'A still of a dress, now moving in wind',
+      'A plate of food with rising steam',
+      'A shopfront at golden hour',
+    ],
   },
 
   shotdirect: {
@@ -97,6 +116,11 @@ export const GUIDES: Record<string, Guide> = {
       'Keep each shot to one idea; cut between them rather than cramming.',
     ],
     panel: 'The scene description, the shot list, and the camera move attached to whichever shot is selected.',
+    examples: [
+      'A wide establishing shot of the street',
+      'A close on hands wrapping the product',
+      'An over-the-shoulder at the counter',
+    ],
   },
 
   snipreel: {
@@ -118,6 +142,11 @@ export const GUIDES: Record<string, Guide> = {
       'Check the suggested clips before posting — you pick the final ones.',
     ],
     panel: 'The source video, how long the clips should be, and the aspect ratio you are cutting to.',
+    examples: [
+      'A forty-minute sermon cut to ninety seconds',
+      'The one good minute of a two-hour stream',
+      'A podcast answer that stands alone',
+    ],
   },
 
   pixcraft: {
@@ -141,6 +170,11 @@ export const GUIDES: Record<string, Guide> = {
       'Name the lighting: "warm evening light" changes the result more than most words.',
     ],
     panel: 'Your description, any reference picture, how many to make, the shape of the image, and the running total.',
+    examples: [
+      'A packshot on white for a listing',
+      'A Saturday sale flyer in brand colours',
+      'A thumbnail built to be clicked',
+    ],
   },
 
   patchup: {
@@ -163,6 +197,11 @@ export const GUIDES: Record<string, Guide> = {
       'Splitting into layers lets you move the subject without touching the background.',
     ],
     panel: 'The layer list, the selection tools, and the description of the change you are making.',
+    examples: [
+      'A background swapped behind a product',
+      'A cluttered shelf, now clean',
+      'A subject lifted off its layer',
+    ],
   },
 
   talksync: {
@@ -185,6 +224,11 @@ export const GUIDES: Record<string, Guide> = {
       'Keep the script to what fits comfortably in the clip length.',
     ],
     panel: 'The face you uploaded, the audio or script, and the quality of the finished clip.',
+    examples: [
+      'A face reading a script in Pidgin',
+      'A presenter announcing new stock',
+      'A spokesperson available at midnight',
+    ],
   },
 
   bodydouble: {
@@ -206,6 +250,11 @@ export const GUIDES: Record<string, Guide> = {
       'Describe the clothing plainly: fabric, colour, fit.',
     ],
     panel: 'The source footage, the description of the change, and the output quality.',
+    examples: [
+      'The same model in a second outfit',
+      'One shoot, a whole rail of clothes',
+      'A face kept, a setting changed',
+    ],
   },
 
   starmaker: {
@@ -228,6 +277,11 @@ export const GUIDES: Record<string, Guide> = {
       'Fewer, stronger features hold up better across many pictures than a long list.',
     ],
     panel: 'The character\'s features, your saved characters, and the pose or scene you are placing them in.',
+    examples: [
+      'A character built once and saved',
+      'The same face across a week of posts',
+      'A brand person who never reshoots',
+    ],
   },
 
   salesreel: {
@@ -250,6 +304,11 @@ export const GUIDES: Record<string, Guide> = {
       'Vertical (9:16) fills the screen on both apps.',
     ],
     panel: 'The product photo, the advert message, the aspect ratio, and the quality you are paying for.',
+    examples: [
+      'A vertical advert for a phone case',
+      'Fifteen seconds that lead with the product',
+      'Three versions to test against each other',
+    ],
   },
 
   soundtrack: {
@@ -273,23 +332,11 @@ export const GUIDES: Record<string, Guide> = {
       'Keep a voiceover to what fits the length of the video it sits under.',
     ],
     panel: 'The music or voice choice, your description or script, the length, and the price for it.',
+    examples: [
+      'Slow Afrobeats under a product reel',
+      'A voiceover reading this week\'s offer',
+      'A bed of light percussion, hopeful',
+    ],
   },
 
-  appshelf: {
-    headline: 'Tell us what to build next',
-    tagline: 'Vote on the tools you actually want. Nothing is charged here.',
-    about:
-      'App Shelf is the one page that does not generate anything. It lists the tools being considered next, and ' +
-      'you vote for the ones you would use. The most requested get built first. Nothing here costs a credit, and ' +
-      'nothing here is a commitment — it is the shortest route between what you need and what we build.',
-    steps: [
-      { title: 'Read the shelf', body: 'Each entry says what the tool would do and who it is for.' },
-      { title: 'Vote for what you need', body: 'Your votes are counted against your account, so one person cannot stack them.' },
-      { title: 'Watch it arrive', body: 'The most requested tool becomes the next one built.' },
-    ],
-    needs: 'Just your votes. Nothing is charged.',
-    takes: 'A moment.',
-    tips: ['The most requested tools get built first.'],
-    panel: 'The categories on the shelf, with a count each, and the running list of everything you have voted for.',
-  },
 };

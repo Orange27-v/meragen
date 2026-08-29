@@ -1,8 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { api, ApiError, type BrandAsset, type BrandAssetType } from '@/lib/api';
 import { useSession } from '@/lib/useSession';
+import { exampleImage } from '@/lib/tools';
 import DashboardShell from '@/components/DashboardShell';
 
 /**
@@ -14,11 +16,29 @@ import DashboardShell from '@/components/DashboardShell';
  * constantly sits first.
  */
 
-const KINDS: Array<{ id: BrandAssetType | 'all'; label: string; empty: string }> = [
-  { id: 'all',           label: 'Everything',  empty: 'Nothing saved yet.' },
-  { id: 'character',     label: 'Characters',  empty: 'Save a face from any result and reuse it in every video.' },
-  { id: 'voice_profile', label: 'Voices',      empty: 'Your cloned voices will live here once MyVoice is ready.' },
-  { id: 'template',      label: 'Brand kits',  empty: 'Save your colours, logo and fonts so every advert matches.' },
+/**
+ * The tabs, and what each says when it holds nothing.
+ *
+ * An empty tab used to be one line of grey text in a card — the moment a
+ * customer is least sure what this page is for is the moment it explained
+ * least. Each now shows the kind of thing that belongs here, borrowed from the
+ * tool that makes it, and points at that tool.
+ */
+const KINDS: Array<{
+  id: BrandAssetType | 'all';
+  label: string;
+  empty: string;
+  /** The tool whose stills illustrate this tab, and where its Make button goes. */
+  from?: { tool: string; label: string };
+}> = [
+  { id: 'all',           label: 'Everything',  empty: 'Nothing saved yet. Anything you keep from a result lands here.',
+    from: { tool: 'starmaker',  label: 'Open Star Maker' } },
+  { id: 'character',     label: 'Characters',  empty: 'Save a face from any result and reuse it in every video, so every post shows the same person.',
+    from: { tool: 'starmaker',  label: 'Build a character' } },
+  { id: 'voice_profile', label: 'Voices',      empty: 'Your cloned voices will live here once MyVoice is ready. Until then, SoundTrack makes the voiceover.',
+    from: { tool: 'soundtrack', label: 'Open SoundTrack' } },
+  { id: 'template',      label: 'Brand kits',  empty: 'Save your colours, logo and fonts so every advert matches without you setting them again.',
+    from: { tool: 'salesreel',  label: 'Open Sales Reel' } },
 ];
 
 /**
@@ -101,7 +121,7 @@ export default function SavedPage() {
         {loading ? (
           <p className="muted">Loading…</p>
         ) : items.length === 0 ? (
-          <div className="card"><p className="muted">{active.empty}</p></div>
+          <EmptyTab kind={active} />
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: '1rem' }}>
             {items.map((asset) => (
@@ -143,3 +163,38 @@ const linkButton = {
   background: 'none', border: 0, padding: 0, font: 'inherit', fontSize: '.8rem',
   color: 'var(--muted)', cursor: 'pointer', textDecoration: 'underline',
 } as const;
+
+/**
+ * A tab with nothing in it — an invitation rather than a dead end.
+ *
+ * The stills are the same placeholder set the studios use, so there is one
+ * folder of images to replace when we have real customer work.
+ */
+function EmptyTab({ kind }: { kind: (typeof KINDS)[number] }) {
+  return (
+    <div className="card" style={{ padding: 'var(--card-pad)' }}>
+      <p style={{ fontSize: 'var(--text-body)', maxWidth: '46ch', lineHeight: 1.55 }}>{kind.empty}</p>
+
+      {kind.from && (
+        <>
+          <div style={{
+            display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+            gap: '.6rem', margin: '1.25rem 0 1.1rem',
+          }}>
+            {[1, 2, 3].map((n) => (
+              <img key={n} src={exampleImage(kind.from!.tool, n)} alt="" aria-hidden
+                width={640} height={360} loading="lazy" decoding="async"
+                style={{
+                  width: '100%', aspectRatio: '16 / 9', objectFit: 'cover', display: 'block',
+                  borderRadius: 'var(--radius)', border: '1px solid var(--line-inner)',
+                }} />
+            ))}
+          </div>
+          <Link href={`/create/${kind.from.tool}`} className="btn btn-primary">
+            {kind.from.label}
+          </Link>
+        </>
+      )}
+    </div>
+  );
+}

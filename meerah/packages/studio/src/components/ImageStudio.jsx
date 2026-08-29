@@ -24,6 +24,7 @@ import {
   getI2IModelById,
 } from "../models.js";
 import { SettingsRail, RailSection } from "./rail/SettingsRail";
+import ToolShowcase from "./rail/ToolShowcase";
 import { QualityPicker, useQualityTiers } from "./rail/QualityPicker";
 import { CostMeter } from "./rail/CostMeter";
 import {
@@ -1468,19 +1469,7 @@ export default function ImageStudio({
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full animate-fade-in-up transition-all duration-700 min-h-[50vh]">
-            {/* Overlapping floating cards */}
-            <div className="flex items-center justify-center gap-1.5 md:gap-3 mb-10 select-none scale-90 sm:scale-100">
-            </div>
-
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-center px-4 flex flex-col items-center">
-              <span className="text-[var(--fog)] text-sm font-medium tracking-wide mb-1">Start creating</span>
-              <span className="text-[var(--chalk)] font-semibold text-2xl sm:text-4xl sm:mt-1 tracking-tight">PixCraft</span>
-            </h1>
-            <p className="text-[var(--fog)] text-xs sm:text-sm font-medium tracking-wide text-center max-w-lg leading-relaxed px-4">
-              Describe a scene, character, mood, or style — and watch it come to life
-            </p>
-          </div>
+          <ToolShowcase toolId="pixcraft" />
         )}
       </div>
 

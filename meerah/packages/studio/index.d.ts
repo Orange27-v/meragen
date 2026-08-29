@@ -44,10 +44,19 @@ export declare const AudioStudio: ComponentType<StudioProps>;
 export declare const MarketingStudio: ComponentType<StudioProps>;
 export declare const AiInfluencerStudio: ComponentType<StudioProps>;
 export declare const LayersStudio: ComponentType<StudioProps>;
-export declare const AppsStudio: ComponentType<StudioProps>;
 
 export declare function getUserBalance(apiKey: string): Promise<{ balance: number }>;
 export declare function getHistory(
   apiKey: string,
   options?: { cursor?: string; limit?: number },
 ): Promise<{ items: unknown[]; cursor: string | null }>;
+
+/** Tool copy the studios' empty state renders. Registered once by the shell. */
+export interface ShowcaseEntry {
+  headline: string;
+  tagline: string;
+  examples: string[];
+  kind?: string;
+}
+export declare function setShowcase(data: Record<string, ShowcaseEntry>): void;
+export declare const ToolShowcase: ComponentType<{ toolId: string; compact?: boolean }>;
