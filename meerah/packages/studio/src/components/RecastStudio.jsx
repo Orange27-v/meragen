@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { SettingsRail, RailSection } from "./rail/SettingsRail";
+import { QualityPicker, useQualityTiers } from "./rail/QualityPicker";
+import { CostMeter } from "./rail/CostMeter";
 import toast, { Toaster } from "react-hot-toast";
-import { processRecast, uploadFile } from "../muapi.js";
+import { processRecast, uploadFile, getUserBalance } from "../muapi.js";
 import { formatErrorMessage } from "../utils/formatError.js";
 import { scopedPersistKey, migrateLegacyPersistKey } from "../persistKey.js";
 import MobileGenerationActions, {
@@ -99,7 +102,7 @@ function MediaPickerButton({
 
       {/* Uploading indicator */}
       {uploadState === UPLOAD_STATE.UPLOADING && (
-        <div className="flex flex-col items-center justify-center w-full h-full absolute inset-0 bg-[#ffffff] z-20 backdrop-blur-[2px]">
+        <div className="flex flex-col items-center justify-center w-full h-full absolute inset-0 bg-[var(--veil)] z-20 backdrop-blur-[2px]">
           <svg className="w-8 h-8 -rotate-90">
             <circle
               cx="16"
@@ -108,7 +111,7 @@ function MediaPickerButton({
               stroke="currentColor"
               strokeWidth="2"
               fill="transparent"
-              className="text-[#d4d4d8]"
+              className="text-[var(--ash)]"
             />
             <circle
               cx="16"
@@ -195,7 +198,7 @@ function AssetsDropdown({
     >
       <PromptPopoverHeader className="mb-0">Asset Library</PromptPopoverHeader>
       {/* Tabs */}
-      <div className="flex border-b border-[#ececee] pb-1">
+      <div className="flex border-b border-[var(--line)] pb-1">
         {["videos", "images", "results"].map((tab) => (
           <button
             key={tab}
@@ -203,8 +206,8 @@ function AssetsDropdown({
             onClick={() => setActiveTab(tab)}
             className={`flex-1 text-center py-1 text-xs font-bold capitalize transition-colors ${
               activeTab === tab
-                ? "text-[#09090b] border-b border-[#09090b]"
-                : "text-[#71717a] hover:text-[#3f3f46]"
+                ? "text-[var(--chalk)] border-b border-[var(--line-hi)]"
+                : "text-[var(--fog)] hover:text-[var(--iron)]"
             }`}
           >
             {tab}
@@ -215,7 +218,7 @@ function AssetsDropdown({
       {/* Items list */}
       <div className="overflow-y-auto custom-scrollbar flex-1 flex flex-col gap-1.5 min-h-[180px] max-h-60">
         {items.length === 0 ? (
-          <div className="flex flex-col items-center justify-center flex-1 py-10 text-xs text-[#a1a1aa]">
+          <div className="flex flex-col items-center justify-center flex-1 py-10 text-xs text-[var(--ash)]">
             No assets found
           </div>
         ) : (
@@ -231,10 +234,10 @@ function AssetsDropdown({
                   onSelectResultAsVideo(item.url, item.name);
                 }
               }}
-              className="flex items-center justify-between p-2 rounded-xl bg-[#fafafa] border border-[#ececee]/[0.04] hover:bg-[#fafafa] hover:border-[#ececee] transition-all gap-2 group/item cursor-pointer"
+              className="flex items-center justify-between p-2 rounded-xl bg-[var(--sunk)] border border-[var(--line)]/[0.04] hover:bg-[var(--sunk)] hover:border-[var(--line)] transition-all gap-2 group/item cursor-pointer"
             >
               {/* Media Preview Thumbnail */}
-              <div className="w-10 h-10 rounded-lg overflow-hidden bg-[#fafafa] flex-shrink-0 relative">
+              <div className="w-10 h-10 rounded-lg overflow-hidden bg-[var(--sunk)] flex-shrink-0 relative">
                 {activeTab === "images" ? (
                   <img
                     src={item.url}
@@ -258,7 +261,7 @@ function AssetsDropdown({
                     e.stopPropagation();
                     setFullscreenUrl(item.url);
                   }}
-                  className="absolute inset-0 bg-[#ffffff] opacity-0 group-hover/item:opacity-100 flex items-center justify-center transition-opacity text-[#09090b] hover:text-[#09090b]"
+                  className="absolute inset-0 bg-[var(--veil)] opacity-0 group-hover/item:opacity-100 flex items-center justify-center transition-opacity text-[var(--chalk)] hover:text-[var(--chalk)]"
                 >
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <circle cx="11" cy="11" r="8" />
@@ -271,10 +274,10 @@ function AssetsDropdown({
 
               {/* Info */}
               <div className="flex-1 min-w-0 flex flex-col">
-                <span className="text-xs text-[#09090b]/95 font-semibold truncate" title={item.name}>
+                <span className="text-xs text-[color-mix(in_srgb,var(--chalk)_95%,transparent)] font-semibold truncate" title={item.name}>
                   {item.name}
                 </span>
-                <span className="text-[9px] text-[#71717a] truncate mt-0.5">
+                <span className="text-[9px] text-[var(--fog)] truncate mt-0.5">
                   {new Date(item.timestamp || Date.now()).toLocaleDateString()}
                 </span>
               </div>
@@ -283,7 +286,7 @@ function AssetsDropdown({
               <div className="flex items-center gap-1">
                 <button
                   type="button"
-                  className="text-xs text-[#ffffff] font-black px-2.5 py-1 bg-[#09090b] rounded-md hover:bg-[#09090b]/90 transition-colors"
+                  className="text-xs text-[var(--chalk)] font-black px-2.5 py-1 bg-[var(--action)] rounded-md hover:bg-[color-mix(in_srgb,var(--action)_90%,transparent)] transition-colors"
                 >
                   Use
                 </button>
@@ -294,7 +297,7 @@ function AssetsDropdown({
                     e.stopPropagation();
                     onDeleteAsset(activeTab, item.url);
                   }}
-                  className="p-1.5 text-[#71717a] hover:text-red-500 rounded hover:bg-[#fafafa] transition-colors"
+                  className="p-1.5 text-[var(--fog)] hover:text-red-500 rounded hover:bg-[var(--sunk)] transition-colors"
                 >
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <polyline points="3 6 5 6 21 6" />
@@ -371,7 +374,7 @@ function Dropdown({
 // SVG icons
 // ---------------------------------------------------------------------------
 const VideoIcon = ({
-  className = "text-[#71717a] group-hover:text-primary transition-colors",
+  className = "text-[var(--fog)] group-hover:text-primary transition-colors",
 }) => (
   <svg
     width="16"
@@ -388,7 +391,7 @@ const VideoIcon = ({
 );
 
 const ImageIcon = ({
-  className = "text-[#71717a] group-hover:text-primary transition-colors",
+  className = "text-[var(--fog)] group-hover:text-primary transition-colors",
 }) => (
   <svg
     width="16"
@@ -489,6 +492,10 @@ export default function RecastStudio({
   });
 
   // ── Generation / UI state ─────────────────────────────────────────────────
+  // Which quality is chosen, and what the account has to spend — both feed the
+  // cost meter at the foot of the rail.
+  const [selectedTierId, setSelectedTierId] = useState("draft");
+  const [creditBalance, setCreditBalance] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generateError, setGenerateError] = useState(null);
   const [fullscreenUrl, setFullscreenUrl] = useState(null);
@@ -782,132 +789,45 @@ export default function RecastStudio({
   // ── Dropdown item lists ─────────────────────────────────────────────────────
   const aspectDropdownItems = aspectOptions.map((r) => ({ id: r, name: r }));
 
-  // ── Render ────────────────────────────────────────────────────────────────
-  return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-app-bg relative overflow-hidden">
+  const qualityTiers = useQualityTiers("video");
+  const selectedTier = qualityTiers.find((t) => t.tierId === selectedTierId) || null;
 
-      {/* ── CENTRAL GALLERY AREA ── */}
-      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-40 lg:pb-32 px-2">
-        {history.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
-            {history.map((entry, idx) => (
-              <div
-                key={entry.id || idx}
-                className="relative group rounded-2xl overflow-hidden border border-[#ececee] bg-[#f4f4f5] shadow-xl hover:border-primary/50 transition-all duration-300 flex flex-col cursor-pointer"
-                onClick={() => setFullscreenUrl(entry.url)}
-              >
-                <video
-                  src={entry.url}
-                  className="w-full aspect-video object-cover bg-[#f4f4f5] hover:opacity-80 transition-opacity"
-                  controls={false}
-                  loop
-                  muted
-                  playsInline
-                  onMouseOver={(e) => e.target.play()}
-                  onMouseOut={(e) => {
-                    e.target.pause();
-                    e.target.currentTime = 0;
-                  }}
-                />
+  // A tier names an exact model, and the server only honours the tier price
+  // when that exact id is submitted.
+  const handleTierSelect = useCallback((tier) => {
+    setSelectedTierId(tier.tierId);
+    setSelectedModelId(tier.modelId);
+  }, []);
 
-                {/* Overlay actions */}
-                <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <GenerationCopyButtons
-                    prompt={entry.prompt}
-                    onCopyError={onGenerationError}
-                  />
-                  <button
-                    type="button"
-                    title="Download"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      downloadFile(entry.url, `bodyswap-${entry.id || idx}.mp4`);
-                    }}
-                    className="p-2 bg-[#ffffff] backdrop-blur-md rounded-full text-[#09090b] hover:bg-primary hover:text-[#09090b] transition-all border border-[#ececee]"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
-                    </svg>
-                  </button>
-                  <button
-                    type="button"
-                    title="Delete"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (confirm("Are you sure you want to delete this generated item?")) {
-                        setInternalHistory(prev => prev.filter((_, i) => i !== idx));
-                      }
-                    }}
-                    className="p-2 bg-[#ffffff] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[#09090b] transition-all border border-[#ececee]"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <polyline points="3 6 5 6 21 6" />
-                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                      <line x1="10" y1="11" x2="10" y2="17" />
-                      <line x1="14" y1="11" x2="14" y2="17" />
-                    </svg>
-                  </button>
-                </div>
-                <MobileGenerationActions
-                  prompt={entry.prompt}
-                  onCopyError={onGenerationError}
-                  actions={[
-                    {
-                      kind: "download",
-                      label: "Download",
-                      onSelect: () =>
-                        downloadFile(entry.url, `bodyswap-${entry.id || idx}.mp4`),
-                    },
-                    {
-                      kind: "delete",
-                      label: "Delete",
-                      danger: true,
-                      onSelect: () => {
-                        if (confirm("Are you sure you want to delete this generated item?")) {
-                          setInternalHistory((prev) => prev.filter((_, i) => i !== idx));
-                        }
-                      },
-                    },
-                  ]}
-                />
+  const refreshBalance = useCallback(() => {
+    getUserBalance(apiKey).then((r) => setCreditBalance(r.balance)).catch(() => {});
+  }, [apiKey]);
 
-                {/* Details */}
-                <div className="p-3 bg-[#ffffff] backdrop-blur-sm border-t border-[#ececee] flex-1 flex flex-col justify-between gap-2">
-                  {entry.prompt && (
-                    <p className="text-[#3f3f46] text-xs line-clamp-2 leading-relaxed" title={entry.prompt}>
-                      {entry.prompt}
-                    </p>
-                  )}
-                  <div className="flex items-center justify-between flex-wrap gap-1 mt-1">
-                    <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap">
-                      Body Swap
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full animate-fade-in-up transition-all duration-700 min-h-[50vh]">
-            {/* Overlapping floating cards */}
-            <div className="flex items-center justify-center gap-1.5 md:gap-3 mb-10 select-none scale-90 sm:scale-100">
-            </div>
+  useEffect(() => { refreshBalance(); }, [refreshBalance]);
 
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-center px-4 flex flex-col items-center">
-              <span className="text-[#71717a] text-sm font-medium tracking-wide mb-1">Start creating</span>
-              <span className="text-[#09090b] font-semibold text-2xl sm:text-4xl sm:mt-1 tracking-tight">
-                Body Double
-              </span>
-            </h1>
-            <p className="text-[#71717a] text-xs sm:text-sm font-medium tracking-wide text-center max-w-lg leading-relaxed px-4">
-              Swap the character in any video dynamically by choosing a video clip and a target character image.
-            </p>
-          </div>
-        )}
-      </div>
+  // Buying credits belongs to the shell, which can show the sheet over any page.
+  const openTopUp = useCallback(() => {
+    window.dispatchEvent(new CustomEvent("meerah:buy-credits"));
+  }, []);
 
-      {/* ── BOTTOM PROMPT BAR ── */}
-      <PromptComposer>
+  // ── the settings rail ─────────────────────────────────────────────────────
+  //
+  // The same column every tool uses: what you give it, what to make, how good,
+  // then what it costs. Replaces a floating bar of unlabelled pills whose price
+  // only appeared after the money was spent.
+  const settingsRail = (
+    <SettingsRail
+      footer={
+        <CostMeter
+          tier={selectedTier}
+          balance={creditBalance}
+          busy={isGenerating}
+          onGenerate={handleGenerate}
+          onBuyCredits={openTopUp}
+        />
+      }
+    >
+      <RailSection label="Your video">
           {/* Uploads row */}
           <div className="flex items-center gap-2 px-1">
             <div className="flex items-center gap-2">
@@ -915,7 +835,7 @@ export default function RecastStudio({
               <MediaPickerButton
                 accept="video/*"
                 label="Video"
-                icon={<VideoIcon className="text-[#71717a] group-hover:text-[#09090b] transition-colors" />}
+                icon={<VideoIcon className="text-[var(--fog)] group-hover:text-[var(--chalk)] transition-colors" />}
                 onUpload={handleVideoPick}
                 onClear={() => {
                   setVideoUrl(null);
@@ -933,7 +853,7 @@ export default function RecastStudio({
               <MediaPickerButton
                 accept="image/*"
                 label="Character image"
-                icon={<ImageIcon className="text-[#71717a] group-hover:text-[#09090b] transition-colors" />}
+                icon={<ImageIcon className="text-[var(--fog)] group-hover:text-[var(--chalk)] transition-colors" />}
                 onUpload={handleImageUpload}
                 onClear={() => {
                   setImageUrl(null);
@@ -960,41 +880,14 @@ export default function RecastStudio({
           </div>
 
           {/* Bottom controls row */}
-          <PromptFooter>
-            <PromptControls>
-              {/* Model selector */}
-              <div className="relative">
-                <button
-                  ref={modelBtnRef}
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setOpenDropdown(openDropdown === "model" ? null : "model");
-                  }}
-                  className={promptControlClassName({
-                    active: openDropdown === "model",
-                  })}
-                >
-                  <div className="w-3.5 h-3.5 bg-[#09090b] rounded-sm flex items-center justify-center">
-                    <span className="text-[9px] font-black text-[#09090b]">R</span>
-                  </div>
-                  <span className={PROMPT_CONTROL_LABEL_CLASS}>
-                    {selectedModel?.name ?? "Select model"}
-                  </span>
-                  <PromptChevronIcon />
-                </button>
-                <Dropdown
-                  isOpen={openDropdown === "model"}
-                  title="Model"
-                  items={recastModels}
-                  selectedId={selectedModelId}
-                  onSelect={handleModelSelect}
-                  onClose={() => setOpenDropdown(null)}
-                  anchorRef={modelBtnRef}
-                  className="w-80 max-w-[calc(100vw-2rem)]"
-                />
-              </div>
+      </RailSection>
 
+      <RailSection label="Quality" hint="Every price is the full cost of one video. Nothing else is added.">
+        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} />
+      </RailSection>
+
+      <RailSection label="Settings">
+            <div className="flex flex-wrap items-center gap-2">
               {/* Aspect ratio selector */}
               {showAspect && (
                 <div className="relative">
@@ -1085,12 +978,12 @@ export default function RecastStudio({
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
-                    className="text-[#52525b] group-hover:text-[#09090b] transition-colors"
+                    className="text-[var(--steel)] group-hover:text-[var(--chalk)] transition-colors"
                   >
                     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
                     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
                   </svg>
-                  <span className="text-xs font-semibold text-[#3f3f46] group-hover:text-[#09090b] transition-colors">
+                  <span className="text-xs font-semibold text-[var(--iron)] group-hover:text-[var(--chalk)] transition-colors">
                     Library
                   </span>
                   <PromptChevronIcon />
@@ -1125,34 +1018,152 @@ export default function RecastStudio({
                   />
                 )}
               </div>
-            </PromptControls>
+            </div>
+      </RailSection>
+    </SettingsRail>
+  );
 
-            {/* Generate button */}
-            <PromptAction
-              onClick={handleGenerate}
-              disabled={isGenerating}
-            >
-              {isGenerating ? (
-                <>
-                  <span className="animate-spin inline-block text-[#09090b]">◌</span>{" "}
-                  Swapping...
-                </>
-              ) : (
-                <span>Swap Body</span>
-              )}
-            </PromptAction>
-          </PromptFooter>
-      </PromptComposer>
+  // ── Render ────────────────────────────────────────────────────────────────
+  return (
+    <div className="w-full h-full flex flex-col lg:flex-row bg-app-bg relative overflow-hidden">
+      {/* ── LEFT: SETTINGS RAIL ── */}
+      {settingsRail}
+
+      {/* ── RIGHT: THE WORK ── */}
+      <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
+
+      {/* ── CENTRAL GALLERY AREA ── */}
+      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-8 px-2">
+        {history.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
+            {history.map((entry, idx) => (
+              <div
+                key={entry.id || idx}
+                className="relative group rounded-2xl overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-primary/50 transition-all duration-300 flex flex-col cursor-pointer"
+                onClick={() => setFullscreenUrl(entry.url)}
+              >
+                <video
+                  src={entry.url}
+                  className="w-full aspect-video object-cover bg-[var(--night)] hover:opacity-80 transition-opacity"
+                  controls={false}
+                  loop
+                  muted
+                  playsInline
+                  onMouseOver={(e) => e.target.play()}
+                  onMouseOut={(e) => {
+                    e.target.pause();
+                    e.target.currentTime = 0;
+                  }}
+                />
+
+                {/* Overlay actions */}
+                <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <GenerationCopyButtons
+                    prompt={entry.prompt}
+                    onCopyError={onGenerationError}
+                  />
+                  <button
+                    type="button"
+                    title="Download"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      downloadFile(entry.url, `bodyswap-${entry.id || idx}.mp4`);
+                    }}
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-primary hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    title="Delete"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (confirm("Are you sure you want to delete this generated item?")) {
+                        setInternalHistory(prev => prev.filter((_, i) => i !== idx));
+                      }
+                    }}
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                      <line x1="10" y1="11" x2="10" y2="17" />
+                      <line x1="14" y1="11" x2="14" y2="17" />
+                    </svg>
+                  </button>
+                </div>
+                <MobileGenerationActions
+                  prompt={entry.prompt}
+                  onCopyError={onGenerationError}
+                  actions={[
+                    {
+                      kind: "download",
+                      label: "Download",
+                      onSelect: () =>
+                        downloadFile(entry.url, `bodyswap-${entry.id || idx}.mp4`),
+                    },
+                    {
+                      kind: "delete",
+                      label: "Delete",
+                      danger: true,
+                      onSelect: () => {
+                        if (confirm("Are you sure you want to delete this generated item?")) {
+                          setInternalHistory((prev) => prev.filter((_, i) => i !== idx));
+                        }
+                      },
+                    },
+                  ]}
+                />
+
+                {/* Details */}
+                <div className="p-3 bg-[var(--surface)] backdrop-blur-sm border-t border-[var(--line)] flex-1 flex flex-col justify-between gap-2">
+                  {entry.prompt && (
+                    <p className="text-[var(--iron)] text-xs line-clamp-2 leading-relaxed" title={entry.prompt}>
+                      {entry.prompt}
+                    </p>
+                  )}
+                  <div className="flex items-center justify-between flex-wrap gap-1 mt-1">
+                    <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap">
+                      Body Swap
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full animate-fade-in-up transition-all duration-700 min-h-[50vh]">
+            {/* Overlapping floating cards */}
+            <div className="flex items-center justify-center gap-1.5 md:gap-3 mb-10 select-none scale-90 sm:scale-100">
+            </div>
+
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-center px-4 flex flex-col items-center">
+              <span className="text-[var(--fog)] text-sm font-medium tracking-wide mb-1">Start creating</span>
+              <span className="text-[var(--chalk)] font-semibold text-2xl sm:text-4xl sm:mt-1 tracking-tight">
+                Body Double
+              </span>
+            </h1>
+            <p className="text-[var(--fog)] text-xs sm:text-sm font-medium tracking-wide text-center max-w-lg leading-relaxed px-4">
+              Swap the character in any video dynamically by choosing a video clip and a target character image.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* ── BOTTOM PROMPT BAR ── */}
+      </div>
 
       {/* ── FULLSCREEN MEDIA MODAL ── */}
       {fullscreenUrl && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#ffffff] backdrop-blur-sm animate-fade-in"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--scrim)] backdrop-blur-sm animate-fade-in"
           onClick={() => setFullscreenUrl(null)}
         >
           <button
             type="button"
-            className="absolute top-6 right-6 p-3 bg-[#f4f4f5] hover:bg-[#ececee] rounded-full text-[#09090b] transition-colors border border-[#ececee]"
+            className="absolute top-6 right-6 p-3 bg-[var(--night)] hover:bg-[var(--slab)] rounded-full text-[var(--chalk)] transition-colors border border-[var(--line)]"
             onClick={(e) => {
               e.stopPropagation();
               setFullscreenUrl(null);
@@ -1188,7 +1199,7 @@ export default function RecastStudio({
           })()}
         </div>
       )}
-      <Toaster position="top-right" containerStyle={{ zIndex: 99999 }} toastOptions={{ duration: 5000, style: { background: '#18181b', color: '#ffffff', border: '1px solid rgba(255,255,255,0.15)', fontSize: '13px', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.6)', maxWidth: '440px', wordBreak: 'break-word', whiteSpace: 'pre-wrap', padding: '12px 16px' } }} />
+      <Toaster position="top-right" containerStyle={{ zIndex: 99999 }} toastOptions={{ duration: 5000, style: { background: 'var(--slab-hi)', color: 'var(--surface)', border: '1px solid rgba(255,255,255,0.15)', fontSize: '13px', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.6)', maxWidth: '440px', wordBreak: 'break-word', whiteSpace: 'pre-wrap', padding: '12px 16px' } }} />
     </div>
   );
 }

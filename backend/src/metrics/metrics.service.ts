@@ -4,6 +4,7 @@ import { GenerationStatus, CreditTransactionType } from '@prisma/client';
 import { PrismaService } from '../common/prisma.service';
 import { NAIRA_PER_CREDIT } from '../pricing/money';
 import { paystackFeeKobo } from '../pricing/infrastructure';
+import { isAdminEmail } from '../common/admins';
 
 export interface Metrics {
   windowDays: number;
@@ -61,11 +62,7 @@ export class MetricsService {
 
   /** Emails allowed to see this, from the environment only. */
   isAdminEmail(email: string): boolean {
-    const allowed = this.config.get<string>('ADMIN_EMAILS', '')
-      .split(',')
-      .map((entry) => entry.trim().toLowerCase())
-      .filter(Boolean);
-    return allowed.includes(email.trim().toLowerCase());
+    return isAdminEmail(email, this.config.get<string>('ADMIN_EMAILS', ''));
   }
 
   async collect(windowDays = 30): Promise<Metrics> {

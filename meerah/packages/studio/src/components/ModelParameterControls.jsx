@@ -7,9 +7,10 @@ import {
   PromptPopoverHeader,
   promptControlClassName,
 } from "./prompt/PromptComposer.jsx";
+import { sanitiseHelp } from "./rail/sanitise";
 
 const FIELD_CLASS =
-  "w-full rounded-lg border border-[#ececee] bg-white/[0.04] px-3 py-2 text-xs text-[#09090b] outline-none transition-colors focus:border-[#09090b]/50";
+  "w-full rounded-lg border border-[var(--line)] bg-[var(--surface)]/[0.04] px-3 py-2 text-xs text-[var(--chalk)] outline-none transition-colors focus:border-[color-mix(in_srgb,var(--line-hi)_50%,transparent)]";
 
 function createEmptyValue(schema = {}) {
   if (schema.default !== undefined) return schema.default;
@@ -30,12 +31,12 @@ function createEmptyValue(schema = {}) {
 function FieldLabel({ schema, inputKey }) {
   return (
     <div className="min-w-0">
-      <div className="text-xs font-semibold text-[#09090b]/75">
+      <div className="text-xs font-semibold text-[color-mix(in_srgb,var(--chalk)_75%,transparent)]">
         {schema.title || inputKey.replaceAll("_", " ")}
       </div>
       {schema.description && (
-        <div className="mt-0.5 text-[10px] leading-relaxed text-[#09090b]/35">
-          {schema.description}
+        <div className="mt-0.5 text-[10px] leading-relaxed text-[color-mix(in_srgb,var(--chalk)_35%,transparent)]">
+          {sanitiseHelp(schema.description)}
         </div>
       )}
     </div>
@@ -75,12 +76,12 @@ function ScalarInput({ schema, value, onChange, label }) {
         onClick={() => onChange(!value)}
         className={`relative h-6 w-11 shrink-0 rounded-full border transition-colors ${
           value
-            ? "border-[#09090b]/50 bg-[#09090b]/30"
-            : "border-[#ececee] bg-white/[0.06]"
+            ? "border-[color-mix(in_srgb,var(--line-hi)_50%,transparent)] bg-[color-mix(in_srgb,var(--action)_30%,transparent)]"
+            : "border-[var(--line)] bg-[var(--surface)]/[0.06]"
         }`}
       >
         <span
-          className={`absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
+          className={`absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-[var(--surface)] transition-transform ${
             value ? "translate-x-5" : "translate-x-0"
           }`}
         />
@@ -124,13 +125,13 @@ function ArrayInput({ schema, value, onChange, label }) {
       {items.map((item, index) => (
         <div
           key={index}
-          className="rounded-lg border border-[#ececee] bg-[#fafafa] p-2.5"
+          className="rounded-lg border border-[var(--line)] bg-[var(--sunk)] p-2.5"
         >
           {itemSchema.type === "object" ? (
             <div className="flex flex-col gap-2">
               {Object.entries(itemSchema.properties || {}).map(([key, property]) => (
                 <label key={key} className="flex flex-col gap-1">
-                  <span className="text-[10px] font-semibold text-[#09090b]/45">
+                  <span className="text-[10px] font-semibold text-[color-mix(in_srgb,var(--chalk)_45%,transparent)]">
                     {property.title || key.replaceAll("_", " ")}
                   </span>
                   <ScalarInput
@@ -167,7 +168,7 @@ function ArrayInput({ schema, value, onChange, label }) {
           type="button"
           onClick={() => onChange([...items, createEmptyValue(itemSchema)])}
           aria-label={`Add ${label}`}
-          className="rounded-lg border border-dashed border-[#ececee] px-3 py-2 text-xs font-semibold text-[#09090b]/45 hover:border-[#09090b]/30 hover:text-[#09090b]"
+          className="rounded-lg border border-dashed border-[var(--line)] px-3 py-2 text-xs font-semibold text-[color-mix(in_srgb,var(--chalk)_45%,transparent)] hover:border-[color-mix(in_srgb,var(--line-hi)_30%,transparent)] hover:text-[var(--chalk)]"
         >
           + Add
         </button>

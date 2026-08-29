@@ -3,9 +3,10 @@
  * packages/studio are written entirely in Tailwind utilities, and without it
  * they render unstyled.
  *
- * The theme is mapped onto the Awesomic tokens in app/globals.css, so the
- * fork's semantic classes (bg-app-bg, text-primary…) resolve to our palette
- * rather than its original dark one.
+ * The theme is mapped onto the tokens in app/globals.css, so the fork's
+ * semantic classes (bg-app-bg, text-primary…) resolve to our navy-and-indigo
+ * palette rather than its original one. Every entry is a var() reference, so
+ * the palette has exactly one source of truth.
  */
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -21,24 +22,38 @@ module.exports = {
       },
       colors: {
         // The fork's semantic names, repointed at our surfaces.
-        'app-bg':   '#f4f4f5',   // canvas
-        'panel-bg': '#ffffff',   // card
-        'card-bg':  '#fafafa',   // recessed
-        primary:    '#09090b',   // the system's primary is ink, not a hue
-        secondary:  '#52525b',
-        muted:      '#71717a',
+        'app-bg':   'var(--night)',      // canvas
+        'panel-bg': 'var(--slab)',       // card
+        'card-bg':  'var(--sunk)',       // recessed
+        scrim:      'var(--scrim)',      // behind a dialog
+        veil:       'var(--veil)',       // over a card while it renders
+        primary:    'var(--indigo)',     // the filled action
+        secondary:  'var(--steel)',
+        muted:      'var(--fog)',
         // Our scale, available to the fork by name.
-        obsidian: '#09090b',
-        graphite: '#18181b',
-        iron:     '#3f3f46',
-        steel:    '#52525b',
-        fog:      '#71717a',
-        ash:      '#a1a1aa',
-        mist:     '#d4d4d8',
-        cloud:    '#ececee',
-        paper:    '#f4f4f5',
-        snow:     '#ffffff',
-        ember:    '#ff5a00',
+        void:       'var(--void)',
+        sunk:       'var(--sunk)',
+        night:      'var(--night)',
+        slab:       'var(--slab)',
+        'slab-hi':  'var(--slab-hi)',
+        hair:       'var(--hair)',
+        'hair-hi':  'var(--hair-hi)',
+        chalk:      'var(--chalk)',
+        iron:       'var(--iron)',
+        steel:      'var(--steel)',
+        fog:        'var(--fog)',
+        ash:        'var(--ash)',
+        indigo:     'var(--indigo)',
+        peri:       'var(--peri)',
+        lilac:      'var(--lilac)',
+        // Legacy scale names the fork still references by name.
+        obsidian: 'var(--chalk)',
+        graphite: 'var(--paper-ink)',
+        mist:     'var(--hair-hi)',
+        cloud:    'var(--hair)',
+        paper:    'var(--night)',
+        snow:     'var(--slab)',
+        ember:    'var(--lilac)',
       },
       borderRadius: {
         tag: '12px',

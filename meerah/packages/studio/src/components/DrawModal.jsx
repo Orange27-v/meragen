@@ -66,7 +66,7 @@ export default function DrawModal({
     "#22c55e", // Green
     "#3b82f6", // Blue
     "#a855f7", // Purple
-    "#ffffff", // White
+    "var(--surface)", // White
     "#000000", // Black
   ];
 
@@ -227,7 +227,7 @@ export default function DrawModal({
       if (img) {
         bgCtx.drawImage(img, 0, 0, width, height);
       } else {
-        bgCtx.fillStyle = "#ffffff";
+        bgCtx.fillStyle = "var(--surface)";
         bgCtx.fillRect(0, 0, width, height);
       }
 
@@ -988,22 +988,22 @@ export default function DrawModal({
   const bbox = getObjectBoundingBox(selectedObj);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#ffffff] backdrop-blur-md p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--scrim)] backdrop-blur-md p-4">
       {/* Modal Box */}
-      <div className="relative w-full max-w-5xl bg-[#f4f4f5] border border-[#ececee] rounded-2xl flex flex-col shadow-[0_20px_50px_rgba(0,0,0,0.9)] overflow-hidden h-[90vh]">
+      <div className="relative w-full max-w-5xl bg-[var(--night)] border border-[var(--line)] rounded-2xl flex flex-col shadow-[0_20px_50px_rgba(0,0,0,0.9)] overflow-hidden h-[90vh]">
         {/* Header Tab Selector */}
-        <div className="flex items-center justify-between border-b border-[#ececee] p-4 shrink-0 bg-[#f4f4f5]">
-          <div className="flex items-center gap-1.5 bg-[#ffffff]/60 border border-[#ececee] p-1 rounded-full select-none">
+        <div className="flex items-center justify-between border-b border-[var(--line)] p-4 shrink-0 bg-[var(--night)]">
+          <div className="flex items-center gap-1.5 bg-[color-mix(in_srgb,var(--surface)_60%,transparent)] border border-[var(--line)] p-1 rounded-full select-none">
             {/* <button
               onClick={() => setActiveTab("sketch-to-video")}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
                 activeTab === "sketch-to-video"
-                  ? "bg-[#f4f4f5] text-[#09090b]"
-                  : "text-[#71717a] hover:text-[#3f3f46]"
+                  ? "bg-[var(--night)] text-[var(--chalk)]"
+                  : "text-[var(--fog)] hover:text-[var(--iron)]"
               }`}
             >
               Sketch to Video
-              <span className="bg-[#ff5a00] text-[#09090b] text-[8px] font-black px-1 rounded">
+              <span className="bg-[var(--indigo)] text-[var(--chalk)] text-[8px] font-black px-1 rounded">
                 NEW
               </span>
             </button>
@@ -1011,8 +1011,8 @@ export default function DrawModal({
               onClick={() => setActiveTab("draw-to-video")}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
                 activeTab === "draw-to-video"
-                  ? "bg-[#f4f4f5] text-[#09090b]"
-                  : "text-[#71717a] hover:text-[#3f3f46]"
+                  ? "bg-[var(--night)] text-[var(--chalk)]"
+                  : "text-[var(--fog)] hover:text-[var(--iron)]"
               }`}
             >
               Draw to Video
@@ -1021,8 +1021,8 @@ export default function DrawModal({
               onClick={() => setActiveTab("draw-to-edit")}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
                 activeTab === "draw-to-edit"
-                  ? "bg-[#f4f4f5] text-[#09090b]"
-                  : "text-[#71717a] hover:text-[#3f3f46]"
+                  ? "bg-[var(--night)] text-[var(--chalk)]"
+                  : "text-[var(--fog)] hover:text-[var(--iron)]"
               }`}
             >
               Draw to Edit
@@ -1032,30 +1032,30 @@ export default function DrawModal({
           {/* Close button */}
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full border border-[#ececee] flex items-center justify-center text-[#52525b] hover:text-[#09090b] hover:bg-[#fafafa] transition-all"
+            className="w-8 h-8 rounded-full border border-[var(--line)] flex items-center justify-center text-[var(--steel)] hover:text-[var(--chalk)] hover:bg-[var(--sunk)] transition-all"
           >
             ×
           </button>
         </div>
 
         {/* Workspace Body */}
-        <div className="flex-1 flex flex-col items-center justify-center p-6 overflow-y-auto custom-scrollbar relative bg-[#f4f4f5]/30">
+        <div className="flex-1 flex flex-col items-center justify-center p-6 overflow-y-auto custom-scrollbar relative bg-[color-mix(in_srgb,var(--night)_30%,transparent)]">
           {viewState === "setup" ? (
             /* Setup Card */
-            <div className="border-2 border-dashed border-[#ececee] rounded-2xl p-8 max-w-md w-full text-center flex flex-col items-center gap-6 bg-[#f4f4f5]/50">
-              <div className="w-56 h-36 rounded-xl border border-[#ececee] overflow-hidden shadow-lg select-none relative bg-[#f4f4f5]">
-                <div className="absolute bottom-2 left-2 right-2 bg-[#ffffff] backdrop-blur-md rounded-md p-1 px-2 border border-[#ececee] flex items-center gap-1">
-                  <span className="text-[9px] text-[#52525b] tracking-wider uppercase font-bold">
+            <div className="border-2 border-dashed border-[var(--line)] rounded-2xl p-8 max-w-md w-full text-center flex flex-col items-center gap-6 bg-[color-mix(in_srgb,var(--night)_50%,transparent)]">
+              <div className="w-56 h-36 rounded-xl border border-[var(--line)] overflow-hidden shadow-lg select-none relative bg-[var(--night)]">
+                <div className="absolute bottom-2 left-2 right-2 bg-[var(--surface)] backdrop-blur-md rounded-md p-1 px-2 border border-[var(--line)] flex items-center gap-1">
+                  <span className="text-[9px] text-[var(--steel)] tracking-wider uppercase font-bold">
                     Sketchpad active
                   </span>
                 </div>
               </div>
 
               <div>
-                <h2 className="text-[#09090b] font-extrabold text-lg tracking-wide mb-1.5 uppercase">
+                <h2 className="text-[var(--chalk)] font-extrabold text-lg tracking-wide mb-1.5 uppercase">
                   DRAW TO EDIT
                 </h2>
-                <p className="text-[#71717a] text-xs font-medium max-w-xs leading-relaxed mx-auto">
+                <p className="text-[var(--fog)] text-xs font-medium max-w-xs leading-relaxed mx-auto">
                   From sketch to a complete picture in a second. No prompt
                   needed.
                 </p>
@@ -1064,7 +1064,7 @@ export default function DrawModal({
               <div className="flex flex-col gap-2.5 w-full max-w-[240px]">
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="bg-white hover:bg-white/90 text-[#09090b] font-bold text-sm px-6 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md active:scale-95"
+                  className="bg-[var(--surface)] hover:bg-white/90 text-[var(--chalk)] font-bold text-sm px-6 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md active:scale-95"
                 >
                   <svg
                     width="14"
@@ -1091,7 +1091,7 @@ export default function DrawModal({
                     setBgImageUrl(null);
                     setViewState("canvas");
                   }}
-                  className="bg-[#ffffff]/80 hover:bg-[#ffffff] text-[#09090b] border border-[#ececee] font-bold text-sm px-6 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-inner"
+                  className="bg-[color-mix(in_srgb,var(--surface)_80%,transparent)] hover:bg-[var(--surface)] text-[var(--chalk)] border border-[var(--line)] font-bold text-sm px-6 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-inner"
                 >
                   <svg
                     width="14"
@@ -1118,7 +1118,7 @@ export default function DrawModal({
                 {/* Stacked Canvases Wrapper - width auto-derived from height via aspect-ratio */}
                 <div
                   ref={canvasWrapperRef}
-                  className="relative border border-[#ececee] shadow-2xl rounded-lg overflow-hidden bg-[#ffffff] select-none"
+                  className="relative border border-[var(--line)] shadow-2xl rounded-lg overflow-hidden bg-[var(--surface)] select-none"
                   style={{
                     height: "100%",
                     width: "auto",
@@ -1165,7 +1165,7 @@ export default function DrawModal({
                       return (
                         <div
                           key={imgObj.id}
-                          className={`absolute group cursor-move ${isSelected ? "ring-2 ring-[#ff5a00] ring-offset-1 ring-offset-black z-10" : ""}`}
+                          className={`absolute group cursor-move ${isSelected ? "ring-2 ring-[var(--indigo)] ring-offset-1 ring-offset-black z-10" : ""}`}
                           style={{
                             left: `${leftPct}%`,
                             top: `${topPct}%`,
@@ -1222,7 +1222,7 @@ export default function DrawModal({
                           }}
                           className={`absolute bg-transparent border-none outline-none resize-none font-bold text-left overflow-hidden select-text z-10 ${
                             isSelected
-                              ? "ring-1 ring-[#ff5a00] ring-dashed bg-[#ffffff]/25"
+                              ? "ring-1 ring-[var(--indigo)] ring-dashed bg-[color-mix(in_srgb,var(--surface)_25%,transparent)]"
                               : ""
                           }`}
                           style={{
@@ -1243,7 +1243,7 @@ export default function DrawModal({
                   {/* Unified Outline Handles Overlay for Selected Object */}
                   {activeTool === "pointer" && selectedObjectId && bbox && (
                     <div
-                      className="absolute border border-dashed border-[#ff5a00] pointer-events-auto z-20 cursor-move"
+                      className="absolute border border-dashed border-[var(--peri)] pointer-events-auto z-20 cursor-move"
                       style={{
                         left: `${(bbox.x / canvasDimensions.width) * 100}%`,
                         top: `${(bbox.y / canvasDimensions.height) * 100}%`,
@@ -1254,37 +1254,37 @@ export default function DrawModal({
                     >
                       {/* Corner handles */}
                       <div
-                        className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-white border border-[#ff5a00] cursor-nwse-resize rounded-full"
+                        className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-[var(--surface)] border border-[var(--peri)] cursor-nwse-resize rounded-full"
                         onMouseDown={(e) => handleStartResizeSelected(e, "tl")}
                       />
                       <div
-                        className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-white border border-[#ff5a00] cursor-nesw-resize rounded-full"
+                        className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-[var(--surface)] border border-[var(--peri)] cursor-nesw-resize rounded-full"
                         onMouseDown={(e) => handleStartResizeSelected(e, "tr")}
                       />
                       <div
-                        className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-white border border-[#ff5a00] cursor-nesw-resize rounded-full"
+                        className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-[var(--surface)] border border-[var(--peri)] cursor-nesw-resize rounded-full"
                         onMouseDown={(e) => handleStartResizeSelected(e, "bl")}
                       />
                       <div
-                        className="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-white border border-[#ff5a00] cursor-nwse-resize rounded-full"
+                        className="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-[var(--surface)] border border-[var(--peri)] cursor-nwse-resize rounded-full"
                         onMouseDown={(e) => handleStartResizeSelected(e, "br")}
                       />
 
                       {/* Edge handles */}
                       <div
-                        className="absolute -top-1.5 left-[calc(50%-6px)] w-3 h-3 bg-white border border-[#ff5a00] cursor-ns-resize rounded-full"
+                        className="absolute -top-1.5 left-[calc(50%-6px)] w-3 h-3 bg-[var(--surface)] border border-[var(--peri)] cursor-ns-resize rounded-full"
                         onMouseDown={(e) => handleStartResizeSelected(e, "t")}
                       />
                       <div
-                        className="absolute -bottom-1.5 left-[calc(50%-6px)] w-3 h-3 bg-white border border-[#ff5a00] cursor-ns-resize rounded-full"
+                        className="absolute -bottom-1.5 left-[calc(50%-6px)] w-3 h-3 bg-[var(--surface)] border border-[var(--peri)] cursor-ns-resize rounded-full"
                         onMouseDown={(e) => handleStartResizeSelected(e, "b")}
                       />
                       <div
-                        className="absolute top-[calc(50%-6px)] -left-1.5 w-3 h-3 bg-white border border-[#ff5a00] cursor-ew-resize rounded-full"
+                        className="absolute top-[calc(50%-6px)] -left-1.5 w-3 h-3 bg-[var(--surface)] border border-[var(--peri)] cursor-ew-resize rounded-full"
                         onMouseDown={(e) => handleStartResizeSelected(e, "l")}
                       />
                       <div
-                        className="absolute top-[calc(50%-6px)] -right-1.5 w-3 h-3 bg-white border border-[#ff5a00] cursor-ew-resize rounded-full"
+                        className="absolute top-[calc(50%-6px)] -right-1.5 w-3 h-3 bg-[var(--surface)] border border-[var(--peri)] cursor-ew-resize rounded-full"
                         onMouseDown={(e) => handleStartResizeSelected(e, "r")}
                       />
                     </div>
@@ -1294,7 +1294,7 @@ export default function DrawModal({
                   {activeTool === "pointer" && selectedObjectId && (
                     <button
                       onClick={handleRemoveSelected}
-                      className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-[#ffffff] hover:bg-[#ffffff] text-[#09090b] border border-[#ececee] px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xl z-30 transition-all pointer-events-auto select-none"
+                      className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-[var(--surface)] hover:bg-[var(--surface)] text-[var(--chalk)] border border-[var(--line)] px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xl z-30 transition-all pointer-events-auto select-none"
                     >
                       <svg
                         width="12"
@@ -1315,7 +1315,7 @@ export default function DrawModal({
               </div>
 
               {/* Centered Drawing Toolbar */}
-              <div className="mt-6 bg-[#f4f4f5]/90 backdrop-blur-md border border-[#ececee] px-4 py-2.5 rounded-2xl flex items-center gap-3 shadow-2xl z-20 select-none">
+              <div className="mt-6 bg-[color-mix(in_srgb,var(--night)_90%,transparent)] backdrop-blur-md border border-[var(--line)] px-4 py-2.5 rounded-2xl flex items-center gap-3 shadow-2xl z-20 select-none">
                 {/* Pointer tool */}
                 <button
                   onClick={() => {
@@ -1325,8 +1325,8 @@ export default function DrawModal({
                   title="Selection pointer"
                   className={`p-1.5 rounded-lg transition-all ${
                     activeTool === "pointer"
-                      ? "bg-white text-[#09090b]"
-                      : "text-[#52525b] hover:text-[#09090b]"
+                      ? "bg-[var(--surface)] text-[var(--chalk)]"
+                      : "text-[var(--steel)] hover:text-[var(--chalk)]"
                   }`}
                 >
                   <svg
@@ -1350,8 +1350,8 @@ export default function DrawModal({
                   title="Draw pencil"
                   className={`p-1.5 rounded-lg transition-all ${
                     activeTool === "pencil"
-                      ? "bg-white text-[#09090b]"
-                      : "text-[#52525b] hover:text-[#09090b]"
+                      ? "bg-[var(--surface)] text-[var(--chalk)]"
+                      : "text-[var(--steel)] hover:text-[var(--chalk)]"
                   }`}
                 >
                   <svg
@@ -1375,8 +1375,8 @@ export default function DrawModal({
                   title="Eraser (E)"
                   className={`p-1.5 rounded-lg transition-all ${
                     activeTool === "eraser"
-                      ? "bg-white text-[#09090b]"
-                      : "text-[#52525b] hover:text-[#09090b]"
+                      ? "bg-[var(--surface)] text-[var(--chalk)]"
+                      : "text-[var(--steel)] hover:text-[var(--chalk)]"
                   }`}
                 >
                   <svg
@@ -1400,8 +1400,8 @@ export default function DrawModal({
                   title="Rectangle shape"
                   className={`p-1.5 rounded-lg transition-all ${
                     activeTool === "rect"
-                      ? "bg-white text-[#09090b]"
-                      : "text-[#52525b] hover:text-[#09090b]"
+                      ? "bg-[var(--surface)] text-[var(--chalk)]"
+                      : "text-[var(--steel)] hover:text-[var(--chalk)]"
                   }`}
                 >
                   <svg
@@ -1425,8 +1425,8 @@ export default function DrawModal({
                   title="Arrow shape"
                   className={`p-1.5 rounded-lg transition-all ${
                     activeTool === "arrow"
-                      ? "bg-white text-[#09090b]"
-                      : "text-[#52525b] hover:text-[#09090b]"
+                      ? "bg-[var(--surface)] text-[var(--chalk)]"
+                      : "text-[var(--steel)] hover:text-[var(--chalk)]"
                   }`}
                 >
                   <svg
@@ -1451,8 +1451,8 @@ export default function DrawModal({
                   title="Text tool"
                   className={`p-1.5 rounded-lg transition-all ${
                     activeTool === "text"
-                      ? "bg-white text-[#09090b]"
-                      : "text-[#52525b] hover:text-[#09090b]"
+                      ? "bg-[var(--surface)] text-[var(--chalk)]"
+                      : "text-[var(--steel)] hover:text-[var(--chalk)]"
                   }`}
                 >
                   <span className="text-sm font-black tracking-tight select-none px-0.5">
@@ -1466,8 +1466,8 @@ export default function DrawModal({
                   title="Insert overlay image"
                   className={`p-1.5 rounded-lg transition-all ${
                     activeTool === "image"
-                      ? "bg-white text-[#09090b]"
-                      : "text-[#52525b] hover:text-[#09090b]"
+                      ? "bg-[var(--surface)] text-[var(--chalk)]"
+                      : "text-[var(--steel)] hover:text-[var(--chalk)]"
                   }`}
                 >
                   <svg
@@ -1491,32 +1491,32 @@ export default function DrawModal({
                   className="hidden"
                 />
 
-                <div className="h-6 w-px bg-[#f4f4f5] mx-0.5" />
+                <div className="h-6 w-px bg-[var(--night)] mx-0.5" />
 
                 {/* Inline Preset Color Selection */}
-                <div className="flex items-center gap-1.5 bg-[#ffffff]/60 px-2 py-1 rounded-xl border border-[#ececee]">
+                <div className="flex items-center gap-1.5 bg-[color-mix(in_srgb,var(--surface)_60%,transparent)] px-2 py-1 rounded-xl border border-[var(--line)]">
                   {PRESET_COLORS.map((col) => (
                     <button
                       key={col}
                       onClick={() => setBrushColor(col)}
-                      className="w-4 h-4 rounded-full border border-[#ececee] hover:scale-110 transition-transform relative flex items-center justify-center"
+                      className="w-4 h-4 rounded-full border border-[var(--line)] hover:scale-110 transition-transform relative flex items-center justify-center"
                       style={{ backgroundColor: col }}
                     >
                       {brushColor === col && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-white mix-blend-difference" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--surface)] mix-blend-difference" />
                       )}
                     </button>
                   ))}
                 </div>
 
-                <div className="h-6 w-px bg-[#f4f4f5] mx-0.5" />
+                <div className="h-6 w-px bg-[var(--night)] mx-0.5" />
 
                 {/* Undo */}
                 <button
                   onClick={handleUndo}
                   disabled={!canUndo}
                   title="Undo"
-                  className="p-1.5 rounded-lg text-[#52525b] hover:text-[#09090b] disabled:opacity-25 transition-all"
+                  className="p-1.5 rounded-lg text-[var(--steel)] hover:text-[var(--chalk)] disabled:opacity-25 transition-all"
                 >
                   <svg
                     width="16"
@@ -1535,7 +1535,7 @@ export default function DrawModal({
                   onClick={handleRedo}
                   disabled={!canRedo}
                   title="Redo"
-                  className="p-1.5 rounded-lg text-[#52525b] hover:text-[#09090b] disabled:opacity-25 transition-all"
+                  className="p-1.5 rounded-lg text-[var(--steel)] hover:text-[var(--chalk)] disabled:opacity-25 transition-all"
                 >
                   <svg
                     width="16"
@@ -1553,7 +1553,7 @@ export default function DrawModal({
                 <button
                   onClick={handleGenerateClick}
                   disabled={generating}
-                  className="ml-1 bg-[#ff5a00] hover:opacity-90 active:scale-[0.97] transition-all text-[#09090b] font-extrabold text-xs px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-md shadow-[#ff5a00]/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="ml-1 bg-[var(--indigo)] hover:opacity-90 active:scale-[0.97] transition-all text-[var(--chalk)] font-extrabold text-xs px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-md shadow-[color-mix(in_srgb,var(--indigo)_10%,transparent)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {generating ? (
                     <>
@@ -1574,15 +1574,15 @@ export default function DrawModal({
 
         {/* Static Footer Control Row (Overlap Prevention) */}
         {viewState === "canvas" && (
-          <div className="border-t border-[#ececee] p-4 shrink-0 bg-[#f4f4f5] flex items-center justify-between z-20">
+          <div className="border-t border-[var(--line)] p-4 shrink-0 bg-[var(--night)] flex items-center justify-between z-20">
             {/* Left Options */}
             <div className="flex items-center gap-2">
               <div className="relative" ref={modelDropdownRef}>
                 <button
                   onClick={() => setIsModelDropdownOpen(!isModelDropdownOpen)}
-                  className="h-[38px] flex items-center gap-2 px-3 bg-[#ffffff]/80 hover:bg-[#ffffff] rounded-xl border border-[#ececee] text-xs text-[#3f3f46] whitespace-nowrap shadow-xl"
+                  className="h-[38px] flex items-center gap-2 px-3 bg-[color-mix(in_srgb,var(--surface)_80%,transparent)] hover:bg-[var(--surface)] rounded-xl border border-[var(--line)] text-xs text-[var(--iron)] whitespace-nowrap shadow-xl"
                 >
-                  <span className="text-[10px] text-[#ffffff] font-black bg-[#ff5a00]/10 px-1.5 rounded border border-[#ff5a00]/25">
+                  <span className="text-[10px] text-[var(--chalk)] font-black bg-[color-mix(in_srgb,var(--indigo)_10%,transparent)] px-1.5 rounded border border-[color-mix(in_srgb,var(--peri)_25%,transparent)]">
                     G
                   </span>
                   {selectedModel === "nano-banana-pro-edit"
@@ -1592,8 +1592,8 @@ export default function DrawModal({
                 </button>
 
                 {isModelDropdownOpen && (
-                  <div className="absolute bottom-[calc(100%+8px)] left-0 bg-[#f4f4f5] border border-[#ececee] rounded-2xl p-2 w-64 shadow-2xl flex flex-col gap-1 z-30">
-                    <div className="text-[10px] font-black text-[#71717a] uppercase tracking-widest p-1.5 pb-1 select-none">
+                  <div className="absolute bottom-[calc(100%+8px)] left-0 bg-[var(--night)] border border-[var(--line)] rounded-2xl p-2 w-64 shadow-2xl flex flex-col gap-1 z-30">
+                    <div className="text-[10px] font-black text-[var(--fog)] uppercase tracking-widest p-1.5 pb-1 select-none">
                       Select model
                     </div>
 
@@ -1604,17 +1604,17 @@ export default function DrawModal({
                       }}
                       className={`flex flex-col text-left p-2.5 rounded-xl transition-all ${
                         selectedModel === "nano-banana-2-edit"
-                          ? "bg-[#ff5a00]/10 text-[#09090b]"
-                          : "hover:bg-[#fafafa] text-[#3f3f46]"
+                          ? "bg-[color-mix(in_srgb,var(--indigo)_10%,transparent)] text-[var(--chalk)]"
+                          : "hover:bg-[var(--sunk)] text-[var(--iron)]"
                       }`}
                     >
                       <div className="text-xs font-bold flex items-center gap-1.5">
                         Nano Banana 2 Edit
                         {selectedModel === "nano-banana-2-edit" && (
-                          <span className="text-[#ff5a00]">✓</span>
+                          <span className="text-[var(--lilac)]">✓</span>
                         )}
                       </div>
-                      <div className="text-[9px] text-[#71717a] leading-snug mt-0.5">
+                      <div className="text-[9px] text-[var(--fog)] leading-snug mt-0.5">
                         Google's Advanced Image Editing Model
                       </div>
                     </button>
@@ -1626,17 +1626,17 @@ export default function DrawModal({
                       }}
                       className={`flex flex-col text-left p-2.5 rounded-xl transition-all ${
                         selectedModel === "nano-banana-pro-edit"
-                          ? "bg-[#ff5a00]/10 text-[#09090b]"
-                          : "hover:bg-[#fafafa] text-[#3f3f46]"
+                          ? "bg-[color-mix(in_srgb,var(--indigo)_10%,transparent)] text-[var(--chalk)]"
+                          : "hover:bg-[var(--sunk)] text-[var(--iron)]"
                       }`}
                     >
                       <div className="text-xs font-bold flex items-center gap-1.5">
                         Nano Banana Pro Edit
                         {selectedModel === "nano-banana-pro-edit" && (
-                          <span className="text-[#ff5a00]">✓</span>
+                          <span className="text-[var(--lilac)]">✓</span>
                         )}
                       </div>
-                      <div className="text-[9px] text-[#71717a] leading-snug mt-0.5">
+                      <div className="text-[9px] text-[var(--fog)] leading-snug mt-0.5">
                         Best 4K Image Model Ever
                       </div>
                     </button>
@@ -1648,7 +1648,7 @@ export default function DrawModal({
               <div className="relative">
                 <button
                   onClick={() => setShowSettingsPopover(!showSettingsPopover)}
-                  className="h-[38px] w-[38px] flex items-center justify-center bg-[#ffffff]/80 hover:bg-[#ffffff] rounded-xl border border-[#ececee] text-[#52525b] shadow-xl transition-all"
+                  className="h-[38px] w-[38px] flex items-center justify-center bg-[color-mix(in_srgb,var(--surface)_80%,transparent)] hover:bg-[var(--surface)] rounded-xl border border-[var(--line)] text-[var(--steel)] shadow-xl transition-all"
                   title="Adjust Brush / Font Size"
                 >
                   <svg
@@ -1672,8 +1672,8 @@ export default function DrawModal({
                 </button>
 
                 {showSettingsPopover && (
-                  <div className="absolute bottom-[calc(100%+8px)] left-0 bg-[#f4f4f5] border border-[#ececee] rounded-2xl p-3.5 w-44 shadow-2xl flex flex-col gap-2 z-30">
-                    <div className="text-[10px] font-black text-[#71717a] uppercase tracking-widest">
+                  <div className="absolute bottom-[calc(100%+8px)] left-0 bg-[var(--night)] border border-[var(--line)] rounded-2xl p-3.5 w-44 shadow-2xl flex flex-col gap-2 z-30">
+                    <div className="text-[10px] font-black text-[var(--fog)] uppercase tracking-widest">
                       {selectedObj && selectedObj.type === "text"
                         ? "Text Size"
                         : "Brush Size"}
@@ -1684,9 +1684,9 @@ export default function DrawModal({
                       max="100"
                       value={brushSize}
                       onChange={(e) => setBrushSize(parseInt(e.target.value))}
-                      className="w-full h-1 bg-[#f4f4f5] rounded-lg appearance-none cursor-pointer accent-[#ff5a00]"
+                      className="w-full h-1 bg-[var(--night)] rounded-lg appearance-none cursor-pointer accent-[var(--peri)]"
                     />
-                    <span className="text-[11px] font-bold text-[#52525b] text-right">
+                    <span className="text-[11px] font-bold text-[var(--steel)] text-right">
                       {brushSize}px
                     </span>
                   </div>
@@ -1703,7 +1703,7 @@ export default function DrawModal({
                 if (e.key === "Enter" && !generating) handleGenerateClick();
               }}
               placeholder="Describe what you want to generate…"
-              className="flex-1 mx-3 h-[38px] bg-[#ffffff]/80 border border-[#ececee] rounded-xl px-3 text-xs text-[#3f3f46] placeholder-white/25 outline-none focus:border-[#ff5a00]/40 focus:ring-1 focus:ring-[#ff5a00]/20 transition-all"
+              className="flex-1 mx-3 h-[38px] bg-[color-mix(in_srgb,var(--surface)_80%,transparent)] border border-[var(--line)] rounded-xl px-3 text-xs text-[var(--iron)] placeholder-[color-mix(in_srgb,var(--chalk)_25%,transparent)] outline-none focus:border-[color-mix(in_srgb,var(--peri)_40%,transparent)] focus:ring-1 focus:ring-[color-mix(in_srgb,var(--indigo)_20%,transparent)] transition-all"
             />
 
             {/* Right Options */}
@@ -1711,7 +1711,7 @@ export default function DrawModal({
               <div className="relative" ref={arDropdownRef}>
                 <button
                   onClick={() => setIsArDropdownOpen(!isArDropdownOpen)}
-                  className="h-[38px] flex items-center gap-2 px-3 bg-[#ffffff]/80 hover:bg-[#ffffff] rounded-xl border border-[#ececee] text-xs text-[#3f3f46] whitespace-nowrap shadow-xl"
+                  className="h-[38px] flex items-center gap-2 px-3 bg-[color-mix(in_srgb,var(--surface)_80%,transparent)] hover:bg-[var(--surface)] rounded-xl border border-[var(--line)] text-xs text-[var(--iron)] whitespace-nowrap shadow-xl"
                 >
                   <svg
                     width="12"
@@ -1729,8 +1729,8 @@ export default function DrawModal({
                 </button>
 
                 {isArDropdownOpen && (
-                  <div className="absolute bottom-[calc(100%+8px)] right-0 bg-[#f4f4f5] border border-[#ececee] rounded-xl p-2 w-36 max-h-72 overflow-y-auto shadow-2xl flex flex-col gap-1 z-30">
-                    <div className="text-[10px] font-black text-[#71717a] uppercase tracking-widest p-1.5 pb-1 select-none">
+                  <div className="absolute bottom-[calc(100%+8px)] right-0 bg-[var(--night)] border border-[var(--line)] rounded-xl p-2 w-36 max-h-72 overflow-y-auto shadow-2xl flex flex-col gap-1 z-30">
+                    <div className="text-[10px] font-black text-[var(--fog)] uppercase tracking-widest p-1.5 pb-1 select-none">
                       Aspect Ratio
                     </div>
                     {["16:9", "9:16", "4:3", "3:4", "1:1", "Auto"].map((r) => (
@@ -1742,8 +1742,8 @@ export default function DrawModal({
                         }}
                         className={`text-left p-1.5 px-2.5 rounded-xl text-xs font-bold transition-all ${
                           aspectRatio === r
-                            ? "bg-[#ff5a00]/10 text-[#09090b]"
-                            : "hover:bg-[#fafafa] text-[#3f3f46]"
+                            ? "bg-[color-mix(in_srgb,var(--indigo)_10%,transparent)] text-[var(--chalk)]"
+                            : "hover:bg-[var(--sunk)] text-[var(--iron)]"
                         }`}
                       >
                         {r}
@@ -1756,7 +1756,7 @@ export default function DrawModal({
               <button
                 onClick={handleClearCanvas}
                 title="Clear drawings"
-                className="h-[38px] w-[38px] flex items-center justify-center bg-[#ffffff]/80 hover:bg-[#ffffff] rounded-xl border border-[#ececee] text-[#52525b] shadow-xl transition-all"
+                className="h-[38px] w-[38px] flex items-center justify-center bg-[color-mix(in_srgb,var(--surface)_80%,transparent)] hover:bg-[var(--surface)] rounded-xl border border-[var(--line)] text-[var(--steel)] shadow-xl transition-all"
               >
                 <svg
                   width="15"
@@ -1778,7 +1778,7 @@ export default function DrawModal({
                   )
                 }
                 title="Info"
-                className="h-[38px] w-[38px] flex items-center justify-center bg-[#ffffff]/80 hover:bg-[#ffffff] rounded-xl border border-[#ececee] text-[#52525b] shadow-xl transition-all"
+                className="h-[38px] w-[38px] flex items-center justify-center bg-[color-mix(in_srgb,var(--surface)_80%,transparent)] hover:bg-[var(--surface)] rounded-xl border border-[var(--line)] text-[var(--steel)] shadow-xl transition-all"
               >
                 <span className="text-xs font-bold leading-none">i</span>
               </button>

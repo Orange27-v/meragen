@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo, useId } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { generateVideo, generateI2V, processV2V, uploadFile } from "../muapi.js";
+import { generateVideo, generateI2V, processV2V, uploadFile, getUserBalance } from "../muapi.js";
 import { formatErrorMessage } from "../utils/formatError.js";
 import { scopedPersistKey, migrateLegacyPersistKey } from "../persistKey.js";
 import DrawModal from "./DrawModal.jsx";
@@ -27,6 +27,14 @@ import {
   videoModelPickerEntries,
   videoModelPickerEntryByVariantId,
 } from "../modelFamilies.js";
+import {
+  SettingsRail,
+  RailSection,
+  Collapsible,
+  OptionRow,
+} from "./rail/SettingsRail";
+import { QualityPicker, useQualityTiers } from "./rail/QualityPicker";
+import { CostMeter } from "./rail/CostMeter";
 import {
   buildReferenceParams,
   getModelMediaCapabilities,
@@ -117,12 +125,12 @@ function ReferenceMediaLabel({ label, required = false }) {
   return (
     <span
       className={`flex min-h-6 max-w-[88px] items-start justify-center text-balance text-center text-[10px] font-semibold leading-3 ${
-        required ? "text-[#52525b]" : "text-[#09090b]/45"
+        required ? "text-[var(--steel)]" : "text-[color-mix(in_srgb,var(--chalk)_45%,transparent)]"
       }`}
     >
       {label}
       {required && (
-        <span className="ml-0.5 text-[#09090b]" aria-hidden="true">
+        <span className="ml-0.5 text-[var(--chalk)]" aria-hidden="true">
           *
         </span>
       )}
@@ -148,7 +156,7 @@ function ReferencePreview({
         ) : type === "video" ? (
           <video src={url} className="w-full h-full object-cover" muted />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-[#fafafa] text-primary">
+          <div className="w-full h-full flex items-center justify-center bg-[var(--sunk)] text-primary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M9 18V5l10-2v13" />
               <circle cx="6" cy="18" r="3" />
@@ -161,7 +169,7 @@ function ReferencePreview({
           aria-label={`Remove ${actionLabel.toLowerCase()}`}
           title={`Remove ${actionLabel.toLowerCase()}`}
           onClick={() => onRemove(index)}
-          className="absolute top-0.5 right-0.5 w-4 h-4 bg-[#ffffff] hover:bg-[#ffffff] rounded-full flex items-center justify-center text-[#09090b]/85 hover:text-[#09090b] text-[8px] border border-[#ececee]"
+          className="absolute top-0.5 right-0.5 w-4 h-4 bg-[var(--surface)] hover:bg-[var(--surface)] rounded-full flex items-center justify-center text-[color-mix(in_srgb,var(--chalk)_85%,transparent)] hover:text-[var(--chalk)] text-[8px] border border-[var(--line)]"
         >
           ×
         </button>
@@ -217,9 +225,9 @@ function ReferenceUploadButton({
         className={`${promptMediaButtonClassName()} disabled:cursor-not-allowed disabled:opacity-50`}
       >
         {uploading ? (
-          <div className="flex flex-col items-center justify-center w-full h-full absolute inset-0 bg-[#ffffff] z-20 backdrop-blur-[2px]">
+          <div className="flex flex-col items-center justify-center w-full h-full absolute inset-0 bg-[var(--veil)] z-20 backdrop-blur-[2px]">
             <svg className="w-8 h-8 -rotate-90">
-              <circle cx="16" cy="16" r="14" stroke="currentColor" strokeWidth="2" fill="transparent" className="text-[#d4d4d8]" />
+              <circle cx="16" cy="16" r="14" stroke="currentColor" strokeWidth="2" fill="transparent" className="text-[var(--ash)]" />
               <circle
                 cx="16"
                 cy="16"
@@ -229,24 +237,24 @@ function ReferenceUploadButton({
                 fill="transparent"
                 strokeDasharray={88}
                 strokeDashoffset={88 - (88 * progress) / 100}
-                className="text-[#09090b] transition-all duration-300"
+                className="text-[var(--chalk)] transition-all duration-300"
               />
             </svg>
-            <span className="absolute text-[9px] font-black text-[#09090b] leading-none">{progress}%</span>
+            <span className="absolute text-[9px] font-black text-[var(--chalk)] leading-none">{progress}%</span>
           </div>
         ) : type === "video" ? (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-[#71717a] group-hover:text-[#09090b] transition-colors">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-[var(--fog)] group-hover:text-[var(--chalk)] transition-colors">
             <polygon points="23 7 16 12 23 17 23 7" />
             <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
           </svg>
         ) : type === "audio" ? (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-[#71717a] group-hover:text-[#09090b] transition-colors">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-[var(--fog)] group-hover:text-[var(--chalk)] transition-colors">
             <path d="M9 18V5l10-2v13" />
             <circle cx="6" cy="18" r="3" />
             <circle cx="16" cy="16" r="3" />
           </svg>
         ) : (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-[#71717a] group-hover:text-[#09090b] transition-colors">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-[var(--fog)] group-hover:text-[var(--chalk)] transition-colors">
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
@@ -313,316 +321,9 @@ const VideoReadySvg = () => (
 
 // ── Dropdown components ───────────────────────────────────────────────────────
 
-const PROVIDER_LOGOS = {
-  openai: "https://cdn.muapi.ai/models/openai.png",
-  google: "https://cdn.muapi.ai/models/gemini.png",
-  kling: "https://cdn.muapi.ai/models/kling.png",
-  alibaba: "https://cdn.muapi.ai/models/alibaba.png",
-  bytedance: "https://cdn.muapi.ai/models/bytedance.png",
-  blackforest: "https://cdn.muapi.ai/models/bfl.png",
-  minimax: "https://cdn.muapi.ai/models/minimax.png",
-  suno: "https://cdn.muapi.ai/models/suno.png",
-  anthropic: "https://cdn.muapi.ai/models/claude.png",
-  meshy: "https://cdn.muapi.ai/models/meshy-3.png",
-  tripo3d: "https://cdn.muapi.ai/models/tripo3d.png",
-  grok: "https://cdn.muapi.ai/models/xai.png",
-  muapi: "https://cdn.muapi.ai/models/muapi.png",
-  midjourney: "https://cdn.muapi.ai/models/midjourney.png",
-  vidu: "https://cdn.muapi.ai/models/vidu.png",
-  runway: "https://cdn.muapi.ai/models/runway.png",
-  luma: "https://cdn.muapi.ai/models/luma.png",
-  ideogram: "https://cdn.muapi.ai/models/ideogram.png",
-  leonardoai: "https://cdn.muapi.ai/models/leonardoai.png",
-  hunyuan: "https://cdn.muapi.ai/models/hunyuan.png",
-  hidream: "https://cdn.muapi.ai/models/hidream.png",
-  lightricks: "https://cdn.muapi.ai/models/lightricks.png",
-  pixverse: "https://cdn.muapi.ai/models/pixverse.png",
-  reve: "https://cdn.muapi.ai/models/reve.png",
-  stability: "https://cdn.muapi.ai/models/stability.png"
-};
 
 const invertLogos = ['openai', 'blackforest', 'runway', 'ideogram', 'lightricks', 'grok'];
 
-function ModelDropdown({ selectedModel, onSelect, onClose }) {
-  const [search, setSearch] = useState("");
-  const selectedEntry = videoModelPickerEntryByVariantId.get(selectedModel);
-  const selectedModelProvider = selectedEntry?.family.provider || "all";
-  const modelCategories = [
-    {
-      id: "all",
-      label: "All",
-      entries: videoModelPickerEntries,
-    },
-    {
-      id: "t2v",
-      label: "Text to Video",
-      entries: videoModelPickerEntries.filter((entry) => entry.variantsByMode.t2v),
-    },
-    {
-      id: "i2v",
-      label: "Image to Video",
-      entries: videoModelPickerEntries.filter((entry) => entry.variantsByMode.i2v),
-    },
-    {
-      id: "v2v",
-      label: "Video Tools",
-      entries: videoModelPickerEntries.filter((entry) => entry.variantsByMode.v2v),
-    },
-  ];
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedProvider, setSelectedProvider] = useState(
-    () => selectedModelProvider,
-  );
-  const activeCategory = modelCategories.find((category) => category.id === selectedCategory) || modelCategories[0];
-  const modelEntries = activeCategory.entries;
-
-  const activeItemRef = useRef(null);
-
-  useEffect(() => {
-    // Automatically scroll the active model into view when opening
-    if (activeItemRef.current) {
-      activeItemRef.current.scrollIntoView({ block: "nearest" });
-    }
-  }, []);
-
-  const getProviderStyle = (provider) => {
-    switch (provider) {
-      case "grok":
-        return { text: "xI", bg: "bg-orange-500/10 text-orange-400 border-orange-500/25" };
-      case "openai":
-        return { text: "O", bg: "bg-emerald-500/10 text-emerald-400 border-emerald-500/25" };
-      case "google":
-        return { text: "G", bg: "bg-blue-500/10 text-blue-400 border-blue-500/25" };
-      case "blackforest":
-        return { text: "BF", bg: "bg-amber-500/10 text-amber-400 border-amber-500/25" };
-      case "bytedance":
-        return { text: "BD", bg: "bg-purple-500/10 text-purple-400 border-purple-500/25" };
-      case "midjourney":
-        return { text: "MJ", bg: "bg-indigo-500/10 text-indigo-400 border-indigo-500/25" };
-      case "kling":
-        return { text: "KL", bg: "bg-rose-500/10 text-rose-400 border-rose-500/25" };
-      case "vidu":
-        return { text: "VD", bg: "bg-cyan-500/10 text-cyan-400 border-cyan-500/25" };
-      case "minimax":
-        return { text: "MX", bg: "bg-pink-500/10 text-pink-400 border-pink-500/25" };
-      case "ideogram":
-        return { text: "ID", bg: "bg-yellow-500/10 text-yellow-400 border-yellow-500/25" };
-      case "luma":
-        return { text: "LM", bg: "bg-teal-500/10 text-teal-400 border-teal-500/25" };
-      case "alibaba":
-        return { text: "AL", bg: "bg-sky-500/10 text-sky-400 border-sky-500/25" };
-      case "leonardoai":
-        return { text: "LE", bg: "bg-violet-500/10 text-violet-400 border-violet-500/25" };
-      case "stability":
-        return { text: "SD", bg: "bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/25" };
-      default:
-        const name = provider ? provider.toUpperCase() : "AI";
-        return { text: name.substring(0, 2), bg: "bg-primary/10 text-primary border-primary/25" };
-    }
-  };
-
-  // Dynamically compute list of providers from the input models lists
-  const availableProviders = [];
-  const seenProviders = new Set();
-  
-  modelEntries.forEach(({ family }) => {
-    const pId = family.provider || 'muapi';
-    const pName = family.provider_name || 'Muapi';
-    if (!seenProviders.has(pId)) {
-      seenProviders.add(pId);
-      availableProviders.push({ id: pId, name: pName });
-    }
-  });
-
-  const lf = search.toLowerCase();
-
-  const filtered = modelEntries.filter((entry) => {
-    const { family } = entry;
-    // 1. Filter by provider tab
-    if (selectedProvider !== "all") {
-      const pId = family.provider || 'muapi';
-      if (pId !== selectedProvider) return false;
-    }
-    // 2. Filter by search query
-    return entry.searchText.includes(lf);
-  });
-
-  const getIconColor = (family) => {
-    if (family.id.includes("kling")) return "bg-blue-500/10 text-blue-400 border-blue-500/10";
-    if (family.id.includes("veo")) return "bg-purple-500/10 text-purple-400 border-purple-500/10";
-    if (family.id.includes("sora")) return "bg-rose-500/10 text-rose-400 border-rose-500/10";
-    return "bg-primary/10 text-primary border-primary/10";
-  };
-
-  const renderItem = (entry) => {
-    const { family } = entry;
-    const isSelected = selectedEntry === entry;
-    return (
-    <div
-      key={entry.id}
-      ref={isSelected ? activeItemRef : null}
-      className={`flex items-center justify-between p-3.5 hover:bg-[#fafafa] rounded-2xl cursor-pointer transition-all border border-transparent hover:border-[#ececee] ${isSelected ? "bg-[#fafafa] border-[#ececee]" : ""}`}
-      onClick={(e) => {
-        e.stopPropagation();
-        onSelect(entry, activeCategory.id);
-        onClose();
-      }}
-    >
-      <div className="flex items-center gap-3.5">
-        {PROVIDER_LOGOS[family.provider] ? (
-          <div className="w-8 h-8 rounded-xl border border-[#ececee] overflow-hidden shrink-0 flex items-center justify-center bg-[#fafafa]">
-            <img
-              src={PROVIDER_LOGOS[family.provider]}
-              alt={family.provider_name}
-              className={`w-full h-full object-contain p-1 ${invertLogos.includes(family.provider) ? "invert" : ""}`}
-            />
-          </div>
-        ) : (
-          <div
-            className={`w-9 h-9 ${getIconColor(family)} border rounded-xl flex items-center justify-center font-black text-xs shadow-inner uppercase`}
-          >
-            {entry.name.charAt(0)}
-          </div>
-        )}
-        <div className="flex flex-col gap-0.5 min-w-0">
-          <span className="text-xs font-bold text-[#09090b] tracking-tight truncate">
-            {entry.name}
-          </span>
-          <div className="flex items-center gap-1.5">
-            {selectedProvider === "all" && family.provider_name && (
-              <span className="text-[9px] text-[#71717a]">
-                {family.provider_name}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-      {isSelected && <CheckSvg />}
-    </div>
-    );
-  };
-
-  return (
-    <div className="flex gap-4 h-full max-h-[70vh] min-h-[350px]">
-      {/* Left Sidebar: Provider tabs */}
-      <div className="flex flex-col gap-2.5 items-center pr-2 border-r border-[#ececee] shrink-0 select-none overflow-y-auto custom-scrollbar w-14 pt-0.5">
-        <button
-          type="button"
-          onClick={() => setSelectedProvider("all")}
-          className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all flex-shrink-0 cursor-pointer ${
-            selectedProvider === "all"
-              ? "bg-[#f4f4f5] text-yellow-400 border-yellow-500/30 shadow-md scale-105"
-              : "bg-[#fafafa] text-[#52525b] border-[#ececee] hover:bg-[#fafafa] hover:text-[#09090b]"
-          }`}
-          title="All Providers"
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill={selectedProvider === "all" ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-          </svg>
-        </button>
-        
-        {availableProviders.map(p => {
-          const style = getProviderStyle(p.id);
-          const isSelected = selectedProvider === p.id;
-          return (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => setSelectedProvider(p.id)}
-              aria-pressed={isSelected}
-              className={`w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center overflow-hidden font-black text-[10px] border transition-all cursor-pointer ${
-                isSelected
-                  ? `${style.bg} scale-105 shadow-md shadow-black/10`
-                  : "bg-[#fafafa] text-[#71717a] border-[#ececee]/[0.02] hover:bg-[#fafafa] hover:text-[#3f3f46]"
-              }`}
-              title={p.name}
-            >
-              {PROVIDER_LOGOS[p.id] ? (
-                <img
-                  src={PROVIDER_LOGOS[p.id]}
-                  alt={p.name}
-                  className={`w-full h-full rounded-full object-contain ${invertLogos.includes(p.id) ? "invert" : ""}`}
-                />
-              ) : (
-                style.text
-              )}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Right Pane: Search + Lists */}
-      <div className="flex-1 flex flex-col gap-2 min-w-0">
-        <div className="px-1 pb-2 border-b border-[#ececee] shrink-0 space-y-2">
-          <div className="flex gap-1.5 overflow-x-auto custom-scrollbar pb-0.5">
-            {modelCategories.map((category) => (
-              <button
-                key={category.id}
-                type="button"
-                onClick={() => {
-                  setSelectedCategory(category.id);
-                  setSelectedProvider("all");
-                }}
-                className={`shrink-0 rounded-lg px-2.5 py-1.5 text-[10px] font-bold transition-colors border ${
-                  selectedCategory === category.id
-                    ? "bg-primary/15 text-primary border-primary/30"
-                    : "bg-[#fafafa] text-[#52525b] border-[#ececee]/[0.04] hover:bg-[#fafafa] hover:text-[#09090b]"
-                }`}
-              >
-                {category.label}
-              </button>
-            ))}
-          </div>
-          <div className="flex items-center gap-3 bg-[#fafafa] rounded-xl px-4 py-2 border border-[#ececee] focus-within:border-primary/50 transition-colors">
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-              className="text-muted"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35" />
-            </svg>
-            <input
-              type="text"
-              placeholder="Search models..."
-              value={search}
-              onChange={(e) => {
-                const value = e.target.value;
-                setSearch(value);
-                if (value.trim()) setSelectedProvider("all");
-              }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-transparent border-none text-xs text-[#09090b] focus:ring-0 w-full p-0 outline-none"
-            />
-          </div>
-        </div>
-        
-        <div className="text-xs font-bold text-secondary px-2 py-1 shrink-0 flex items-center justify-between">
-          <span>{activeCategory.label} models</span>
-          {selectedProvider !== "all" && (
-            <span className="text-[10px] bg-[#fafafa] px-2 py-0.5 rounded text-[#52525b]">
-              {availableProviders.find(p => p.id === selectedProvider)?.name || selectedProvider}
-            </span>
-          )}
-        </div>
-        
-        <div className="flex flex-col gap-1.5 overflow-y-auto custom-scrollbar pr-1 pb-2 flex-1">
-          {filtered.length === 0 ? (
-            <div className="text-xs text-[#71717a] text-center py-6">
-              No models found
-            </div>
-          ) : (
-            filtered.map((entry) => renderItem(entry))
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ── Control button ────────────────────────────────────────────────────────────
 
@@ -657,6 +358,11 @@ export default function VideoStudio({
   const defaultModel = t2vModels[0];
   const defaultFamily = videoModelCatalog.familyByVariantId.get(defaultModel.id);
   const [selectedModel, setSelectedModel] = useState(defaultModel.id);
+  // Which quality is chosen, and what the account has to spend. Both drive the
+  // cost meter pinned at the foot of the settings rail.
+  const [selectedTierId, setSelectedTierId] = useState("draft");
+  const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [creditBalance, setCreditBalance] = useState(null);
   const [selectedFamilyId, setSelectedFamilyId] = useState(defaultFamily.id);
   const [selectedAr, setSelectedAr] = useState(
     defaultModel.inputs?.aspect_ratio?.default || "16:9",
@@ -1628,6 +1334,44 @@ export default function VideoStudio({
     ],
   );
 
+  // The price list, and the tier currently chosen from it.
+  const qualityTiers = useQualityTiers("video");
+  const selectedTier = qualityTiers.find((tier) => tier.tierId === selectedTierId) || null;
+
+  // The balance the cost meter subtracts from. Refreshed after every job,
+  // because a generation is the thing that moves it.
+  const refreshBalance = useCallback(() => {
+    getUserBalance(apiKey)
+      .then((result) => setCreditBalance(result.balance))
+      .catch(() => {});
+  }, [apiKey]);
+
+  useEffect(() => {
+    refreshBalance();
+  }, [refreshBalance]);
+
+  // Buying credits belongs to the shell, which owns the sheet and can show it
+  // over any page. The studio only has to say that it is needed.
+  const openTopUp = useCallback(() => {
+    window.dispatchEvent(new CustomEvent("meerah:buy-credits"));
+  }, []);
+
+  // ── quality selection ─────────────────────────────────────────────────────
+  //
+  // A tier names an exact vendor model, and the server only honours the tier
+  // price when that exact id is submitted. So this resolves the pinned variant
+  // itself rather than going through handleModelSelect, which picks the best
+  // variant in a family and could land on a neighbour at a different price.
+  const handleTierSelect = useCallback(
+    (tier) => {
+      const entry = videoModelCatalog.variantById.get(tier.modelId);
+      if (!entry) return;
+      setSelectedTierId(tier.tierId);
+      applyUserSelectedVariant(entry, entry.mode, entry.family ?? selectedFamily);
+    },
+    [applyUserSelectedVariant, selectedFamily],
+  );
+
   const handleWorkflowSelect = useCallback((workflowId) => {
     const preferred = workflowVariantPreferencesRef.current.get(
       workflowContextKey(selectedFamilyId, workflowId),
@@ -1770,10 +1514,13 @@ export default function VideoStudio({
           id: genId,
           url: res.url,
           prompt: currentModel?.hasPrompt ? trimmedPrompt : "",
-          model: selectedModel,
+          // The card shows this. A vendor id here would publish our supplier
+          // list, and means nothing to someone who chose "Draft".
+          model: selectedTier?.label || "Video",
           timestamp: new Date().toISOString(),
         };
         addToLocalHistory(entry);
+        refreshBalance();
         showVideoInCanvas(res.url, selectedModel);
         if (onGenerationComplete)
           onGenerationComplete({
@@ -1808,12 +1555,15 @@ export default function VideoStudio({
           id: genId,
           url: res.url,
           prompt: trimmedPrompt,
-          model: selectedModel,
+          // The card shows this. A vendor id here would publish our supplier
+          // list, and means nothing to someone who chose "Draft".
+          model: selectedTier?.label || "Video",
           aspect_ratio: selectedAr,
           duration: selectedDuration,
           timestamp: new Date().toISOString(),
         };
         addToLocalHistory(entry);
+        refreshBalance();
         showVideoInCanvas(res.url, selectedModel);
         if (onGenerationComplete)
           onGenerationComplete({
@@ -1854,12 +1604,15 @@ export default function VideoStudio({
           id: genId,
           url: res.url,
           prompt: trimmedPrompt,
-          model: selectedModel,
+          // The card shows this. A vendor id here would publish our supplier
+          // list, and means nothing to someone who chose "Draft".
+          model: selectedTier?.label || "Video",
           aspect_ratio: selectedAr,
           duration: selectedDuration,
           timestamp: new Date().toISOString(),
         };
         addToLocalHistory(entry);
+        refreshBalance();
         showVideoInCanvas(res.url, selectedModel);
         if (onGenerationComplete)
           onGenerationComplete({
@@ -1961,6 +1714,12 @@ export default function VideoStudio({
       ? currentModelCapabilities.image.maxItems > 0
     : currentModelCapabilities.image.maxItems > 0 ||
       (!v2vMode && selectedFamily.supports.i2v);
+  // Whether this model takes any media at all — governs the upload section.
+  const canStartFromMedia =
+    canUploadImageReference ||
+    currentModelCapabilities.video.maxItems > 0 ||
+    currentModelCapabilities.audio.maxItems > 0;
+
   const imageTargetVariant = workflowFamily
     ? selectedVariant
     : currentModelCapabilities.image.maxItems > 0
@@ -2106,169 +1865,29 @@ export default function VideoStudio({
     setOpenDropdown((prev) => (prev === type ? null : type));
   };
 
-  // ── render ────────────────────────────────────────────────────────────────
-  return (
-    <div
-      ref={containerRef}
-      className="w-full h-full flex flex-col items-center justify-center bg-app-bg relative overflow-hidden"
+  // ── the settings rail ─────────────────────────────────────────────────────
+  //
+  // Everything that decides what gets made, in the order the decisions happen:
+  // what you give it, what to make, how good, then what that costs. It used to
+  // be a floating bar of unlabelled pills over an empty canvas, with the price
+  // revealed only after the money was spent.
+  const settingsRail = (
+    <SettingsRail
+      footer={
+        <CostMeter
+          tier={selectedTier}
+          balance={creditBalance}
+          busy={generating}
+          disabled={promptDisabled && !prompt.trim()}
+          onGenerate={handleGenerate}
+          onBuyCredits={openTopUp}
+        />
+      }
     >
-      {/* ── CENTRAL GALLERY AREA ── */}
-      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-40 lg:pb-32 px-2">
-        {history.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
-            {history.map((entry, idx) => {
-              const isSeedance2 = entry.model === "seedance-v2.0-t2v" || entry.model === "seedance-v2.0-i2v";
-              return (
-                <div
-                  key={entry.id || idx}
-                  className="relative group rounded-lg overflow-hidden border border-[#ececee] bg-[#f4f4f5] shadow-xl hover:border-primary/50 transition-all duration-300 flex flex-col cursor-pointer"
-                  onClick={() => setFullscreenUrl(entry.url)}
-                >
-                  <video
-                    src={entry.url}
-                    className="w-full aspect-video object-cover bg-[#f4f4f5] hover:opacity-80 transition-opacity"
-                    controls={false}
-                    loop
-                    muted
-                    playsInline
-                    onMouseOver={(e) => e.target.play()}
-                    onMouseOut={(e) => {
-                      e.target.pause();
-                      e.target.currentTime = 0;
-                    }}
-                  />
-                  
-                  {/* Overlay actions */}
-                  <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <GenerationCopyButtons
-                      prompt={entry.prompt}
-                      onCopyError={onGenerationError}
-                    />
-                    <button
-                      type="button"
-                      title="Download"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        downloadFile(entry.url, `video-${entry.id || idx}.mp4`);
-                      }}
-                      className="p-2 bg-[#ffffff] backdrop-blur-md rounded-full text-[#09090b] hover:bg-primary hover:text-[#09090b] transition-all border border-[#ececee]"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
-                      </svg>
-                    </button>
-                    {isSeedance2 && (
-                      <button
-                        type="button"
-                        title="Extend this video using Seedance 2.0 Extend"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleExtend(entry.id, entry.model);
-                        }}
-                        className="p-2 bg-[#ffffff] backdrop-blur-md rounded-full text-[#09090b] hover:bg-primary hover:text-[#09090b] transition-all border border-[#ececee]"
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      title="Delete"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (confirm("Are you sure you want to delete this generated item?")) {
-                          handleDeleteEntry(entry, idx).catch((err) => {
-                            onGenerationError?.(err.message || "Failed to delete item");
-                          });
-                        }
-                      }}
-                      className="p-2 bg-[#ffffff] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[#09090b] transition-all border border-[#ececee]"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                        <line x1="10" y1="11" x2="10" y2="17" />
-                        <line x1="14" y1="11" x2="14" y2="17" />
-                      </svg>
-                    </button>
-                  </div>
-                  <MobileGenerationActions
-                    prompt={entry.prompt}
-                    onCopyError={onGenerationError}
-                    actions={[
-                      {
-                        kind: "download",
-                        label: "Download",
-                        onSelect: () =>
-                          downloadFile(entry.url, `video-${entry.id || idx}.mp4`),
-                      },
-                      isSeedance2 && {
-                        kind: "extend",
-                        label: "Extend",
-                        onSelect: () => handleExtend(entry.id, entry.model),
-                      },
-                      {
-                        kind: "delete",
-                        label: "Delete",
-                        danger: true,
-                        onSelect: () => {
-                          if (confirm("Are you sure you want to delete this generated item?")) {
-                            handleDeleteEntry(entry, idx).catch((err) => {
-                              onGenerationError?.(err.message || "Failed to delete item");
-                            });
-                          }
-                        },
-                      },
-                    ]}
-                  />
-
-                  {/* Prompt & Details */}
-                  <div className="p-3 bg-[#ffffff] backdrop-blur-sm border-t border-[#ececee] flex-1 flex flex-col justify-between gap-2">
-                    <p className="text-[#3f3f46] text-xs line-clamp-3 leading-relaxed" title={entry.prompt}>
-                      {entry.prompt || "No prompt provided"}
-                    </p>
-                    <div className="flex items-center justify-between mt-1 flex-wrap gap-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap capitalize">
-                          {entry.model?.replace("-", " ") || "Video Studio"}
-                        </span>
-                        <div className="flex gap-2">
-                          {entry.resolution && (
-                            <span className="text-[10px] text-[#71717a]">{entry.resolution}</span>
-                          )}
-                          {entry.duration && (
-                            <span className="text-[10px] text-[#71717a]">{entry.duration}s</span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full animate-fade-in-up transition-all duration-700 min-h-[50vh]">
-            {/* Overlapping floating cards */}
-            <div className="flex items-center justify-center gap-1.5 md:gap-3 mb-10 select-none scale-90 sm:scale-100">
-            </div>
-
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-center px-4 flex flex-col items-center">
-              <span className="text-[#71717a] text-sm font-medium tracking-wide mb-1">Start creating</span>
-              <span className="text-[#09090b] font-semibold text-2xl sm:text-4xl sm:mt-1 tracking-tight">
-                VidEngine
-              </span>
-            </h1>
-            <p className="text-[#71717a] text-xs sm:text-sm font-medium tracking-wide text-center max-w-lg leading-relaxed px-4">
-              Animate images into stunning AI videos with motion effects
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* ── BOTTOM PROMPT BAR ── */}
-      <PromptComposer>
+      {/* Only when this quality can actually take a photo or video. A labelled
+          section with nothing inside it reads as something that failed to load. */}
+      {canStartFromMedia && (
+      <RailSection label="Start from a photo or video" hint="Optional. Leave it empty to make a video from words alone.">
           <div className="flex flex-col gap-3">
             {/* Inline list of uploaded media files */}
             <div className="flex items-start gap-2.5 flex-wrap">
@@ -2458,6 +2077,11 @@ export default function VideoStudio({
                 </>
               )}
             </div>
+          </div>
+      </RailSection>
+      )}
+
+      <RailSection label="Your prompt">
 
             {/* Prompt textarea */}
             <div className="flex-1 flex flex-col gap-1">
@@ -2469,7 +2093,8 @@ export default function VideoStudio({
                 disabled={promptDisabled}
               />
             </div>
-          </div>
+
+      </RailSection>
 
           {/* Extend banner */}
           {isExtendMode && (
@@ -2488,52 +2113,17 @@ export default function VideoStudio({
             </div>
           )}
 
-          {/* Bottom row: controls + generate */}
-          <PromptFooter>
-            <PromptControls ref={dropdownRef}>
-              {/* Model btn */}
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={toggleDropdown("model")}
-                  className={promptControlClassName({
-                    active: openDropdown === "model",
-                  })}
-                >
-                  <div className="w-4 h-4 rounded overflow-hidden shrink-0 flex items-center justify-center bg-[#fafafa]">
-                    {(() => {
-                      const selectedModelProvider = selectedFamily.provider || 'muapi';
-                      return PROVIDER_LOGOS[selectedModelProvider] ? (
-                        <img 
-                          src={PROVIDER_LOGOS[selectedModelProvider]} 
-                          alt="" 
-                          className={`w-full h-full object-contain ${invertLogos.includes(selectedModelProvider) ? "invert" : ""}`} 
-                        />
-                      ) : (
-                        <span className="text-[9px] font-bold text-[#09090b] uppercase">V</span>
-                      );
-                    })()}
-                </div>
-                <span className={PROMPT_CONTROL_LABEL_CLASS}>
-                    {selectedPickerEntry?.name || selectedFamily.name}
-                  </span>
-                  <PromptChevronIcon />
-                </button>
-                {openDropdown === "model" && (
-                  <PromptPopover
-                    onClick={(e) => e.stopPropagation()}
-                    className="w-[calc(100vw-2rem)] md:w-[480px] max-w-md md:max-w-none max-h-[70vh]"
-                  >
-                    <PromptPopoverHeader>Model</PromptPopoverHeader>
-                    <ModelDropdown
-                      selectedModel={selectedModel}
-                      onSelect={handleModelSelect}
-                      onClose={() => setOpenDropdown(null)}
-                    />
-                  </PromptPopover>
-                )}
-              </div>
+      <RailSection label="Quality" hint="Every price is the full cost of one video. Nothing else is added.">
+        <QualityPicker
+          tiers={qualityTiers}
+          value={selectedTierId}
+          onChange={handleTierSelect}
+        />
+      </RailSection>
 
+      {/* The controls the chosen quality actually supports. */}
+      <RailSection label="Video settings">
+            <div ref={dropdownRef} className="flex flex-wrap items-center gap-2">
               {workflowControlState.kind !== "hidden" && (
                 <div className="relative flex items-center gap-1">
                   <button
@@ -2618,7 +2208,7 @@ export default function VideoStudio({
                           </PromptMenuItem>
                         ))}
                         {selectedWorkflow && workflowFamily?.hasBase && (
-                          <div className="mt-2 border-t border-[#ececee] pt-2">
+                          <div className="mt-2 border-t border-[var(--line)] pt-2">
                             <button
                               type="button"
                               role="menuitemradio"
@@ -2628,7 +2218,7 @@ export default function VideoStudio({
                                 clearWorkflow();
                                 closeWorkflowMenu(true);
                               }}
-                              className="flex min-h-9 w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[11px] font-semibold text-[#71717a] transition-colors hover:bg-white/[0.04] hover:text-[#3f3f46] focus:outline-none focus-visible:bg-white/[0.04] focus-visible:text-[#3f3f46]"
+                              className="flex min-h-9 w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[11px] font-semibold text-[var(--fog)] transition-colors hover:bg-white/[0.04] hover:text-[var(--iron)] focus:outline-none focus-visible:bg-white/[0.04] focus-visible:text-[var(--iron)]"
                             >
                               <svg
                                 width="13"
@@ -2723,7 +2313,7 @@ export default function VideoStudio({
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
-                      className="opacity-40 text-[#09090b]"
+                      className="opacity-40 text-[var(--chalk)]"
                     >
                       <path d="M5 3l14 9-14 9V3z" />
                     </svg>
@@ -2856,7 +2446,7 @@ export default function VideoStudio({
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2.5"
-                    className="opacity-40 text-[#09090b] group-hover:text-[#09090b] transition-colors"
+                    className="opacity-40 text-[var(--chalk)] group-hover:text-[var(--chalk)] transition-colors"
                   >
                     <path d="M12 20h9" />
                     <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
@@ -2864,38 +2454,189 @@ export default function VideoStudio({
                   <span className={PROMPT_CONTROL_LABEL_CLASS}>Draw</span>
                 </button>
               )}
-            </PromptControls>
+            </div>
+      </RailSection>
 
-            {/* Generate button */}
-            <PromptAction
-              onClick={handleGenerate}
-              disabled={generating}
-            >
-              {generating ? (
-                <>
-                  <span className="animate-spin inline-block text-[#09090b]">
-                    ◌
-                  </span>{" "}
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <span>Generate</span>
-                </>
-              )}
-            </PromptAction>
-          </PromptFooter>
-      </PromptComposer>
+
+    </SettingsRail>
+  );
+
+  // ── render ────────────────────────────────────────────────────────────────
+  return (
+    <div
+      ref={containerRef}
+      className="w-full h-full flex flex-col lg:flex-row bg-app-bg relative overflow-hidden"
+    >
+      {/* ── LEFT: SETTINGS RAIL ── */}
+      {settingsRail}
+
+      {/* ── RIGHT: THE WORK ── */}
+      <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
+      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar px-4 pb-8">
+        {history.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
+            {history.map((entry, idx) => {
+              const isSeedance2 = entry.model === "seedance-v2.0-t2v" || entry.model === "seedance-v2.0-i2v";
+              return (
+                <div
+                  key={entry.id || idx}
+                  className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-primary/50 transition-all duration-300 flex flex-col cursor-pointer"
+                  onClick={() => setFullscreenUrl(entry.url)}
+                >
+                  <video
+                    src={entry.url}
+                    className="w-full aspect-video object-cover bg-[var(--night)] hover:opacity-80 transition-opacity"
+                    controls={false}
+                    loop
+                    muted
+                    playsInline
+                    onMouseOver={(e) => e.target.play()}
+                    onMouseOut={(e) => {
+                      e.target.pause();
+                      e.target.currentTime = 0;
+                    }}
+                  />
+                  
+                  {/* Overlay actions */}
+                  <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <GenerationCopyButtons
+                      prompt={entry.prompt}
+                      onCopyError={onGenerationError}
+                    />
+                    <button
+                      type="button"
+                      title="Download"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        downloadFile(entry.url, `video-${entry.id || idx}.mp4`);
+                      }}
+                      className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-primary hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                      </svg>
+                    </button>
+                    {isSeedance2 && (
+                      <button
+                        type="button"
+                        title="Extend this video using Seedance 2.0 Extend"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleExtend(entry.id, entry.model);
+                        }}
+                        className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-primary hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      title="Delete"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (confirm("Are you sure you want to delete this generated item?")) {
+                          handleDeleteEntry(entry, idx).catch((err) => {
+                            onGenerationError?.(err.message || "Failed to delete item");
+                          });
+                        }
+                      }}
+                      className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                        <line x1="10" y1="11" x2="10" y2="17" />
+                        <line x1="14" y1="11" x2="14" y2="17" />
+                      </svg>
+                    </button>
+                  </div>
+                  <MobileGenerationActions
+                    prompt={entry.prompt}
+                    onCopyError={onGenerationError}
+                    actions={[
+                      {
+                        kind: "download",
+                        label: "Download",
+                        onSelect: () =>
+                          downloadFile(entry.url, `video-${entry.id || idx}.mp4`),
+                      },
+                      isSeedance2 && {
+                        kind: "extend",
+                        label: "Extend",
+                        onSelect: () => handleExtend(entry.id, entry.model),
+                      },
+                      {
+                        kind: "delete",
+                        label: "Delete",
+                        danger: true,
+                        onSelect: () => {
+                          if (confirm("Are you sure you want to delete this generated item?")) {
+                            handleDeleteEntry(entry, idx).catch((err) => {
+                              onGenerationError?.(err.message || "Failed to delete item");
+                            });
+                          }
+                        },
+                      },
+                    ]}
+                  />
+
+                  {/* Prompt & Details */}
+                  <div className="p-3 bg-[var(--surface)] backdrop-blur-sm border-t border-[var(--line)] flex-1 flex flex-col justify-between gap-2">
+                    <p className="text-[var(--iron)] text-xs line-clamp-3 leading-relaxed" title={entry.prompt}>
+                      {entry.prompt || "No prompt provided"}
+                    </p>
+                    <div className="flex items-center justify-between mt-1 flex-wrap gap-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap capitalize">
+                          {entry.model?.replace("-", " ") || "Video Studio"}
+                        </span>
+                        <div className="flex gap-2">
+                          {entry.resolution && (
+                            <span className="text-[10px] text-[var(--fog)]">{entry.resolution}</span>
+                          )}
+                          {entry.duration && (
+                            <span className="text-[10px] text-[var(--fog)]">{entry.duration}s</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full animate-fade-in-up transition-all duration-700 min-h-[50vh]">
+            {/* Overlapping floating cards */}
+            <div className="flex items-center justify-center gap-1.5 md:gap-3 mb-10 select-none scale-90 sm:scale-100">
+            </div>
+
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-center px-4 flex flex-col items-center">
+              <span className="text-[var(--fog)] text-sm font-medium tracking-wide mb-1">Start creating</span>
+              <span className="text-[var(--chalk)] font-semibold text-2xl sm:text-4xl sm:mt-1 tracking-tight">
+                VidEngine
+              </span>
+            </h1>
+            <p className="text-[var(--fog)] text-xs sm:text-sm font-medium tracking-wide text-center max-w-lg leading-relaxed px-4">
+              Animate images into stunning AI videos with motion effects
+            </p>
+          </div>
+        )}
+      </div>
+
+      </div>
 
       {/* ── FULLSCREEN VIDEO MODAL ── */}
       {fullscreenUrl && (
         <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#ffffff] backdrop-blur-sm animate-fade-in"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--scrim)] backdrop-blur-sm animate-fade-in"
           onClick={() => setFullscreenUrl(null)}
         >
           <button
             type="button"
-            className="absolute top-6 right-6 p-3 bg-[#f4f4f5] hover:bg-[#ececee] rounded-full text-[#09090b] transition-colors border border-[#ececee]"
+            className="absolute top-6 right-6 p-3 bg-[var(--night)] hover:bg-[var(--slab)] rounded-full text-[var(--chalk)] transition-colors border border-[var(--line)]"
             onClick={(e) => {
               e.stopPropagation();
               setFullscreenUrl(null);
@@ -2924,7 +2665,7 @@ export default function VideoStudio({
         batchSize={1}
         onAddHistoryItem={handleDrawReference}
       />
-      <Toaster position="top-right" containerStyle={{ zIndex: 99999 }} toastOptions={{ duration: 5000, style: { background: '#18181b', color: '#ffffff', border: '1px solid rgba(255,255,255,0.15)', fontSize: '13px', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.6)', maxWidth: '440px', wordBreak: 'break-word', whiteSpace: 'pre-wrap', padding: '12px 16px' } }} />
+      <Toaster position="top-right" containerStyle={{ zIndex: 99999 }} toastOptions={{ duration: 5000, style: { background: 'var(--slab-hi)', color: 'var(--surface)', border: '1px solid rgba(255,255,255,0.15)', fontSize: '13px', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.6)', maxWidth: '440px', wordBreak: 'break-word', whiteSpace: 'pre-wrap', padding: '12px 16px' } }} />
     </div>
   );
 }

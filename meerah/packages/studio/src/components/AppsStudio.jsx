@@ -13,126 +13,123 @@ import toast, { Toaster } from 'react-hot-toast';
 const templateApps = [
   {
     name: "AI Headshot Studio",
-    description: "Launch a headshot SaaS in minutes. Charge $5–$20 per set, keep all profits. Stripe payments & user accounts included.",
+    description: "Turn one selfie into a set of clean, professional headshots.",
     icon: FaUserTie,
     color: "blue",
-    repo: "https://github.com/SamurAIGPT/ai-headshot-generator",
-    hosted: "https://ai-headshot-generator-xi.vercel.app/",
-    thumbnail: "https://cdn.muapi.ai/apps/d9c39378f60e48098f6b6ce657dc18b5.png",
     isTemplate: true
   },
   {
-    name: "Nano Banana Studio",
-    description: "Your own AI image generation platform, ready to monetize. Add credit packs or subscriptions and start earning from day one.",
+    name: "Batch Picture Studio",
+    description: "Make a batch of pictures in one go, all in the same style.",
     icon: FaHandSparkles,
     color: "amber",
-    repo: "https://github.com/SamurAIGPT/nano-banana-generator",
-    hosted: "https://nano-banana-generator-psi.vercel.app",
-    thumbnail: "https://cdn.muapi.ai/data/2/874086171651/Screenshot_2026-04-15_103743.png",
     isTemplate: true
   },
   {
-    name: "Seedance V2 Studio",
-    description: "Deploy a premium AI art studio and sell access to users. Full Stripe integration lets you collect revenue immediately after launch.",
+    name: "Art Director",
+    description: "Fine control over style, lighting and composition for artwork.",
     icon: FaMagic,
     color: "purple",
-    repo: "https://github.com/SamurAIGPT/seedance-2-generator",
-    hosted: "https://seedance-2-generator.vercel.app/",
-    thumbnail: "https://cdn.muapi.ai/apps/4cd1f49d48934d448e7f493f9d5e476e.png",
     isTemplate: true
   },
   {
     name: "AI Clipping Studio",
-    description: "Launch your own AI-powered video clipping SaaS. Download YouTube videos and extract viral highlights with ease.",
+    description: "Paste a long video link and get the best short clips from it.",
     icon: FaVideo,
     color: "emerald",
-    repo: "https://github.com/SamurAIGPT/ai-clipping-generator",
-    hosted: "https://ai-clipping-generator.vercel.app/",
-    thumbnail: "https://cdn.muapi.ai/data/2/883345778103/cca8b5bb-25f1-40fe-928e-53dce2c8c928.png",
     isTemplate: true
   },
   {
-    name: "EasyVeo Studio",
-    description: "The complete Veo 3.1 video generation suite. Monetize text-to-video, image-to-video, and reference-to-video workflows with ease.",
+    name: "All-in-One Video",
+    description: "One place for every way of making a video: words, a photo, or a reference clip.",
     icon: FaVideo,
     color: "indigo",
-    repo: "https://github.com/SamurAIGPT/veo4-video-generator",
-    hosted: "https://veo4-video-generator.vercel.app/",
-    thumbnail: "https://cdn.muapi.ai/data/2/901343404247/94ac6d86-be4e-4b70-b1e6-96d7e3692604.png",
     isTemplate: true
   }
 ];
 
 const dummyAppsData = [
-  { thumbnail: "https://cdn.muapi.ai/apps/Pet_Product_Studio.jpg", name: "Pet Product Studio", description: "High-end product photography specifically for pet toys and food.", icon: FaPaw, category: "Lifestyle" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Resale_Photo_Enhancer.png", name: "Resale Photo Enhancer", description: "Boost sales by elevating low-quality product photos to studio level.", icon: FaImage, category: "Business" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Recruiter.png", name: "AI Recruiter", description: "Smart candidate screening and interview assistant.", icon: FaBriefcase, category: "Business" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Talk_to_PDF.png", name: "Talk to PDF", description: "Interactive document chat for deep research and summarization.", icon: FaFileAlt, category: "Productivity" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Blogger_CMS.png", name: "Blogger CMS", description: "AI-powered content management for high-velocity SEO blogs.", icon: FaBriefcase, category: "Business" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Amazon_Product_Studio.webp", name: "Amazon Product Studio", description: "Perfect Amazon-ready product shots with AI backdrops.", icon: FaImage, category: "Business" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Business_Card.webp", name: "AI Business Card", description: "Digital-first business card generator with AI networking.", icon: FaBriefcase, category: "Business" },
-  { thumbnail: "https://cdn.muapi.ai/apps/MailWise.png", name: "MailWise", description: "Intelligent email drafting and scheduling assistant.", icon: FaBriefcase, category: "Business" },
-  { thumbnail: "https://cdn.muapi.ai/apps/My_Podcast.webp", name: "My Podcast", description: "Automated podcast editing and show-note generation.", icon: FaMicrophone, category: "Creative" },
-  { thumbnail: "https://cdn.muapi.ai/apps/EZScribe.png", name: "EZScribe", description: "Instant transcription and meeting minute automation.", icon: FaFileAlt, category: "Productivity" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Knowledge_Base.png", name: "AI Knowledge Base", description: "Train an AI on your company data for instant support.", icon: FaBriefcase, category: "Business" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Outbound.webp", name: "AI Outbound", description: "Personalized cold outreach at scale for sales teams.", icon: FaBriefcase, category: "Business" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Royal_Portrait.png", name: "AI Royal Portrait", description: "Transform your photos into 18th-century royal oil paintings.", icon: FaHandSparkles, category: "Creative" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_MEME.png", name: "AI MEME", description: "Viral-ready meme generation based on trending topics.", icon: FaMagic, category: "Creative" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Real_Estate_Stager.webp", name: "AI Real Estate Stager", description: "Virtually furnish and stage empty homes for sale.", icon: FaHome, category: "Real Estate" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Logo.png", name: "AI Logo", description: "Dynamic brand identity and logo generator.", icon: FaHandSparkles, category: "Business" },
-  { thumbnail: "https://cdn.muapi.ai/apps/OldPhoto.png", name: "OldPhoto", description: "Restore, colorize, and sharpen vintage family photos.", icon: FaImage, category: "Creative" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AITryOn.png", name: "AITryOn", description: "Virtual fitting room for fashion brands and enthusiasts.", icon: FaHandSparkles, category: "Lifestyle" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Age_Transformation.webp", name: "AI Age Transformation", description: "Visualize yourself at different stages of life with high fidelity.", icon: FaImage, category: "Lifestyle" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Professional_Makeup_Generator.webp", name: "AI Professional Makeup Generator", description: "Try on hundreds of makeup looks virtually.", icon: FaHandSparkles, category: "Lifestyle" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Flash_Cards.webp", name: "AI Flash Cards", description: "Turn any text or PDF into pedagogical flashcards.", icon: FaFileAlt, category: "Education" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Group_Photo.webp", name: "AI Group Photo", description: "Seamlessly combine individual portraits into a group photo.", icon: FaImage, category: "Creative" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Tattoo_Try_On.webp", name: "AI Tattoo Try-On", description: "Visualize tattoos on your body before getting inked.", icon: FaHandSparkles, category: "Lifestyle" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Hair_Style_Simulator.webp", name: "AI Hair Style Simulator", description: "Try on new haircuts and colors with zero commitment.", icon: FaHandSparkles, category: "Lifestyle" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Kids_to_Adult_Prediction.webp", name: "AI Kids-to-Adult Prediction", description: "Ever wonder what your kid will look like as an adult?", icon: FaImage, category: "Lifestyle" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Room_Declutter.webp", name: "AI Room Declutter", description: "Instantly clean up messy room photos for listings.", icon: FaHome, category: "Real Estate" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Fitness_Body_Simulator.webp", name: "AI Fitness Body Simulator", description: "Visualize your fitness goals on your own body.", icon: FaImage, category: "Lifestyle" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Pet_Portrait.webp", name: "AI Pet Portrait", description: "Elegant, artistic portraits for your beloved pets.", icon: FaPaw, category: "Lifestyle" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Kissing_Video_Generator.webp", name: "AI Kissing Video Generator", description: "Expressive AI video generation for romantic moments.", icon: FaVideo, category: "Creative" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Chat_with_PDF.webp", name: "Chat with PDF", description: "Ask questions and extract data from massive PDF files.", icon: FaFileAlt, category: "Productivity" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Travel_Studio.png", name: "AI Travel Studio", description: "Create stunning travel posters and visuals from prompts.", icon: FaMapMarkerAlt, category: "Lifestyle" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Prompt_Architect.webp", name: "Prompt Architect", description: "Refine and optimize complex prompts for high-tier AI models.", icon: FaMagic, category: "Creative" },
-  { thumbnail: "https://cdn.muapi.ai/apps/ClearMark_AI.webp", name: "ClearMark AI", description: "Automated watermark removal and brand cleanup for assets.", icon: FaImage, category: "Business" },
-  { thumbnail: "https://cdn.muapi.ai/apps/PlantVision_AI.webp", name: "PlantVision AI", description: "Identify plants and generate gardening care guides.", icon: FaHandSparkles, category: "Lifestyle" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Wedding_Photo.png", name: "AI Wedding Photo", description: "Cinematic wedding photography enhancements and filters.", icon: FaImage, category: "Lifestyle" },
-  { thumbnail: "https://cdn.muapi.ai/apps/User_Account_Registration_Form.webp", name: "User Account Registration Form", description: "Beautiful, conversion-optimized signup flows.", icon: FaBriefcase, category: "Development" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Social_Post.webp", name: "Social Post", description: "AI-generated social media scheduling and copy creator.", icon: FaBriefcase, category: "Marketing" },
-  { thumbnail: "https://cdn.muapi.ai/apps/MagicSelf_AI.webp", name: "MagicSelf AI", description: "The ultimate AI selfie and avatar generation engine.", icon: FaMagic, category: "Creative" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Resume_Builder.webp", name: "AI Resume Builder", description: "Craft the perfect, ATS-friendly resume in seconds.", icon: FaFileAlt, category: "Productivity" },
-  { thumbnail: "https://cdn.muapi.ai/apps/GEO_Checker.webp", name: "GEO Checker", description: "AI-powered location tagging and geodata validation.", icon: FaMapMarkerAlt, category: "Business" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Character_Studio.webp", name: "AI Character Studio", description: "Consistent character design for animators and writers.", icon: FaUserTie, category: "Creative" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Luxury_Hair_Studio.webp", name: "Luxury Hair Studio", description: "High-end hair visualization for top-tier salons.", icon: FaHandSparkles, category: "Lifestyle" },
-  { thumbnail: "https://cdn.muapi.ai/apps/ProFlow_Plumbing.webp", name: "ProFlow Plumbing", description: "AI scheduling and diagnostics for plumbing services.", icon: FaHome, category: "Services" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Solace_AI.webp", name: "Solace AI", description: "Empathetic AI assistant for mental well-being support.", icon: FaHandSparkles, category: "Health" },
-  { thumbnail: "https://cdn.muapi.ai/apps/ReLive_AI.webp", name: "ReLive AI", description: "Immersive memory and historical visualization engine.", icon: FaHandSparkles, category: "Creative" },
-  { thumbnail: "https://cdn.muapi.ai/apps/AI_Chiropractic_Service.webp", name: "AI Chiropractic Service", description: "Postural analysis and exercise recommendation AI.", icon: FaUserInjured, category: "Health" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Tabla___ReserveAI.webp", name: "Tabla - ReserveAI", description: "Intelligent table reservation engine for restaurants.", icon: FaBuilding, category: "Services" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Dental_ReserveAI.webp", name: "Dental ReserveAI", description: "Smart dental appointment and follow-up management.", icon: FaStethoscope, category: "Health" },
-  { thumbnail: "https://cdn.muapi.ai/apps/CounselMate.webp", name: "CounselMate", description: "Legal research and document drafting aid for lawyers.", icon: FaBalanceScale, category: "Legal" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Intelligent_Real_Estate_Agent.webp", name: "Intelligent Real Estate Agent", description: "Automate leads and property matches with AI agents.", icon: FaHome, category: "Real Estate" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Fixera.webp", name: "Fixera", description: "Home repair diagnosis and pro-finding ecosystem.", icon: FaHome, category: "Services" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Velora___Yoga_AI.webp", name: "Velora - Yoga AI", description: "Personalized AI yoga and posture guidance engine.", icon: FaHandSparkles, category: "Health" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Nova_AssuranceAI.webp", name: "Nova AssuranceAI", description: "Smart insurance quote and claim processing assistant.", icon: FaBalanceScale, category: "Legal" },
-  { thumbnail: "https://cdn.muapi.ai/apps/TurboGlow_Auto_Spa.webp", name: "TurboGlow Auto Spa", description: "AI booking and customization for luxury auto detailing.", icon: FaCar, category: "Services" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Paws___Pals.webp", name: "Paws & Pals", description: "AI-powered pet care and walking coordination hub.", icon: FaPaw, category: "Lifestyle" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Vertex_Tax_Strategy.webp", name: "Vertex Tax Strategy", description: "Intelligent tax planning and deduction spotting AI.", icon: FaBalanceScale, category: "Business" },
-  { thumbnail: "https://cdn.muapi.ai/apps/LedgerSync.webp", name: "LedgerSync", description: "Automated bookkeeping and financial reconciliations.", icon: FaBriefcase, category: "Business" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Nova_Care_Clinic.webp", name: "Nova Care Clinic", description: "Patient scheduling and medical intake automation.", icon: FaStethoscope, category: "Health" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Opulent_Drive.webp", name: "Opulent Drive", description: "Luxury car rental and fleet management AI.", icon: FaCar, category: "Services" },
-  { thumbnail: "https://cdn.muapi.ai/apps/ProFix_Auto.webp", name: "ProFix Auto", description: "Engine diagnostics and preventive maintenance alerts.", icon: FaCar, category: "Services" },
-  { thumbnail: "https://cdn.muapi.ai/apps/TowMate.webp", name: "TowMate", description: "Smart roadside assistance and dispatch coordination.", icon: FaTruck, category: "Services" },
-  { thumbnail: "https://cdn.muapi.ai/apps/SwiftLink_Logistics.webp", name: "SwiftLink Logistics", description: "AI route optimization and fleet tracking system.", icon: FaTruck, category: "Services" },
-  { thumbnail: "https://cdn.muapi.ai/apps/Lumea_Residence.webp", name: "Lumea Residence", description: "Smart home property management and tenant portal.", icon: FaHome, category: "Real Estate" }
+  { name: "Pet Product Studio", description: "High-end product photography specifically for pet toys and food.", icon: FaPaw, category: "Lifestyle" },
+  { name: "Resale Photo Enhancer", description: "Boost sales by elevating low-quality product photos to studio level.", icon: FaImage, category: "Business" },
+  { name: "AI Recruiter", description: "Smart candidate screening and interview assistant.", icon: FaBriefcase, category: "Business" },
+  { name: "Talk to PDF", description: "Interactive document chat for deep research and summarization.", icon: FaFileAlt, category: "Productivity" },
+  { name: "Blogger CMS", description: "AI-powered content management for high-velocity SEO blogs.", icon: FaBriefcase, category: "Business" },
+  { name: "Amazon Product Studio", description: "Perfect Amazon-ready product shots with AI backdrops.", icon: FaImage, category: "Business" },
+  { name: "AI Business Card", description: "Digital-first business card generator with AI networking.", icon: FaBriefcase, category: "Business" },
+  { name: "MailWise", description: "Intelligent email drafting and scheduling assistant.", icon: FaBriefcase, category: "Business" },
+  { name: "My Podcast", description: "Automated podcast editing and show-note generation.", icon: FaMicrophone, category: "Creative" },
+  { name: "EZScribe", description: "Instant transcription and meeting minute automation.", icon: FaFileAlt, category: "Productivity" },
+  { name: "AI Knowledge Base", description: "Train an AI on your company data for instant support.", icon: FaBriefcase, category: "Business" },
+  { name: "AI Outbound", description: "Personalized cold outreach at scale for sales teams.", icon: FaBriefcase, category: "Business" },
+  { name: "AI Royal Portrait", description: "Transform your photos into 18th-century royal oil paintings.", icon: FaHandSparkles, category: "Creative" },
+  { name: "AI MEME", description: "Viral-ready meme generation based on trending topics.", icon: FaMagic, category: "Creative" },
+  { name: "AI Real Estate Stager", description: "Virtually furnish and stage empty homes for sale.", icon: FaHome, category: "Real Estate" },
+  { name: "AI Logo", description: "Dynamic brand identity and logo generator.", icon: FaHandSparkles, category: "Business" },
+  { name: "OldPhoto", description: "Restore, colorize, and sharpen vintage family photos.", icon: FaImage, category: "Creative" },
+  { name: "AITryOn", description: "Virtual fitting room for fashion brands and enthusiasts.", icon: FaHandSparkles, category: "Lifestyle" },
+  { name: "AI Age Transformation", description: "Visualize yourself at different stages of life with high fidelity.", icon: FaImage, category: "Lifestyle" },
+  { name: "AI Professional Makeup Generator", description: "Try on hundreds of makeup looks virtually.", icon: FaHandSparkles, category: "Lifestyle" },
+  { name: "AI Flash Cards", description: "Turn any text or PDF into pedagogical flashcards.", icon: FaFileAlt, category: "Education" },
+  { name: "AI Group Photo", description: "Seamlessly combine individual portraits into a group photo.", icon: FaImage, category: "Creative" },
+  { name: "AI Tattoo Try-On", description: "Visualize tattoos on your body before getting inked.", icon: FaHandSparkles, category: "Lifestyle" },
+  { name: "AI Hair Style Simulator", description: "Try on new haircuts and colors with zero commitment.", icon: FaHandSparkles, category: "Lifestyle" },
+  { name: "AI Kids-to-Adult Prediction", description: "Ever wonder what your kid will look like as an adult?", icon: FaImage, category: "Lifestyle" },
+  { name: "AI Room Declutter", description: "Instantly clean up messy room photos for listings.", icon: FaHome, category: "Real Estate" },
+  { name: "AI Fitness Body Simulator", description: "Visualize your fitness goals on your own body.", icon: FaImage, category: "Lifestyle" },
+  { name: "AI Pet Portrait", description: "Elegant, artistic portraits for your beloved pets.", icon: FaPaw, category: "Lifestyle" },
+  { name: "AI Kissing Video Generator", description: "Expressive AI video generation for romantic moments.", icon: FaVideo, category: "Creative" },
+  { name: "Chat with PDF", description: "Ask questions and extract data from massive PDF files.", icon: FaFileAlt, category: "Productivity" },
+  { name: "AI Travel Studio", description: "Create stunning travel posters and visuals from prompts.", icon: FaMapMarkerAlt, category: "Lifestyle" },
+  { name: "Prompt Architect", description: "Refine and optimize complex prompts for high-tier AI models.", icon: FaMagic, category: "Creative" },
+  { name: "ClearMark AI", description: "Automated watermark removal and brand cleanup for assets.", icon: FaImage, category: "Business" },
+  { name: "PlantVision AI", description: "Identify plants and generate gardening care guides.", icon: FaHandSparkles, category: "Lifestyle" },
+  { name: "AI Wedding Photo", description: "Cinematic wedding photography enhancements and filters.", icon: FaImage, category: "Lifestyle" },
+  { name: "User Account Registration Form", description: "Beautiful, conversion-optimized signup flows.", icon: FaBriefcase, category: "Development" },
+  { name: "Social Post", description: "AI-generated social media scheduling and copy creator.", icon: FaBriefcase, category: "Marketing" },
+  { name: "MagicSelf AI", description: "The ultimate AI selfie and avatar generation engine.", icon: FaMagic, category: "Creative" },
+  { name: "AI Resume Builder", description: "Craft the perfect, ATS-friendly resume in seconds.", icon: FaFileAlt, category: "Productivity" },
+  { name: "GEO Checker", description: "AI-powered location tagging and geodata validation.", icon: FaMapMarkerAlt, category: "Business" },
+  { name: "AI Character Studio", description: "Consistent character design for animators and writers.", icon: FaUserTie, category: "Creative" },
+  { name: "Luxury Hair Studio", description: "High-end hair visualization for top-tier salons.", icon: FaHandSparkles, category: "Lifestyle" },
+  { name: "ProFlow Plumbing", description: "AI scheduling and diagnostics for plumbing services.", icon: FaHome, category: "Services" },
+  { name: "Solace AI", description: "Empathetic AI assistant for mental well-being support.", icon: FaHandSparkles, category: "Health" },
+  { name: "ReLive AI", description: "Immersive memory and historical visualization engine.", icon: FaHandSparkles, category: "Creative" },
+  { name: "AI Chiropractic Service", description: "Postural analysis and exercise recommendation AI.", icon: FaUserInjured, category: "Health" },
+  { name: "Tabla - ReserveAI", description: "Intelligent table reservation engine for restaurants.", icon: FaBuilding, category: "Services" },
+  { name: "Dental ReserveAI", description: "Smart dental appointment and follow-up management.", icon: FaStethoscope, category: "Health" },
+  { name: "CounselMate", description: "Legal research and document drafting aid for lawyers.", icon: FaBalanceScale, category: "Legal" },
+  { name: "Intelligent Real Estate Agent", description: "Automate leads and property matches with AI agents.", icon: FaHome, category: "Real Estate" },
+  { name: "Fixera", description: "Home repair diagnosis and pro-finding ecosystem.", icon: FaHome, category: "Services" },
+  { name: "Velora - Yoga AI", description: "Personalized AI yoga and posture guidance engine.", icon: FaHandSparkles, category: "Health" },
+  { name: "Nova AssuranceAI", description: "Smart insurance quote and claim processing assistant.", icon: FaBalanceScale, category: "Legal" },
+  { name: "TurboGlow Auto Spa", description: "AI booking and customization for luxury auto detailing.", icon: FaCar, category: "Services" },
+  { name: "Paws & Pals", description: "AI-powered pet care and walking coordination hub.", icon: FaPaw, category: "Lifestyle" },
+  { name: "Vertex Tax Strategy", description: "Intelligent tax planning and deduction spotting AI.", icon: FaBalanceScale, category: "Business" },
+  { name: "LedgerSync", description: "Automated bookkeeping and financial reconciliations.", icon: FaBriefcase, category: "Business" },
+  { name: "Nova Care Clinic", description: "Patient scheduling and medical intake automation.", icon: FaStethoscope, category: "Health" },
+  { name: "Opulent Drive", description: "Luxury car rental and fleet management AI.", icon: FaCar, category: "Services" },
+  { name: "ProFix Auto", description: "Engine diagnostics and preventive maintenance alerts.", icon: FaCar, category: "Services" },
+  { name: "TowMate", description: "Smart roadside assistance and dispatch coordination.", icon: FaTruck, category: "Services" },
+  { name: "SwiftLink Logistics", description: "AI route optimization and fleet tracking system.", icon: FaTruck, category: "Services" },
+  { name: "Lumea Residence", description: "Smart home property management and tenant portal.", icon: FaHome, category: "Real Estate" }
 ];
+
+/**
+ * Every category on the shelf, with how many tools sit in it. Derived rather
+ * than written down, so adding a tool above cannot leave the panel stale.
+ */
+const CATEGORIES = (() => {
+  const counts = new Map();
+  for (const app of dummyAppsData) counts.set(app.category, (counts.get(app.category) || 0) + 1);
+  return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([name, count]) => ({ name, count }));
+})();
 
 export default function AppsStudio({ apiKey }) {
   const [selectedApp, setSelectedApp] = useState(null);
   const [isRequesting, setIsRequesting] = useState(false);
   const [requestedApps, setRequestedApps] = useState([]);
+  // Fifty-two tools in one flat grid is a wall. The panel narrows it.
+  const [category, setCategory] = useState('All');
 
   useEffect(() => {
     if (apiKey) {
@@ -174,10 +171,10 @@ export default function AppsStudio({ apiKey }) {
     return (
       <div 
         key={app.name}
-        className="group bg-[#f4f4f5] border border-[#ececee] rounded-lg flex flex-col overflow-hidden transition-all duration-300 hover:border-[#ececee] hover:bg-[#f4f4f5] hover:shadow-2xl hover:shadow-blue-500/5 hover:-translate-y-1"
+        className="group bg-[var(--night)] border border-[var(--line)] rounded-lg flex flex-col overflow-hidden transition-all duration-300 hover:border-[var(--line)] hover:bg-[var(--night)] hover:shadow-2xl hover:shadow-blue-500/5 hover:-translate-y-1"
       >
         {/* Thumbnail Section */}
-        <div className="relative h-44 w-full overflow-hidden bg-[#fafafa]">
+        <div className="relative h-44 w-full overflow-hidden bg-[var(--sunk)]">
           {app.thumbnail ? (
             <img
               src={app.thumbnail}
@@ -186,7 +183,7 @@ export default function AppsStudio({ apiKey }) {
             />
           ) : (
             <div className={`w-full h-full flex items-center justify-center bg-gradient-to-br ${cardGradient} transition-colors group-hover:scale-110 duration-700`}>
-              <app.icon className={`text-4xl opacity-20 group-hover:opacity-40 transition-opacity text-[#09090b]`} />
+              <app.icon className={`text-4xl opacity-20 group-hover:opacity-40 transition-opacity text-[var(--chalk)]`} />
             </div>
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
@@ -195,57 +192,30 @@ export default function AppsStudio({ apiKey }) {
         {/* Content Section */}
         <div className="p-5 flex flex-col flex-1 space-y-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#fafafa] flex items-center justify-center text-lg text-[#09090b] border border-[#ececee] group-hover:border-[#ececee] transition-colors">
+            <div className="w-10 h-10 rounded-xl bg-[var(--sunk)] flex items-center justify-center text-lg text-[var(--chalk)] border border-[var(--line)] group-hover:border-[var(--line)] transition-colors">
               <app.icon />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-bold text-[#09090b] uppercase tracking-tight truncate">{app.name}</h3>
-              <p className="text-[10px] text-[#71717a] font-bold uppercase tracking-widest">{app.category || 'Template'}</p>
+              <h3 className="text-sm font-bold text-[var(--chalk)] uppercase tracking-tight truncate">{app.name}</h3>
+              <p className="text-[10px] text-[var(--fog)] font-bold uppercase tracking-widest">{app.category || 'Template'}</p>
             </div>
           </div>
           
-          <p className="text-xs text-[#52525b] leading-relaxed font-medium line-clamp-2 min-h-[2.5rem]">{app.description}</p>
+          <p className="text-xs text-[var(--steel)] leading-relaxed font-medium line-clamp-2 min-h-[2.5rem]">{app.description}</p>
           
           {/* Action Buttons */}
           <div className="flex items-center gap-2 pt-2">
-            {isDummy ? (
-              <>
-                <button
-                  onClick={() => setSelectedApp(app)}
-                  className="flex-1 py-2 bg-[#fafafa] text-[#09090b] rounded-md text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#f4f4f5] transition-all border border-[#ececee] active:scale-95"
-                >
-                  <FaGithub className="text-xs" />
-                  Github
-                </button>
-                <button
-                  onClick={() => setSelectedApp(app)}
-                  className="flex-1 py-2 bg-[#09090b]/10 text-[#ffffff] rounded-md text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#09090b]/20 transition-all border border-[#09090b]/20 active:scale-95"
-                >
-                  <FaExternalLinkAlt className="text-[9px]" />
-                  Demo
-                </button>
-              </>
+            {requestedApps.includes(app.name) ? (
+              <span className="flex-1 py-2 rounded-tag text-[11px] font-semibold text-center bg-[var(--sunk)] text-[var(--fog)] border border-[var(--line)]">
+                Voted — thank you
+              </span>
             ) : (
-              <>
-                <a
-                  href={app.repo || '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 py-2 bg-[#fafafa] text-[#09090b] rounded-md text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#f4f4f5] transition-all border border-[#ececee] active:scale-95"
-                >
-                  <FaGithub className="text-xs" />
-                  Github
-                </a>
-                <a
-                  href={app.hosted || '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 py-2 bg-[#09090b]/10 text-[#ffffff] rounded-md text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#09090b]/20 transition-all border border-[#09090b]/20 active:scale-95"
-                >
-                  <FaExternalLinkAlt className="text-[9px]" />
-                  Demo
-                </a>
-              </>
+              <button
+                onClick={() => setSelectedApp(app)}
+                className="flex-1 py-2 rounded-tag text-[11px] font-semibold bg-[var(--action)] text-[var(--chalk)] hover:bg-[var(--slab-hi)] transition-colors active:scale-95"
+              >
+                I would use this
+              </button>
             )}
           </div>
         </div>
@@ -253,24 +223,91 @@ export default function AppsStudio({ apiKey }) {
     );
   };
 
+  const shown = category === 'All'
+    ? dummyAppsData
+    : dummyAppsData.filter((app) => app.category === category);
+
   return (
-    <div className="h-full w-full flex flex-col items-center bg-[#f4f4f5] overflow-y-auto custom-scrollbar relative">
+    <div className="h-full w-full flex flex-col lg:flex-row bg-[var(--night)] relative">
       <Toaster position="bottom-right" reverseOrder={false} />
-      
+
+      {/* ── LEFT PANEL ──
+          App Shelf is the one tool that generates nothing, so it has no
+          settings and no price. What it does have is fifty-two entries, which
+          is exactly the case a panel is for: narrow the shelf, and see how many
+          of your votes are already counted. */}
+      <aside className="w-full lg:w-[370px] shrink-0 bg-[var(--sunk)] border-b lg:border-b-0 lg:border-r border-[var(--line)] flex flex-col">
+        <div className="flex-1 overflow-y-auto custom-scrollbar px-5 py-6 flex flex-col gap-6">
+          <div>
+            <h2 className="text-[10.5px] font-medium uppercase tracking-[.14em] text-[var(--fog)] mb-3">
+              Browse the shelf
+            </h2>
+            <div className="flex flex-col gap-1">
+              {[{ name: 'All', count: dummyAppsData.length }, ...CATEGORIES].map((entry) => {
+                const active = category === entry.name;
+                return (
+                  <button
+                    key={entry.name}
+                    type="button"
+                    onClick={() => setCategory(entry.name)}
+                    aria-pressed={active}
+                    className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-tag text-left text-[13px] transition-colors border ${
+                      active
+                        ? 'bg-[var(--slab-hi)] border-[var(--peri)] text-[var(--chalk)] font-semibold'
+                        : 'bg-transparent border-transparent text-[var(--steel)] hover:bg-[var(--slab)] hover:text-[var(--chalk)]'
+                    }`}
+                  >
+                    <span>{entry.name}</span>
+                    <span className="tabular-nums text-[11px] text-[var(--fog)]">{entry.count}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-[10.5px] font-medium uppercase tracking-[.14em] text-[var(--fog)] mb-3">
+              Your votes
+            </h2>
+            {requestedApps.length === 0 ? (
+              <p className="text-[12.5px] leading-relaxed text-[var(--steel)]">
+                Nothing yet. Tap “I would use this” on any tool — voting is free and
+                costs no credits.
+              </p>
+            ) : (
+              <ul className="flex flex-col gap-1.5">
+                {requestedApps.map((name) => (
+                  <li key={name} className="flex items-start gap-2 text-[12.5px] text-[var(--paper-ink)] leading-snug">
+                    <span aria-hidden className="text-[var(--lilac)] mt-[1px]">✓</span>
+                    <span>{name}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+
+        <div className="border-t border-[var(--line)] px-5 py-4">
+          <p className="text-[11.5px] leading-relaxed text-[var(--fog)]">
+            Nothing on this page is charged. The most requested tools are built first.
+          </p>
+        </div>
+      </aside>
+
+      <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col items-center">
       <div className="flex flex-col gap-10 items-center w-full max-w-7xl pt-12 pb-24 px-6">
         
         {/* Header Section */}
         <div className="text-center space-y-6 max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#09090b]/10 border border-[#09090b]/20 rounded-full">
-            <FaDollarSign className="text-[#09090b] text-xs" />
-            <span className="text-[10px] font-black text-[#09090b] uppercase tracking-widest">Revenue-Ready Templates</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--indigo)] rounded-tag">
+            <span className="text-[10px] font-semibold text-[var(--chalk)] uppercase tracking-widest">Coming next</span>
           </div>
-          <h1 className="text-5xl font-black text-[#09090b] tracking-tighter leading-[0.9]">
-            LAUNCH AN AI APP.<br />START EARNING TODAY.
+          <h1 className="text-[40px] font-semibold text-[var(--chalk)] tracking-tight leading-[1.1]">
+            What should we build next?
           </h1>
-          <p className="text-[#71717a] text-sm font-medium leading-relaxed max-w-xl mx-auto">
-            Each template is a fully-functional, Stripe-integrated AI SaaS you can deploy in minutes.
-            Charge your users, keep the revenue — muapi handles the AI infrastructure.
+          <p className="text-[var(--fog)] text-sm leading-relaxed max-w-xl mx-auto">
+            These are the tools we are considering. Tap the ones you would use and we will
+            build the most wanted first. Voting is free and costs no credits.
           </p>
         </div>
 
@@ -280,30 +317,30 @@ export default function AppsStudio({ apiKey }) {
             {
               icon: FaRocket,
               step: "01",
-              title: "Deploy in Minutes",
-              body: "Fork the open-source template, add your muapi key, and push to Vercel. No backend setup needed."
+              title: "Tap what you want",
+              body: "Every tap is a vote. Pick as many as you like — nothing is charged."
             },
             {
               icon: FaCreditCard,
               step: "02",
-              title: "Collect Payments",
-              body: "Stripe is pre-wired. Set your own pricing — one-time credits, subscriptions, or pay-per-use."
+              title: "We build the top ones",
+              body: "The most requested tools go into the build queue first."
             },
             {
               icon: FaDollarSign,
               step: "03",
-              title: "Keep the Revenue",
-              body: "Payments go straight to your Stripe account. You own the product, the brand, and the profits."
+              title: "You get told",
+              body: "When something you voted for is ready, it appears in your tools."
             }
           ].map(({ icon: Icon, step, title, body }) => (
-            <div key={step} className="flex items-start gap-4 bg-[#f4f4f5] border border-[#ececee] rounded-2xl p-6 hover:border-[#ececee] transition-colors">
-              <div className="w-12 h-12 shrink-0 rounded-2xl bg-[#fafafa] flex items-center justify-center text-[#09090b] border border-[#ececee]">
+            <div key={step} className="flex items-start gap-4 bg-[var(--night)] border border-[var(--line)] rounded-2xl p-6 hover:border-[var(--line)] transition-colors">
+              <div className="w-12 h-12 shrink-0 rounded-2xl bg-[var(--sunk)] flex items-center justify-center text-[var(--chalk)] border border-[var(--line)]">
                 <Icon className="text-lg" />
               </div>
               <div>
-                <p className="text-[10px] font-black text-[#71717a] uppercase tracking-widest mb-1">Step {step}</p>
-                <h3 className="text-sm font-bold text-[#09090b] mb-1.5">{title}</h3>
-                <p className="text-xs text-[#71717a] leading-relaxed font-medium">{body}</p>
+                <p className="text-[10px] font-black text-[var(--fog)] uppercase tracking-widest mb-1">Step {step}</p>
+                <h3 className="text-sm font-bold text-[var(--chalk)] mb-1.5">{title}</h3>
+                <p className="text-xs text-[var(--fog)] leading-relaxed font-medium">{body}</p>
               </div>
             </div>
           ))}
@@ -311,33 +348,34 @@ export default function AppsStudio({ apiKey }) {
 
         {/* Apps Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full pt-8">
-          {templateApps.map((app, index) => renderAppCard(app, false, index))}
-          {dummyAppsData.map((app, index) => renderAppCard(app, true, index + templateApps.length))}
+          {category === 'All' && templateApps.map((app, index) => renderAppCard(app, false, index))}
+          {shown.map((app, index) => renderAppCard(app, true, index + templateApps.length))}
         </div>
 
         {/* Footer Accent */}
         <div className="pt-24 pb-12 flex flex-col items-center gap-4">
-          <div className="inline-flex items-center gap-3 px-4 py-2 bg-[#fafafa] rounded-full border border-[#ececee]">
-            <span className="block w-1.5 h-1.5 rounded-full bg-[#09090b] animate-pulse" />
-            <span className="text-[9px] font-black text-[#71717a] uppercase tracking-widest">Muapi Ecosystem — More templates coming soon</span>
+          <div className="inline-flex items-center gap-3 px-4 py-2 bg-[var(--sunk)] rounded-full border border-[var(--line)]">
+            <span className="block w-1.5 h-1.5 rounded-full bg-[var(--action)] animate-pulse" />
+            <span className="text-[9px] font-black text-[var(--fog)] uppercase tracking-widest">More tools on the way</span>
           </div>
         </div>
+      </div>
       </div>
 
       {/* Get Template Modal */}
       {selectedApp && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
-          <div className="absolute inset-0 bg-[#ffffff] backdrop-blur-sm animate-fade-in" onClick={() => setSelectedApp(null)} />
-          <div className="relative bg-[#f4f4f5] border border-[#ececee] w-full max-w-md rounded-2xl p-8 space-y-8 animate-scale-up shadow-2xl">
+          <div className="absolute inset-0 bg-[var(--surface)] backdrop-blur-sm animate-fade-in" onClick={() => setSelectedApp(null)} />
+          <div className="relative bg-[var(--night)] border border-[var(--line)] w-full max-w-md rounded-2xl p-8 space-y-8 animate-scale-up shadow-2xl">
             <div className="flex flex-col items-center text-center space-y-4">
-              <div className="w-20 h-20 rounded-[28px] bg-[#09090b]/10 border border-[#09090b]/20 flex items-center justify-center text-4xl text-[#ffffff] mb-2">
+              <div className="w-20 h-20 rounded-[28px] bg-[color-mix(in_srgb,var(--action)_10%,transparent)] border border-[color-mix(in_srgb,var(--line-hi)_20%,transparent)] flex items-center justify-center text-4xl text-[var(--chalk)] mb-2">
                 <selectedApp.icon />
               </div>
-              <h2 className="text-2xl font-black text-[#09090b] uppercase tracking-tight">
-                Deploy {selectedApp.name}
+              <h2 className="text-2xl font-black text-[var(--chalk)] uppercase tracking-tight">
+                Vote for {selectedApp.name}
               </h2>
-              <p className="text-sm font-medium text-[#71717a] leading-relaxed px-4">
-                Enter your details and we&apos;ll send you the <b>{selectedApp.name}</b> template along with setup instructions so you can deploy and start earning immediately.
+              <p className="text-sm font-medium text-[var(--fog)] leading-relaxed px-4">
+                We will count your vote for <b>{selectedApp.name}</b>. The most requested tools get built first, and we will tell you when this one is ready.
               </p>
             </div>
 
@@ -345,13 +383,13 @@ export default function AppsStudio({ apiKey }) {
               <button 
                 onClick={handleRequestAccess}
                 disabled={isRequesting}
-                className="w-full py-4 bg-[#09090b] text-[#ffffff] rounded-md text-sm font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#09090b]/90 transition-all shadow-lg active:scale-95 disabled:opacity-50"
+                className="w-full py-4 bg-[var(--action)] text-[var(--chalk)] rounded-md text-sm font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[color-mix(in_srgb,var(--action)_90%,transparent)] transition-all shadow-lg active:scale-95 disabled:opacity-50"
               >
                 {isRequesting ? 'Sending Details...' : 'Get Template'}
               </button>
               <button 
                 onClick={() => setSelectedApp(null)}
-                className="w-full py-4 bg-[#fafafa] border border-[#ececee] text-[#52525b] rounded-md text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#f4f4f5] transition-all"
+                className="w-full py-4 bg-[var(--sunk)] border border-[var(--line)] text-[var(--steel)] rounded-md text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[var(--night)] transition-all"
               >
                 Maybe Later
               </button>

@@ -8,9 +8,26 @@
  */
 import type { ComponentType } from 'react';
 
+/** A past generation, as the studio history cards render one. */
+export interface StudioHistoryEntry {
+  id: string;
+  url: string;
+  prompt: string;
+  /** The quality name the customer picked — never a vendor model id. */
+  model: string;
+  duration?: number;
+  timestamp: number;
+}
+
 export interface StudioProps {
   /** Meerah session token. Sent as the `x-api-key` header. */
   apiKey: string;
+  /**
+   * Past work, from the server. When given, it replaces the studio's own
+   * localStorage history — which is what makes a refresh keep your results.
+   */
+  historyItems?: StudioHistoryEntry[];
+  onDeleteHistoryItem?: (id: string) => void;
   onGenerationStart?: (info: { tabId?: string; requestId?: string }) => void;
   onGenerationComplete?: (info: { tabId?: string; requestId?: string; url?: string }) => void;
   onGenerationError?: (message: string) => void;

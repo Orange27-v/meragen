@@ -1,9 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { api, getToken, clearToken, ApiError, type BrandAsset, type BrandAssetType } from '@/lib/api';
+import { api, ApiError, type BrandAsset, type BrandAssetType } from '@/lib/api';
+import { useSession } from '@/lib/useSession';
+import DashboardShell from '@/components/DashboardShell';
 
 /**
  * `/saved` — characters, cloned voices and brand kits.
@@ -28,7 +28,7 @@ const KINDS: Array<{ id: BrandAssetType | 'all'; label: string; empty: string }>
  * that is what makes leaving expensive (planning.md §7 Phase 9).
  */
 export default function SavedPage() {
-  const router = useRouter();
+  const { user, loading: authLoading, refresh, signOut } = useSession();
   const [items, setItems] = useState<BrandAsset[]>([]);
   const [kind, setKind] = useState<BrandAssetType | 'all'>('all');
   const [loading, setLoading] = useState(true);
@@ -39,24 +39,17 @@ export default function SavedPage() {
       const { items: found } = await api.brand.list(kind === 'all' ? undefined : kind);
       setItems(found);
     } catch (err) {
-      if (err instanceof ApiError && err.status === 401) {
-        clearToken();
-        router.replace('/signin');
-        return;
-      }
-      setError((err as Error).message);
+      // The shell's session hook owns the sign-out path; a 401 here just means
+      // there is nothing to show while it redirects.
+      if (!(err instanceof ApiError && err.status === 401)) setError((err as Error).message);
     } finally {
       setLoading(false);
     }
-  }, [kind, router]);
+  }, [kind]);
 
   useEffect(() => {
-    if (!getToken()) {
-      router.replace('/signin');
-      return;
-    }
-    void load();
-  }, [load, router]);
+    if (!authLoading) void load();
+  }, [authLoading, load]);
 
   async function rename(asset: BrandAsset) {
     const next = window.prompt('New name', asset.name);
@@ -82,18 +75,7 @@ export default function SavedPage() {
   const active = KINDS.find((k) => k.id === kind)!;
 
   return (
-    <>
-      <header className="topbar">
-        <div className="shell topbar-in">
-          <Link className="wordmark" href="/studio"><span className="mark" />Meerah</Link>
-          <div style={{ marginLeft: 'auto', display: 'flex', gap: '.5rem' }}>
-            <Link className="btn btn-ghost" href="/studio">Studio</Link>
-            <Link className="btn btn-ghost" href="/create">All tools</Link>
-          </div>
-        </div>
-      </header>
-
-      <main className="shell" style={{ paddingBlock: '2rem 4rem' }}>
+    <DashboardShell user={user} onSignOut={signOut} refreshUser={refresh}>
         <h1 className="display" style={{ fontSize: '1.8rem', marginBottom: '.5rem' }}>Saved</h1>
         <p className="muted" style={{ marginBottom: '1.5rem' }}>
           Your characters, voices and brand kits. Reuse them so every video looks like you.
@@ -105,7 +87,7 @@ export default function SavedPage() {
           {KINDS.map((option) => (
             <button key={option.id} type="button" onClick={() => { setLoading(true); setKind(option.id); }}
               style={{
-                padding: '.5rem .9rem', borderRadius: 2, font: 'inherit', fontWeight: 600, fontSize: '.85rem',
+                padding: '.5rem .9rem', borderRadius: 'var(--radius-tag)', font: 'inherit', fontWeight: 600, fontSize: '.85rem',
                 cursor: 'pointer',
                 border: `1px solid ${kind === option.id ? 'var(--obsidian)' : 'var(--line)'}`,
                 background: kind === option.id ? 'var(--ink-deep)' : 'transparent',
@@ -125,7 +107,7 @@ export default function SavedPage() {
             {items.map((asset) => (
               <div key={asset.id} className="card" style={{ padding: '.75rem' }}>
                 <div style={{
-                  aspectRatio: '1', borderRadius: 2, overflow: 'hidden', marginBottom: '.6rem',
+                  aspectRatio: '1', borderRadius: 'var(--radius-tag)', overflow: 'hidden', marginBottom: '.6rem',
                   background: 'var(--ink-deep)', display: 'grid', placeItems: 'center',
                 }}>
                   {asset.previewUrl ? (
@@ -153,8 +135,7 @@ export default function SavedPage() {
             ))}
           </div>
         )}
-      </main>
-    </>
+    </DashboardShell>
   );
 }
 

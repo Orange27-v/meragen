@@ -214,6 +214,7 @@ export class GenerationsService {
   async history(userId: string, limit = 50): Promise<Array<{
     id: string; feature: string; modelId: string; status: GenerationStatus;
     outputUrl: string | null; costCredits: number; createdAt: Date;
+    inputParams: unknown;
   }>> {
     return this.prisma.generation.findMany({
       where: { userId },
@@ -222,6 +223,9 @@ export class GenerationsService {
       select: {
         id: true, feature: true, modelId: true, status: true,
         outputUrl: true, costCredits: true, createdAt: true,
+        // The prompt lives in here. The history cards show it, so someone can
+        // tell two of their own videos apart.
+        inputParams: true,
       },
     });
   }

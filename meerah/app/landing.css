@@ -65,7 +65,7 @@
   gap: 8px 24px;
 }
 .hero-note span { display: flex; align-items: center; gap: 6px; }
-.tick { color: var(--obsidian); font-weight: 600; }
+.tick { color: var(--lilac); font-weight: 600; }
 
 /* --- The live language demo. A card, so: white, 36px, hairline. ------------- */
 .demo {
@@ -86,16 +86,16 @@
 .rec {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 13px; font-weight: 500;
-  background: var(--ember); color: var(--snow);
+  background: var(--action); color: var(--on-action);
   padding: 4px 8px; border-radius: var(--radius-tag);
 }
-.rec-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--snow); animation: pulse 1.8s ease-in-out infinite; }
+.rec-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--on-action); animation: pulse 1.8s ease-in-out infinite; }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
 
 .wave { display: flex; align-items: flex-end; gap: 3px; height: 48px; margin: 24px 0; }
 .wave i {
   flex: 1;
-  background: var(--mist);
+  background: var(--slab-hi);
   border-radius: 2px;
   animation: bob 1.4s ease-in-out infinite;
   min-height: 3px;
@@ -117,14 +117,14 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-tag);
   background: transparent;
-  color: var(--graphite);
+  color: var(--paper-ink);
   font: inherit;
   font-size: 13px;
   cursor: pointer;
   transition: all .16s;
 }
-.pill:hover { border-color: var(--iron); }
-.pill[aria-pressed="true"] { background: var(--obsidian); border-color: var(--obsidian); color: var(--snow); }
+.pill:hover { border-color: var(--line-hi); }
+.pill[aria-pressed="true"] { background: var(--action); border-color: var(--action); color: var(--on-action); }
 
 /* --- Sections --------------------------------------------------------------- */
 section { padding: var(--section-gap) 0; }
@@ -148,7 +148,7 @@ section { padding: var(--section-gap) 0; }
 .wedge p { margin-top: 12px; color: var(--steel); }
 .wedge .tag {
   display: inline-block;
-  background: var(--ember); color: var(--snow);
+  background: var(--action); color: var(--on-action);
   padding: 4px 8px; border-radius: var(--radius-tag);
   font-size: 12px; font-weight: 500;
 }
@@ -166,7 +166,7 @@ section { padding: var(--section-gap) 0; }
   padding: var(--card-pad);
   transition: border-color .18s;
 }
-.feat:hover { border-color: var(--mist); }
+.feat:hover { border-color: var(--line-hi); }
 .feat h4 { font-size: var(--text-subheading); font-weight: 600; }
 .feat p { margin-top: 8px; font-size: 14px; color: var(--steel); line-height: 1.5; }
 
@@ -179,7 +179,7 @@ section { padding: var(--section-gap) 0; }
   display: block;
   font-size: var(--text-heading-sm);
   font-weight: 600;
-  color: var(--mist);
+  color: var(--hair-hi);
   line-height: 1;
   margin-bottom: 12px;
 }
@@ -198,7 +198,7 @@ section { padding: var(--section-gap) 0; }
   background: var(--snow);
 }
 /* The featured pack is marked by ink weight, not by colour. */
-.pack.featured { border-color: var(--obsidian); border-width: 1.5px; }
+.pack.featured { border-color: var(--peri); border-width: 1.5px; }
 .pack-name { font-size: var(--text-caption); font-weight: 500; color: var(--iron); }
 .pack-price { font-size: var(--text-heading-sm); font-weight: 600; line-height: 1.1; margin-top: 8px; font-variant-numeric: tabular-nums; }
 .pack-credits { font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; }

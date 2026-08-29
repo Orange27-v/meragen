@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { generateImage, generateI2I, uploadFile } from "../muapi.js";
+import { generateImage, generateI2I, uploadFile, getUserBalance } from "../muapi.js";
 import { formatErrorMessage } from "../utils/formatError.js";
 import { scopedPersistKey, migrateLegacyPersistKey } from "../persistKey.js";
 import DrawModal from "./DrawModal.jsx";
@@ -23,6 +23,9 @@ import {
   getDefaultEffectForI2IModel,
   getI2IModelById,
 } from "../models.js";
+import { SettingsRail, RailSection } from "./rail/SettingsRail";
+import { QualityPicker, useQualityTiers } from "./rail/QualityPicker";
+import { CostMeter } from "./rail/CostMeter";
 import {
   getFamilyVariant,
   getImageReferenceVariant,
@@ -307,7 +310,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
 
   // Trigger icon content
   const triggerContent = uploading ? (
-    <div className="flex flex-col items-center justify-center w-full h-full absolute inset-0 bg-[#ffffff] z-20 backdrop-blur-[2px]">
+    <div className="flex flex-col items-center justify-center w-full h-full absolute inset-0 bg-[var(--veil)] z-20 backdrop-blur-[2px]">
       <svg className="w-8 h-8 -rotate-90">
         <circle
           cx="16"
@@ -316,7 +319,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
           stroke="currentColor"
           strokeWidth="2"
           fill="transparent"
-          className="text-[#d4d4d8]"
+          className="text-[var(--ash)]"
         />
         <circle
           cx="16"
@@ -327,10 +330,10 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
           fill="transparent"
           strokeDasharray={88}
           strokeDashoffset={88 - (88 * lastUploadProgress) / 100}
-          className="text-[#09090b] transition-all duration-300"
+          className="text-[var(--chalk)] transition-all duration-300"
         />
       </svg>
-      <span className="absolute text-[9px] font-black text-[#09090b] leading-none">
+      <span className="absolute text-[9px] font-black text-[var(--chalk)] leading-none">
         {lastUploadProgress}%
       </span>
     </div>
@@ -338,7 +341,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
     hasSelection ? (
       <img src={selectedEntries[0].url} alt="" className="w-full h-full object-cover" />
     ) : (
-      <span className="text-[10px] font-bold text-[#52525b]">Face</span>
+      <span className="text-[10px] font-bold text-[var(--steel)]">Face</span>
     )
   ) : (
     <svg
@@ -348,7 +351,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
       fill="none"
       stroke="currentColor"
       strokeWidth="2.5"
-      className="text-[#71717a] group-hover:text-[#09090b] transition-colors"
+      className="text-[var(--fog)] group-hover:text-[var(--chalk)] transition-colors"
     >
       <line x1="12" y1="5" x2="12" y2="19" />
       <line x1="5" y1="12" x2="19" y2="12" />
@@ -400,7 +403,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
           className="w-96 max-w-[calc(100vw-2rem)]"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-1 pb-3 mb-2 border-b border-[#ececee]">
+          <div className="flex items-center justify-between px-1 pb-3 mb-2 border-b border-[var(--line)]">
             <div className="flex flex-col gap-0.5">
               <span className="text-xs font-bold text-secondary">
                 Reference Images
@@ -416,7 +419,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
                 <button
                   type="button"
                   onClick={handleDone}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-primary text-[#09090b] rounded-xl text-xs font-black transition-all hover:scale-105"
+                  className="flex items-center gap-1 px-3 py-1.5 bg-primary text-[var(--chalk)] rounded-xl text-xs font-black transition-all hover:scale-105"
                 >
                   ✓ Done ({count})
                 </button>
@@ -483,7 +486,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
                     className={`relative rounded-xl overflow-hidden border-2 cursor-pointer group/cell aspect-square transition-all ${
                       isSelected
                         ? "border-primary shadow-glow"
-                        : "border-[#ececee] hover:border-[#d4d4d8]"
+                        : "border-[var(--line)] hover:border-[var(--line)]"
                     } ${atMax ? "opacity-40 cursor-not-allowed" : ""} ${!entry.url ? "cursor-wait" : ""}`}
                   >
                     {entry.url ? (
@@ -493,7 +496,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-[#fafafa] flex flex-col items-center justify-center">
+                      <div className="w-full h-full bg-[var(--sunk)] flex flex-col items-center justify-center">
                         <div className="w-8 h-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin mb-1" />
                         <span className="text-[10px] font-black text-primary">
                           {entry.progress}%
@@ -503,7 +506,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
 
                     {/* Hover overlay with delete */}
                     {entry.url && (
-                      <div className="absolute inset-0 bg-[#ffffff] opacity-0 group-hover/cell:opacity-100 transition-opacity flex items-end justify-end p-1">
+                      <div className="absolute inset-0 bg-[var(--veil)] opacity-0 group-hover/cell:opacity-100 transition-opacity flex items-end justify-end p-1">
                         <button
                           type="button"
                           title="Remove from history"
@@ -529,7 +532,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
                     {isSelected && (
                       <div className="absolute top-1 left-1 min-w-[20px] h-5 bg-primary rounded-full flex items-center justify-center px-1">
                         {isMulti ? (
-                          <span className="text-[10px] font-black text-[#09090b]">
+                          <span className="text-[10px] font-black text-[var(--chalk)]">
                             {selIdx + 1}
                           </span>
                         ) : (
@@ -554,14 +557,14 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
 
           {/* Bottom bar for multi-select */}
           {isMulti && hasSelection && (
-            <div className="mt-3 pt-3 border-t border-[#ececee] flex items-center justify-between">
+            <div className="mt-3 pt-3 border-t border-[var(--line)] flex items-center justify-between">
               <span className="text-xs text-secondary">
                 {count} of {maxImages} selected
               </span>
               <button
                 type="button"
                 onClick={handleDone}
-                className="px-4 py-1.5 bg-primary text-[#09090b] rounded-xl text-xs font-black transition-all hover:scale-105"
+                className="px-4 py-1.5 bg-primary text-[var(--chalk)] rounded-xl text-xs font-black transition-all hover:scale-105"
               >
                 Use Selected
               </button>
@@ -575,317 +578,9 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [], 
 
 // ─── ModelDropdown ────────────────────────────────────────────────────────────
 
-const PROVIDER_LOGOS = {
-  openai: "https://cdn.muapi.ai/models/openai.png",
-  google: "https://cdn.muapi.ai/models/gemini.png",
-  kling: "https://cdn.muapi.ai/models/kling.png",
-  alibaba: "https://cdn.muapi.ai/models/alibaba.png",
-  bytedance: "https://cdn.muapi.ai/models/bytedance.png",
-  blackforest: "https://cdn.muapi.ai/models/bfl.png",
-  minimax: "https://cdn.muapi.ai/models/minimax.png",
-  suno: "https://cdn.muapi.ai/models/suno.png",
-  anthropic: "https://cdn.muapi.ai/models/claude.png",
-  meshy: "https://cdn.muapi.ai/models/meshy-3.png",
-  tripo3d: "https://cdn.muapi.ai/models/tripo3d.png",
-  grok: "https://cdn.muapi.ai/models/xai.png",
-  muapi: "https://cdn.muapi.ai/models/muapi.png",
-  midjourney: "https://cdn.muapi.ai/models/midjourney.png",
-  vidu: "https://cdn.muapi.ai/models/vidu.png",
-  runway: "https://cdn.muapi.ai/models/runway.png",
-  luma: "https://cdn.muapi.ai/models/luma.png",
-  ideogram: "https://cdn.muapi.ai/models/ideogram.png",
-  leonardoai: "https://cdn.muapi.ai/models/leonardoai.png",
-  hunyuan: "https://cdn.muapi.ai/models/hunyuan.png",
-  hidream: "https://cdn.muapi.ai/models/hidream.png",
-  lightricks: "https://cdn.muapi.ai/models/lightricks.png",
-  pixverse: "https://cdn.muapi.ai/models/pixverse.png",
-  reve: "https://cdn.muapi.ai/models/reve.png",
-  stability: "https://cdn.muapi.ai/models/stability.png"
-};
 
 const invertLogos = ['openai', 'blackforest', 'runway', 'ideogram', 'lightricks', 'grok'];
 
-function ModelDropdown({ selectedModel, onSelect, onClose }) {
-  const [search, setSearch] = useState("");
-  const selectedEntry = imageModelPickerEntryByVariantId.get(selectedModel);
-  const modelCategories = [
-    {
-      id: "all",
-      label: "All",
-      entries: imageModelPickerEntries,
-    },
-    {
-      id: "t2i",
-      label: "Text to Image",
-      entries: imageModelPickerEntries.filter((entry) => entry.variantsByMode.t2i),
-    },
-    {
-      id: "i2i",
-      label: "Image to Image",
-      entries: imageModelPickerEntries.filter((entry) => entry.variantsByMode.i2i),
-    },
-  ];
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedProvider, setSelectedProvider] = useState("all");
-  const activeCategory = modelCategories.find((category) => category.id === selectedCategory) || modelCategories[0];
-  const modelEntries = activeCategory.entries;
-
-  const activeItemRef = useRef(null);
-
-  useEffect(() => {
-    // Automatically scroll the active model into view when opening
-    if (activeItemRef.current) {
-      activeItemRef.current.scrollIntoView({ block: "nearest" });
-    }
-  }, []);
-
-  const getProviderStyle = (provider) => {
-    switch (provider) {
-      case "grok":
-        return { text: "xI", bg: "bg-orange-500/10 text-orange-400 border-orange-500/25" };
-      case "openai":
-        return { text: "O", bg: "bg-emerald-500/10 text-emerald-400 border-emerald-500/25" };
-      case "google":
-        return { text: "G", bg: "bg-blue-500/10 text-blue-400 border-blue-500/25" };
-      case "blackforest":
-        return { text: "BF", bg: "bg-amber-500/10 text-amber-400 border-amber-500/25" };
-      case "bytedance":
-        return { text: "BD", bg: "bg-purple-500/10 text-purple-400 border-purple-500/25" };
-      case "midjourney":
-        return { text: "MJ", bg: "bg-indigo-500/10 text-indigo-400 border-indigo-500/25" };
-      case "kling":
-        return { text: "KL", bg: "bg-rose-500/10 text-rose-400 border-rose-500/25" };
-      case "vidu":
-        return { text: "VD", bg: "bg-cyan-500/10 text-cyan-400 border-cyan-500/25" };
-      case "minimax":
-        return { text: "MX", bg: "bg-pink-500/10 text-pink-400 border-pink-500/25" };
-      case "ideogram":
-        return { text: "ID", bg: "bg-yellow-500/10 text-yellow-400 border-yellow-500/25" };
-      case "luma":
-        return { text: "LM", bg: "bg-teal-500/10 text-teal-400 border-teal-500/25" };
-      case "alibaba":
-        return { text: "AL", bg: "bg-sky-500/10 text-sky-400 border-sky-500/25" };
-      case "leonardoai":
-        return { text: "LE", bg: "bg-violet-500/10 text-violet-400 border-violet-500/25" };
-      case "stability":
-        return { text: "SD", bg: "bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/25" };
-      default:
-        const name = provider ? provider.toUpperCase() : "AI";
-        return { text: name.substring(0, 2), bg: "bg-primary/10 text-primary border-primary/25" };
-    }
-  };
-
-  // Dynamically compute list of providers from the input models list
-  const availableProviders = [];
-  const seenProviders = new Set();
-  
-  modelEntries.forEach(({ family }) => {
-    const pId = family.provider || 'muapi';
-    const pName = family.provider_name || 'Muapi';
-    if (!seenProviders.has(pId)) {
-      seenProviders.add(pId);
-      availableProviders.push({ id: pId, name: pName });
-    }
-  });
-
-  const filtered = modelEntries.filter((entry) => {
-    const { family } = entry;
-    // 1. Filter by provider tab
-    if (selectedProvider !== "all") {
-      const pId = family.provider || 'muapi';
-      if (pId !== selectedProvider) return false;
-    }
-    // 2. Filter by search query
-    const query = search.toLowerCase();
-    return entry.searchText.includes(query);
-  });
-
-  return (
-    <div className="flex gap-4 h-full max-h-[60vh] min-h-[350px] overflow-x-hidden">
-      {/* Left Sidebar: Provider tabs */}
-      <div className="flex flex-col gap-2.5 items-center pr-2 border-r border-[#ececee] shrink-0 select-none overflow-y-auto custom-scrollbar w-14 pt-0.5">
-        <button
-          type="button"
-          onClick={() => setSelectedProvider("all")}
-          className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all flex-shrink-0 cursor-pointer ${
-            selectedProvider === "all"
-              ? "bg-[#f4f4f5] text-yellow-400 border-yellow-500/30 shadow-md scale-105"
-              : "bg-[#fafafa] text-[#52525b] border-[#ececee] hover:bg-[#fafafa] hover:text-[#09090b]"
-          }`}
-          title="All Providers"
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill={selectedProvider === "all" ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-          </svg>
-        </button>
-        
-        {availableProviders.map(p => {
-          const style = getProviderStyle(p.id);
-          const isSelected = selectedProvider === p.id;
-          return (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => setSelectedProvider(p.id)}
-              aria-pressed={isSelected}
-              className={`w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center overflow-hidden font-black text-[10px] border transition-all cursor-pointer ${
-                isSelected
-                  ? `${style.bg} scale-105 shadow-md shadow-black/10`
-                  : "bg-[#fafafa] text-[#71717a] border-[#ececee]/[0.02] hover:bg-[#fafafa] hover:text-[#3f3f46]"
-              }`}
-              title={p.name}
-            >
-              {PROVIDER_LOGOS[p.id] ? (
-                <img
-                  src={PROVIDER_LOGOS[p.id]}
-                  alt={p.name}
-                  className={`w-full h-full rounded-full object-contain ${invertLogos.includes(p.id) ? "invert" : ""}`}
-                />
-              ) : (
-                style.text
-              )}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Right Pane: Search input + Models list */}
-      <div className="flex-1 flex flex-col gap-2 min-w-0">
-        <div className="border-b border-[#ececee] shrink-0 pb-2 space-y-2">
-          <div className="flex gap-1.5 overflow-x-auto custom-scrollbar pb-0.5">
-            {modelCategories.map((category) => (
-              <button
-                key={category.id}
-                type="button"
-                onClick={() => {
-                  setSelectedCategory(category.id);
-                  setSelectedProvider("all");
-                }}
-                className={`shrink-0 rounded-lg px-2.5 py-1.5 text-[10px] font-bold transition-colors border ${
-                  selectedCategory === category.id
-                    ? "bg-primary/15 text-primary border-primary/30"
-                    : "bg-[#fafafa] text-[#52525b] border-[#ececee]/[0.04] hover:bg-[#fafafa] hover:text-[#09090b]"
-                }`}
-              >
-                {category.label}
-              </button>
-            ))}
-          </div>
-          <div className="flex items-center gap-3 bg-[#fafafa] rounded-xl px-4 py-2 border border-[#ececee] focus-within:border-primary/50 transition-colors">
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-              className="text-muted"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35" />
-            </svg>
-            <input
-              type="text"
-              placeholder="Search models..."
-              value={search}
-              onClick={(e) => e.stopPropagation()}
-              onChange={(e) => {
-                const value = e.target.value;
-                setSearch(value);
-                if (value.trim()) setSelectedProvider("all");
-              }}
-              className="bg-transparent border-none text-xs text-[#09090b] focus:ring-0 w-full p-0 focus:outline-none"
-            />
-          </div>
-        </div>
-        
-        <div className="text-xs font-semibold text-secondary py-1 shrink-0 flex items-center justify-between">
-          <span>{activeCategory.label} models</span>
-          {selectedProvider !== "all" && (
-            <span className="text-[10px] bg-[#fafafa] px-2 py-0.5 rounded text-[#52525b]">
-              {availableProviders.find(p => p.id === selectedProvider)?.name || selectedProvider}
-            </span>
-          )}
-        </div>
-        
-        <div className="flex flex-col gap-1.5 overflow-y-auto custom-scrollbar pr-1 pb-2 flex-1">
-          {filtered.length === 0 ? (
-            <div className="text-xs text-[#71717a] text-center py-6">
-              No models found
-            </div>
-          ) : (
-            filtered.map((entry) => {
-              const { family } = entry;
-              const isSelected = selectedEntry === entry;
-              return (
-              <div
-                key={entry.id}
-                ref={isSelected ? activeItemRef : null}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSelect(entry, activeCategory.id);
-                  onClose();
-                }}
-                className={`flex items-center justify-between p-3 hover:bg-[#fafafa] rounded-lg cursor-pointer transition-all border border-transparent hover:border-[#ececee] ${
-                  isSelected ? "bg-[#fafafa] border-[#ececee]" : ""
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  {PROVIDER_LOGOS[family.provider] ? (
-                    <div className="w-8 h-8 rounded-full border border-[#ececee] overflow-hidden shrink-0 flex items-center justify-center bg-[#fafafa]">
-                      <img
-                        src={PROVIDER_LOGOS[family.provider]}
-                        alt={family.provider_name}
-                        className={`w-full h-full object-contain p-1 ${invertLogos.includes(family.provider) ? "invert" : ""}`}
-                      />
-                    </div>
-                  ) : (
-                    <div
-                      className={`w-8 h-8 ${
-                        family.id.includes("kontext")
-                          ? "bg-blue-500/10 text-blue-400 border-blue-500/10"
-                          : family.id.includes("effects")
-                            ? "bg-purple-500/10 text-purple-400 border-purple-500/10"
-                            : "bg-primary/10 text-primary border-primary/10"
-                      } border rounded-full flex items-center justify-center font-bold text-xs shadow-inner uppercase`}
-                    >
-                      {entry.name.charAt(0)}
-                    </div>
-                  )}
-                  <div className="flex flex-col gap-0.5 min-w-0">
-                    <span className="text-xs font-bold text-[#09090b] tracking-tight truncate">
-                      {entry.name}
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                    {selectedProvider === "all" && family.provider_name && (
-                      <span className="text-[9px] text-[#71717a]">
-                        {family.provider_name}
-                      </span>
-                    )}
-                    </div>
-                  </div>
-                </div>
-                {isSelected && (
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#22d3ee"
-                    strokeWidth="4"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                )}
-              </div>
-              );
-            })
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ─── SimpleDropdown ───────────────────────────────────────────────────────────
 
@@ -965,6 +660,10 @@ export default function ImageStudio({
   const [currentImageUrl, setCurrentImageUrl] = useState(null);
   const [activeHistoryIdx, setActiveHistoryIdx] = useState(0);
   const [batchSize, setBatchSize] = useState(1);
+  // Which quality is chosen, and what the account has to spend. Both feed the
+  // cost meter pinned at the foot of the settings rail.
+  const [selectedTierId, setSelectedTierId] = useState("image");
+  const [creditBalance, setCreditBalance] = useState(null);
   const [localHistory, setLocalHistory] = useState([]); // [{id,url,prompt,model,aspect_ratio,timestamp}]
 
   // Use prop history if provided, otherwise local
@@ -1409,131 +1108,49 @@ export default function ImageStudio({
         ? "Describe how to transform this image (optional)"
         : "Describe the image you want to create";
 
-  // ── Render ───────────────────────────────────────────────────────────────
-  return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-app-bg relative p-4 md:p-6 overflow-hidden">
-      
-      {/* ── CENTRAL GALLERY AREA ── */}
-      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-40 lg:pb-32 px-2">
-        {history.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full pt-4 animate-fade-in-up">
-            {history.map((entry, idx) => (
-              <div
-                key={entry.id || idx}
-                className="relative group rounded-lg overflow-hidden border border-[#ececee] bg-[#f4f4f5] shadow-xl hover:border-primary/50 transition-all duration-300 flex flex-col cursor-pointer"
-                onClick={() => setFullscreenUrl(entry.url)}
-              >
-                <img
-                  src={entry.url}
-                  alt={entry.prompt?.substring(0, 30) || "Generated image"}
-                  className="w-full aspect-square object-cover bg-[#f4f4f5] hover:opacity-80 transition-opacity"
-                />
-                
-                {/* Overlay actions */}
-                <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <GenerationCopyButtons
-                    prompt={entry.prompt}
-                    imageUrl={entry.url}
-                    onCopyError={onGenerationError}
-                  />
-                  <button
-                    type="button"
-                    title="Download"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      downloadImage(entry.url, `muapi-${entry.id || idx}.jpg`);
-                    }}
-                    className="p-2 bg-[#ffffff] backdrop-blur-md rounded-full text-[#09090b] hover:bg-primary hover:text-[#09090b] transition-all border border-[#ececee]"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
-                    </svg>
-                  </button>
-                  <button
-                    type="button"
-                    title="Delete"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (confirm("Are you sure you want to delete this generated item?")) {
-                        handleDeleteEntry(entry, idx).catch((err) => {
-                          onGenerationError?.(err.message || "Failed to delete item");
-                        });
-                      }
-                    }}
-                    className="p-2 bg-[#ffffff] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[#09090b] transition-all border border-[#ececee]"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <polyline points="3 6 5 6 21 6" />
-                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                      <line x1="10" y1="11" x2="10" y2="17" />
-                      <line x1="14" y1="11" x2="14" y2="17" />
-                    </svg>
-                  </button>
-                </div>
-                <MobileGenerationActions
-                  prompt={entry.prompt}
-                  imageUrl={entry.url}
-                  onCopyError={onGenerationError}
-                  actions={[
-                    {
-                      kind: "download",
-                      label: "Download",
-                      onSelect: () =>
-                        downloadImage(entry.url, `muapi-${entry.id || idx}.jpg`),
-                    },
-                    {
-                      kind: "delete",
-                      label: "Delete",
-                      danger: true,
-                      onSelect: () => {
-                        if (confirm("Are you sure you want to delete this generated item?")) {
-                          handleDeleteEntry(entry, idx).catch((err) => {
-                            onGenerationError?.(err.message || "Failed to delete item");
-                          });
-                        }
-                      },
-                    },
-                  ]}
-                />
+  const qualityTiers = useQualityTiers("image");
+  const selectedTier = qualityTiers.find((t) => t.tierId === selectedTierId) || null;
 
-                {/* Prompt & Details */}
-                <div className="p-3 bg-[#ffffff] backdrop-blur-sm border-t border-[#ececee] flex-1 flex flex-col justify-between gap-2">
-                  <p className="text-[#3f3f46] text-xs line-clamp-3 leading-relaxed" title={entry.prompt}>
-                    {entry.prompt || "No prompt provided"}
-                  </p>
-                  <div className="flex items-center justify-between mt-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded border border-primary/20 capitalize">
-                        {entry.model?.replace("-", " ") || "Image Studio"}
-                      </span>
-                      <span className="text-[10px] text-[#71717a]">{entry.aspect_ratio}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full animate-fade-in-up transition-all duration-700 min-h-[50vh]">
-            {/* Overlapping floating cards */}
-            <div className="flex items-center justify-center gap-1.5 md:gap-3 mb-10 select-none scale-90 sm:scale-100">
-            </div>
+  // A tier names an exact model, and the server only honours the tier price
+  // when that exact id is submitted.
+  const handleTierSelect = useCallback((tier) => {
+    setSelectedTierId(tier.tierId);
+    setSelectedModelId(tier.modelId);
+  }, []);
 
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-center px-4 flex flex-col items-center">
-              <span className="text-[#71717a] text-sm font-medium tracking-wide mb-1">Start creating</span>
-              <span className="text-[#09090b] font-semibold text-2xl sm:text-4xl sm:mt-1 tracking-tight">PixCraft</span>
-            </h1>
-            <p className="text-[#71717a] text-xs sm:text-sm font-medium tracking-wide text-center max-w-lg leading-relaxed px-4">
-              Describe a scene, character, mood, or style — and watch it come to life
-            </p>
-          </div>
-        )}
-      </div>
+  const refreshBalance = useCallback(() => {
+    getUserBalance(apiKey)
+      .then((r) => setCreditBalance(r.balance))
+      .catch(() => {});
+  }, [apiKey]);
 
-      {/* ── BOTTOM PROMPT BAR ── */}
-      <PromptComposer>
-          {/* Top row: upload picker + textarea */}
-          <div className="flex flex-col gap-3">
+  useEffect(() => { refreshBalance(); }, [refreshBalance]);
+
+  // Buying credits belongs to the shell, which can show the sheet over any page.
+  const openTopUp = useCallback(() => {
+    window.dispatchEvent(new CustomEvent("meerah:buy-credits"));
+  }, []);
+
+  // ── the settings rail ─────────────────────────────────────────────────────
+  //
+  // Same shape as every other tool: what you give it, what to make, how good,
+  // then what that costs — with the price visible before the button is pressed.
+  const settingsRail = (
+    <SettingsRail
+      footer={
+        <CostMeter
+          tier={selectedTier}
+          balance={creditBalance}
+          busy={generating}
+          onGenerate={handleGenerate}
+          onBuyCredits={openTopUp}
+          quantity={batchSize}
+          label={batchSize > 1 ? `Generate ${batchSize}` : "Generate"}
+        />
+      }
+    >
+      {referenceVariant && (
+        <RailSection label="Start from a picture" hint="Optional. Leave it empty to make a picture from words alone.">
             {/* Inline list of uploaded files */}
             <div className="flex items-center gap-2.5 flex-wrap">
               {uploadedImageUrls && uploadedImageUrls.length > 0 && uploadedImageUrls.map((url, idx) => (
@@ -1546,7 +1163,7 @@ export default function ImageStudio({
                       setUploadedImageUrls(next);
                       if (next.length === 0) handleUploadClear();
                     }}
-                    className="absolute top-0.5 right-0.5 w-4 h-4 bg-[#ffffff] hover:bg-[#ffffff] rounded-full flex items-center justify-center text-[#09090b]/85 hover:text-[#09090b] text-[8px] border border-[#ececee]"
+                    className="absolute top-0.5 right-0.5 w-4 h-4 bg-[var(--surface)] hover:bg-[var(--surface)] rounded-full flex items-center justify-center text-[color-mix(in_srgb,var(--chalk)_85%,transparent)] hover:text-[var(--chalk)] text-[8px] border border-[var(--line)]"
                   >
                     ×
                   </button>
@@ -1578,7 +1195,10 @@ export default function ImageStudio({
                 />
               )}
             </div>
+        </RailSection>
+      )}
 
+      <RailSection label="Your prompt">
             {/* Input prompt text area */}
             <PromptTextarea
               ref={textareaRef}
@@ -1586,73 +1206,14 @@ export default function ImageStudio({
               onChange={(e) => setPrompt(e.target.value)}
               placeholder={placeholderText}
             />
-          </div>
+      </RailSection>
 
-          {/* Bottom row: controls + generate */}
-          <PromptFooter>
-            {/* Left controls */}
-            <PromptControls ref={dropdownRef}>
-              {/* Model button */}
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setDropdownOpen((o) => (o === "model" ? null : "model"));
-                  }}
-                  className={promptControlClassName({
-                    active: dropdownOpen === "model",
-                  })}
-                >
-                  <div className="w-4 h-4 rounded overflow-hidden shrink-0 flex items-center justify-center bg-[#fafafa]">
-                    {(() => {
-                      const selectedModelProvider = selectedFamily.provider || 'muapi';
-                      return PROVIDER_LOGOS[selectedModelProvider] ? (
-                        <img 
-                          src={PROVIDER_LOGOS[selectedModelProvider]} 
-                          alt="" 
-                          className={`w-full h-full object-contain ${invertLogos.includes(selectedModelProvider) ? "invert" : ""}`} 
-                        />
-                      ) : (
-                        <span className="text-[9px] font-bold text-[#09090b] uppercase">G</span>
-                      );
-                    })()}
-                  </div>
-                  <span className={PROMPT_CONTROL_LABEL_CLASS}>
-                    PixCraft</span>
-                  <PromptChevronIcon />
-                </button>
+      <RailSection label="Quality" hint="The price covers one picture at this quality.">
+        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} />
+      </RailSection>
 
-                {dropdownOpen === "model" && (
-                  <PromptPopover
-                    onClick={(e) => e.stopPropagation()}
-                    className="w-[calc(100vw-2rem)] md:w-[480px] max-w-md md:max-w-none max-h-[70vh]"
-                  >
-                    <PromptPopoverHeader>Model</PromptPopoverHeader>
-                    <ModelDropdown
-                      selectedModel={selectedModelId}
-                      onSelect={handleModelSelect}
-                      onClose={() => setDropdownOpen(null)}
-                    />
-                  </PromptPopover>
-                )}
-              </div>
-
-              <ModelParameterControls
-                inputs={supplementalInputs}
-                values={modelParameterValues}
-                onChange={(key, value) =>
-                  setModelParameterValues((values) => ({ ...values, [key]: value }))
-                }
-                open={dropdownOpen === "parameters"}
-                onToggle={(event) => {
-                  event.stopPropagation();
-                  setDropdownOpen((open) =>
-                    open === "parameters" ? null : "parameters",
-                  );
-                }}
-              />
-
+      <RailSection label="Picture settings">
+            <div ref={dropdownRef} className="flex flex-wrap items-center gap-2">
               {/* Aspect ratio button */}
               <div className="relative">
                 <button
@@ -1734,7 +1295,7 @@ export default function ImageStudio({
                       active: dropdownOpen === "effect",
                     })}
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-40 text-[#09090b]">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-40 text-[var(--chalk)]">
                       <path d="M5 3l14 9-14 9V3z" />
                     </svg>
                     <span className={`${PROMPT_CONTROL_LABEL_CLASS} max-w-[140px] truncate`}>
@@ -1764,17 +1325,17 @@ export default function ImageStudio({
                 <button
                   type="button"
                   onClick={() => setBatchSize(prev => Math.max(1, prev - 1))}
-                  className="text-[#71717a] hover:text-[#3f3f46] font-extrabold text-xs transition-colors px-1"
+                  className="text-[var(--fog)] hover:text-[var(--iron)] font-extrabold text-xs transition-colors px-1"
                 >
                   -
                 </button>
-                <span className="text-xs font-semibold text-[#3f3f46] min-w-[24px] text-center">
+                <span className="text-xs font-semibold text-[var(--iron)] min-w-[24px] text-center">
                   {batchSize}/4
                 </span>
                 <button
                   type="button"
                   onClick={() => setBatchSize(prev => Math.min(4, prev + 1))}
-                  className="text-[#71717a] hover:text-[#3f3f46] font-extrabold text-xs transition-colors px-1"
+                  className="text-[var(--fog)] hover:text-[var(--iron)] font-extrabold text-xs transition-colors px-1"
                 >
                   +
                 </button>
@@ -1786,7 +1347,7 @@ export default function ImageStudio({
                 className={promptControlClassName()}
                 onClick={() => setIsDrawModalOpen(true)}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="opacity-40 text-[#09090b] group-hover:text-[#09090b] transition-colors">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="opacity-40 text-[var(--chalk)] group-hover:text-[var(--chalk)] transition-colors">
                   <path d="M12 20h9" />
                   <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
                 </svg>
@@ -1794,36 +1355,146 @@ export default function ImageStudio({
                   Draw
                 </span>
               </button>
-            </PromptControls>
+            </div>
+      </RailSection>
+    </SettingsRail>
+  );
 
-            {/* Generate button */}
-            <PromptAction
-              onClick={handleGenerate}
-              disabled={generating}
-            >
-              {generating ? (
-                <>
-                  <span className="animate-spin inline-block text-[#09090b]">◌</span>
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <span>Generate ✦</span>
-                </>
-              )}
-            </PromptAction>
-          </PromptFooter>
-      </PromptComposer>
+  // ── Render ───────────────────────────────────────────────────────────────
+  return (
+    <div className="w-full h-full flex flex-col lg:flex-row bg-app-bg relative overflow-hidden">
+      {/* ── LEFT: SETTINGS RAIL ── */}
+      {settingsRail}
+
+      {/* ── RIGHT: THE WORK ── */}
+      <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
+      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar px-4 pb-8">
+        {history.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full pt-4 animate-fade-in-up">
+            {history.map((entry, idx) => (
+              <div
+                key={entry.id || idx}
+                className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-primary/50 transition-all duration-300 flex flex-col cursor-pointer"
+                onClick={() => setFullscreenUrl(entry.url)}
+              >
+                <img
+                  src={entry.url}
+                  alt={entry.prompt?.substring(0, 30) || "Generated image"}
+                  className="w-full aspect-square object-cover bg-[var(--night)] hover:opacity-80 transition-opacity"
+                />
+                
+                {/* Overlay actions */}
+                <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <GenerationCopyButtons
+                    prompt={entry.prompt}
+                    imageUrl={entry.url}
+                    onCopyError={onGenerationError}
+                  />
+                  <button
+                    type="button"
+                    title="Download"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      downloadImage(entry.url, `muapi-${entry.id || idx}.jpg`);
+                    }}
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-primary hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    title="Delete"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (confirm("Are you sure you want to delete this generated item?")) {
+                        handleDeleteEntry(entry, idx).catch((err) => {
+                          onGenerationError?.(err.message || "Failed to delete item");
+                        });
+                      }
+                    }}
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                      <line x1="10" y1="11" x2="10" y2="17" />
+                      <line x1="14" y1="11" x2="14" y2="17" />
+                    </svg>
+                  </button>
+                </div>
+                <MobileGenerationActions
+                  prompt={entry.prompt}
+                  imageUrl={entry.url}
+                  onCopyError={onGenerationError}
+                  actions={[
+                    {
+                      kind: "download",
+                      label: "Download",
+                      onSelect: () =>
+                        downloadImage(entry.url, `muapi-${entry.id || idx}.jpg`),
+                    },
+                    {
+                      kind: "delete",
+                      label: "Delete",
+                      danger: true,
+                      onSelect: () => {
+                        if (confirm("Are you sure you want to delete this generated item?")) {
+                          handleDeleteEntry(entry, idx).catch((err) => {
+                            onGenerationError?.(err.message || "Failed to delete item");
+                          });
+                        }
+                      },
+                    },
+                  ]}
+                />
+
+                {/* Prompt & Details */}
+                <div className="p-3 bg-[var(--surface)] backdrop-blur-sm border-t border-[var(--line)] flex-1 flex flex-col justify-between gap-2">
+                  <p className="text-[var(--iron)] text-xs line-clamp-3 leading-relaxed" title={entry.prompt}>
+                    {entry.prompt || "No prompt provided"}
+                  </p>
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded border border-primary/20 capitalize">
+                        {entry.model?.replace("-", " ") || "Image Studio"}
+                      </span>
+                      <span className="text-[10px] text-[var(--fog)]">{entry.aspect_ratio}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full animate-fade-in-up transition-all duration-700 min-h-[50vh]">
+            {/* Overlapping floating cards */}
+            <div className="flex items-center justify-center gap-1.5 md:gap-3 mb-10 select-none scale-90 sm:scale-100">
+            </div>
+
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-center px-4 flex flex-col items-center">
+              <span className="text-[var(--fog)] text-sm font-medium tracking-wide mb-1">Start creating</span>
+              <span className="text-[var(--chalk)] font-semibold text-2xl sm:text-4xl sm:mt-1 tracking-tight">PixCraft</span>
+            </h1>
+            <p className="text-[var(--fog)] text-xs sm:text-sm font-medium tracking-wide text-center max-w-lg leading-relaxed px-4">
+              Describe a scene, character, mood, or style — and watch it come to life
+            </p>
+          </div>
+        )}
+      </div>
+
+      </div>
 
       {/* ── FULLSCREEN IMAGE MODAL ── */}
       {fullscreenUrl && (
         <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#ffffff] backdrop-blur-sm animate-fade-in"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--scrim)] backdrop-blur-sm animate-fade-in"
           onClick={() => setFullscreenUrl(null)}
         >
           <button
             type="button"
-            className="absolute top-6 right-6 p-3 bg-[#f4f4f5] hover:bg-[#ececee] rounded-full text-[#09090b] transition-colors border border-[#ececee]"
+            className="absolute top-6 right-6 p-3 bg-[var(--night)] hover:bg-[var(--slab)] rounded-full text-[var(--chalk)] transition-colors border border-[var(--line)]"
             onClick={(e) => {
               e.stopPropagation();
               setFullscreenUrl(null);
@@ -1851,7 +1522,7 @@ export default function ImageStudio({
         batchSize={1}
         onAddHistoryItem={addToHistory}
       />
-      <Toaster position="top-right" containerStyle={{ zIndex: 99999 }} toastOptions={{ duration: 5000, style: { background: '#18181b', color: '#ffffff', border: '1px solid rgba(255,255,255,0.15)', fontSize: '13px', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.6)', maxWidth: '440px', wordBreak: 'break-word', whiteSpace: 'pre-wrap', padding: '12px 16px' } }} />
+      <Toaster position="top-right" containerStyle={{ zIndex: 99999 }} toastOptions={{ duration: 5000, style: { background: 'var(--slab-hi)', color: 'var(--surface)', border: '1px solid rgba(255,255,255,0.15)', fontSize: '13px', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.6)', maxWidth: '440px', wordBreak: 'break-word', whiteSpace: 'pre-wrap', padding: '12px 16px' } }} />
     </div>
   );
 }

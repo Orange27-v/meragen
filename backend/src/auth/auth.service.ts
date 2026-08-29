@@ -1,7 +1,9 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { randomBytes, createHash } from 'node:crypto';
 import { AuthProvider } from '@prisma/client';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../common/prisma.service';
+import { isAdminEmail } from '../common/admins';
 import { FirebaseService } from './firebase.service';
 
 const SESSION_DAYS = 30;
@@ -26,6 +28,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly firebase: FirebaseService,
+    private readonly config: ConfigService,
   ) {}
 
   /** False means nobody can sign in — the API says so plainly rather than 500ing. */
@@ -134,10 +137,16 @@ export class AuthService {
       .catch(() => undefined);
   }
 
-  async me(userId: string): Promise<{ id: string; email: string; creditBalance: number }> {
-    return this.prisma.user.findUniqueOrThrow({
+  async me(userId: string): Promise<{
+    id: string; email: string; creditBalance: number; isAdmin: boolean;
+  }> {
+    const user = await this.prisma.user.findUniqueOrThrow({
       where: { id: userId },
       select: { id: true, email: true, creditBalance: true },
     });
+    // Lets the dashboard decide whether to render the owner link at all. It is
+    // a display hint only: the metrics route re-checks the same list on every
+    // request, so forging this flag in the browser buys nothing.
+    return { ...user, isAdmin: isAdminEmail(user.email, this.config.get<string>('ADMIN_EMAILS', '')) };
   }
 }

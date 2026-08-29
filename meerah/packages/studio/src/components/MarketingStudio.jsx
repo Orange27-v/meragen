@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { uploadFile, generateMarketingStudioAd } from "../muapi.js";
+import { SettingsRail, RailSection } from "./rail/SettingsRail";
+import { QualityPicker, useQualityTiers } from "./rail/QualityPicker";
+import { CostMeter } from "./rail/CostMeter";
+import { uploadFile, generateMarketingStudioAd, getUserBalance } from "../muapi.js";
 import { scopedPersistKey, migrateLegacyPersistKey } from "../persistKey.js";
 import MobileGenerationActions, {
   GenerationCopyButtons,
@@ -140,7 +143,7 @@ function UploadSlot({ icon, url, progress, label, onUpload, onClear, multiple = 
         />
         
         {progress > 0 && progress < 100 ? (
-          <div className="absolute inset-0 bg-[#ffffff] rounded-full flex items-center justify-center z-10">
+          <div className="absolute inset-0 bg-[var(--surface)] rounded-full flex items-center justify-center z-10">
             <span className="text-[8px] font-black text-primary">{progress}%</span>
           </div>
         ) : url ? (
@@ -148,7 +151,7 @@ function UploadSlot({ icon, url, progress, label, onUpload, onClear, multiple = 
             <img src={url} className="w-full h-full object-cover" alt={label} />
           </div>
         ) : (
-          <div className="text-[#71717a] group-hover:text-primary transition-colors">
+          <div className="text-[var(--fog)] group-hover:text-primary transition-colors">
             {icon}
           </div>
         )}
@@ -157,7 +160,7 @@ function UploadSlot({ icon, url, progress, label, onUpload, onClear, multiple = 
         {url && !multiple && (
           <button 
             onClick={(e) => { e.stopPropagation(); onClear(); }}
-            className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-[#09090b] rounded-full flex items-center justify-center opacity-0 group-hover/slot:opacity-100 transition-opacity shadow-lg"
+            className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-[var(--chalk)] rounded-full flex items-center justify-center opacity-0 group-hover/slot:opacity-100 transition-opacity shadow-lg"
           >
             <CloseSvg />
           </button>
@@ -193,7 +196,7 @@ function Dropdown({ isOpen, title, items, selectedId, onSelect, onClose, isVideo
             key={item.id}
             onClick={() => onSelect(item)}
             className={`relative rounded overflow-hidden border-2 transition-all group cursor-pointer ${
-              selectedId === item.id || selectedId === item.url ? 'border-primary shadow-glow' : 'border-[#ececee] hover:border-[#d4d4d8]'
+              selectedId === item.id || selectedId === item.url ? 'border-primary shadow-glow' : 'border-[var(--line)] hover:border-[var(--line)]'
             }`}
           >
             {onPreview && !isVideo && (
@@ -204,7 +207,7 @@ function Dropdown({ isOpen, title, items, selectedId, onSelect, onClose, isVideo
                   e.stopPropagation();
                   onPreview(item);
                 }}
-                className="absolute top-1.5 left-1.5 w-6 h-6 bg-[#ffffff] rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-[#09090b] hover:text-[#ffffff] transition-all border border-[#ececee] z-20 text-[#3f3f46]"
+                className="absolute top-1.5 left-1.5 w-6 h-6 bg-[var(--surface)] rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-[var(--action)] hover:text-[var(--chalk)] transition-all border border-[var(--line)] z-20 text-[var(--iron)]"
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <circle cx="11" cy="11" r="8" />
@@ -221,7 +224,7 @@ function Dropdown({ isOpen, title, items, selectedId, onSelect, onClose, isVideo
               <img src={item.url} className="w-full aspect-square object-cover group-hover:scale-105 transition-all duration-500" alt={item.name} />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <span className="text-[9px] font-black text-[#09090b] uppercase tracking-tight">{item.name}</span>
+              <span className="text-[9px] font-black text-[var(--chalk)] uppercase tracking-tight">{item.name}</span>
             </div>
             {(selectedId === item.id || selectedId === item.url) && (
               <div className="absolute top-1.5 right-1.5 w-4 h-4 bg-primary rounded-full flex items-center justify-center shadow-lg">
@@ -302,6 +305,10 @@ export default function MarketingStudio({
 
   const [localHistory, setLocalHistory] = useState([]);
   const history = historyItems ?? localHistory;
+  // Which quality is chosen, and what the account has to spend — both feed the
+  // cost meter at the foot of the rail.
+  const [selectedTierId, setSelectedTierId] = useState("draft");
+  const [creditBalance, setCreditBalance] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [dropdown, setDropdown] = useState(null); // 'format' | 'avatar' | 'ratio' | 'res' | 'duration'
   const [uploadProgress, setUploadProgress] = useState({ product: 0, avatar: 0, additional: 0 });
@@ -418,133 +425,54 @@ export default function MarketingStudio({
     }
   };
 
-  // ── Render ─────────────────────────────────────────────────────────────────
+  const qualityTiers = useQualityTiers("video");
+  const selectedTier = qualityTiers.find((t) => t.tierId === selectedTierId) || null;
 
-  return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-app-bg relative overflow-hidden">
-      <style>{SCROLLBAR_STYLE}</style>
-      
-      {/* ── MAIN CONTENT AREA ── */}
-      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-40 lg:pb-32 px-2">
-        {history.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
-            {history.map(entry => (
-              <div
-                key={entry.id}
-                onClick={() => setFullscreenUrl(entry.url)}
-                className="relative group rounded-lg overflow-hidden border border-[#ececee] bg-[#f4f4f5] shadow-xl hover:border-primary/50 transition-all duration-300 flex flex-col cursor-pointer"
-              >
-                <video 
-                  src={entry.url} 
-                  className="w-full aspect-video object-cover hover:opacity-80 transition-opacity" 
-                  muted loop onMouseOver={e => e.target.play()} onMouseOut={e => { e.target.pause(); e.target.currentTime = 0; }}
-                />
-                
-                {/* Actions Overlay */}
-                <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <GenerationCopyButtons
-                    prompt={entry.prompt}
-                    onCopyError={onGenerationError}
-                  />
-                   <button
-                    onClick={(e) => { e.stopPropagation(); downloadFile(entry.url, `marketing-ad-${entry.id}.mp4`); }}
-                    className="p-2 bg-[#ffffff] backdrop-blur-md rounded-full text-[#09090b] hover:bg-primary hover:text-[#09090b] transition-all border border-[#ececee]"
-                    title="Download"
-                   >
-                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                       <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
-                     </svg>
-                   </button>
-                   <button
-                    type="button"
-                    title="Delete"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (confirm("Are you sure you want to delete this generated item?")) {
-                        if (!historyItems) {
-                          setLocalHistory(prev => prev.filter(h => h.id !== entry.id));
-                        }
-                      }
-                    }}
-                    className="p-2 bg-[#ffffff] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[#09090b] transition-all border border-[#ececee]"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <polyline points="3 6 5 6 21 6" />
-                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                      <line x1="10" y1="11" x2="10" y2="17" />
-                      <line x1="14" y1="11" x2="14" y2="17" />
-                    </svg>
-                   </button>
-                </div>
-                <MobileGenerationActions
-                  prompt={entry.prompt}
-                  onCopyError={onGenerationError}
-                  actions={[
-                    {
-                      kind: "download",
-                      label: "Download",
-                      onSelect: () =>
-                        downloadFile(entry.url, `marketing-ad-${entry.id}.mp4`),
-                    },
-                    {
-                      kind: "delete",
-                      label: "Delete",
-                      danger: true,
-                      onSelect: () => {
-                        if (confirm("Are you sure you want to delete this generated item?")) {
-                          if (!historyItems) {
-                            setLocalHistory((prev) =>
-                              prev.filter((item) => item.id !== entry.id),
-                            );
-                          }
-                        }
-                      },
-                    },
-                  ]}
-                />
+  // A tier names an exact model, and the server only honours the tier price
+  // when that exact id is submitted.
+  const handleTierSelect = useCallback((tier) => {
+    setSelectedTierId(tier.tierId);
+    // No model to pin: this tool runs one pipeline, and the tier only
+    // decides the quality it renders at.
+  }, []);
 
-                <div className="p-3 bg-[#ffffff] backdrop-blur-sm border-t border-[#ececee] flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-black text-primary px-2 py-0.5 bg-primary/10 rounded border border-primary/20 uppercase tracking-tighter">
-                      Marketing Studio
-                    </span>
-                    {entry.format && (
-                      <span className="text-[9px] text-[#71717a] font-bold">{entry.format}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full animate-fade-in-up transition-all duration-700 min-h-[50vh]">
-            {/* Overlapping floating cards */}
-            <div className="flex items-center justify-center gap-1.5 md:gap-3 mb-10 select-none scale-90 sm:scale-100">
-            </div>
+  const refreshBalance = useCallback(() => {
+    getUserBalance(apiKey).then((r) => setCreditBalance(r.balance)).catch(() => {});
+  }, [apiKey]);
 
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-center px-4 flex flex-col items-center">
-              <span className="text-[#71717a] text-sm font-medium tracking-wide mb-1">Start creating</span>
-              <span className="text-[#09090b] font-semibold text-2xl sm:text-4xl sm:mt-1 tracking-tight">
-                Sales Reel
-              </span>
-            </h1>
-            <p className="text-[#71717a] text-xs sm:text-sm font-medium tracking-wide text-center max-w-lg leading-relaxed px-4">
-              Describe your scene, upload your product, and watch high-converting AI video ads come to life.
-            </p>
-          </div>
-        )}
-      </div>
+  useEffect(() => { refreshBalance(); }, [refreshBalance]);
 
-      {/* ── BOTTOM PROMPT BAR ── */}
-      <PromptComposer>
+  // Buying credits belongs to the shell, which can show the sheet over any page.
+  const openTopUp = useCallback(() => {
+    window.dispatchEvent(new CustomEvent("meerah:buy-credits"));
+  }, []);
+
+  // ── the settings rail ─────────────────────────────────────────────────────
+  //
+  // The same column every tool uses: what you give it, what to make, how good,
+  // then what it costs. Replaces a floating bar of unlabelled pills whose price
+  // only appeared after the money was spent.
+  const settingsRail = (
+    <SettingsRail
+      footer={
+        <CostMeter
+          tier={selectedTier}
+          balance={creditBalance}
+          busy={isGenerating}
+          onGenerate={handleGenerate}
+          onBuyCredits={openTopUp}
+        />
+      }
+    >
+      <RailSection label="Your product">
           {additionalImages.length > 0 && (
             <div className="flex items-center gap-1.5">
               {additionalImages.map((img, idx) => (
                 <div key={idx} className="relative group/img flex-shrink-0">
-                  <img src={img} className="w-9 h-9 rounded-full object-cover border border-[#ececee]" />
+                  <img src={img} className="w-9 h-9 rounded-full object-cover border border-[var(--line)]" />
                   <button 
                     onClick={() => setAdditionalImages(prev => prev.filter((_, i) => i !== idx))}
-                    className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#ffffff] text-[#09090b] rounded-full flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity border border-[#ececee]"
+                    className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[var(--surface)] text-[var(--chalk)] rounded-full flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity border border-[var(--line)]"
                   >
                     <CloseSvg />
                   </button>
@@ -563,11 +491,17 @@ export default function MarketingStudio({
           </div>
 
           {/* Bottom Row: Uploads + Controls + Generate */}
-          <PromptFooter>
-            <PromptControls>
+      </RailSection>
+
+      <RailSection label="Quality" hint="Every price is the full cost of one video. Nothing else is added.">
+        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} />
+      </RailSection>
+
+      <RailSection label="Settings">
+            <div className="flex flex-wrap items-center gap-2">
               
               {/* Asset Uploads Group */}
-              <div className="flex items-center gap-1.5 pr-3 border-r border-[#ececee]">
+              <div className="flex items-center gap-1.5 pr-3 border-r border-[var(--line)]">
                 <UploadSlot 
                   label="Product" 
                   icon={<ProductIcon />} 
@@ -635,7 +569,7 @@ export default function MarketingStudio({
                     active: dropdown === "avatar",
                   })}
                 >
-                  <div className="w-4 h-4 rounded-full overflow-hidden border border-[#d4d4d8] shadow-inner">
+                  <div className="w-4 h-4 rounded-full overflow-hidden border border-[var(--line)] shadow-inner">
                     <img src={avatarImage || ASSETS.avatar[0].url} className="w-full h-full object-cover" />
                   </div>
                   <span className={PROMPT_CONTROL_LABEL_CLASS}>
@@ -659,7 +593,7 @@ export default function MarketingStudio({
                     }}
                     className={promptControlClassName({
                       iconOnly: true,
-                      className: "text-[#71717a] hover:text-[#09090b]",
+                      className: "text-[var(--fog)] hover:text-[var(--chalk)]",
                     })}
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -691,8 +625,8 @@ export default function MarketingStudio({
                       active: dropdown === key,
                       className:
                         dropdown === key
-                          ? "text-xs font-semibold text-[#09090b]"
-                          : "text-xs font-semibold text-[#3f3f46]",
+                          ? "text-xs font-semibold text-[var(--chalk)]"
+                          : "text-xs font-semibold text-[var(--iron)]",
                     })}
                   >
                     {key === "ratio" ? (
@@ -722,28 +656,140 @@ export default function MarketingStudio({
                   />
                 </div>
               ))}
-            </PromptControls>
+            </div>
+      </RailSection>
+    </SettingsRail>
+  );
 
-            <PromptAction
-              onClick={handleGenerate}
-              disabled={isGenerating}
-            >
-              {isGenerating ? (
-                <>
-                  <span className="animate-spin inline-block text-[#09090b]">◌</span>
-                  Generating...
-                </>
-              ) : (
-                <span>Launch</span>
-              )}
-            </PromptAction>
-          </PromptFooter>
-      </PromptComposer>
+  // ── Render ─────────────────────────────────────────────────────────────────
+
+  return (
+    <div className="w-full h-full flex flex-col lg:flex-row bg-app-bg relative overflow-hidden">
+      {/* ── LEFT: SETTINGS RAIL ── */}
+      {settingsRail}
+
+      {/* ── RIGHT: THE WORK ── */}
+      <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
+      <style>{SCROLLBAR_STYLE}</style>
+      
+      {/* ── MAIN CONTENT AREA ── */}
+      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-8 px-2">
+        {history.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
+            {history.map(entry => (
+              <div
+                key={entry.id}
+                onClick={() => setFullscreenUrl(entry.url)}
+                className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-primary/50 transition-all duration-300 flex flex-col cursor-pointer"
+              >
+                <video 
+                  src={entry.url} 
+                  className="w-full aspect-video object-cover hover:opacity-80 transition-opacity" 
+                  muted loop onMouseOver={e => e.target.play()} onMouseOut={e => { e.target.pause(); e.target.currentTime = 0; }}
+                />
+                
+                {/* Actions Overlay */}
+                <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <GenerationCopyButtons
+                    prompt={entry.prompt}
+                    onCopyError={onGenerationError}
+                  />
+                   <button
+                    onClick={(e) => { e.stopPropagation(); downloadFile(entry.url, `marketing-ad-${entry.id}.mp4`); }}
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-primary hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                    title="Download"
+                   >
+                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                       <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                     </svg>
+                   </button>
+                   <button
+                    type="button"
+                    title="Delete"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (confirm("Are you sure you want to delete this generated item?")) {
+                        if (!historyItems) {
+                          setLocalHistory(prev => prev.filter(h => h.id !== entry.id));
+                        }
+                      }
+                    }}
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                      <line x1="10" y1="11" x2="10" y2="17" />
+                      <line x1="14" y1="11" x2="14" y2="17" />
+                    </svg>
+                   </button>
+                </div>
+                <MobileGenerationActions
+                  prompt={entry.prompt}
+                  onCopyError={onGenerationError}
+                  actions={[
+                    {
+                      kind: "download",
+                      label: "Download",
+                      onSelect: () =>
+                        downloadFile(entry.url, `marketing-ad-${entry.id}.mp4`),
+                    },
+                    {
+                      kind: "delete",
+                      label: "Delete",
+                      danger: true,
+                      onSelect: () => {
+                        if (confirm("Are you sure you want to delete this generated item?")) {
+                          if (!historyItems) {
+                            setLocalHistory((prev) =>
+                              prev.filter((item) => item.id !== entry.id),
+                            );
+                          }
+                        }
+                      },
+                    },
+                  ]}
+                />
+
+                <div className="p-3 bg-[var(--surface)] backdrop-blur-sm border-t border-[var(--line)] flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-black text-primary px-2 py-0.5 bg-primary/10 rounded border border-primary/20 uppercase tracking-tighter">
+                      Marketing Studio
+                    </span>
+                    {entry.format && (
+                      <span className="text-[9px] text-[var(--fog)] font-bold">{entry.format}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full animate-fade-in-up transition-all duration-700 min-h-[50vh]">
+            {/* Overlapping floating cards */}
+            <div className="flex items-center justify-center gap-1.5 md:gap-3 mb-10 select-none scale-90 sm:scale-100">
+            </div>
+
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-center px-4 flex flex-col items-center">
+              <span className="text-[var(--fog)] text-sm font-medium tracking-wide mb-1">Start creating</span>
+              <span className="text-[var(--chalk)] font-semibold text-2xl sm:text-4xl sm:mt-1 tracking-tight">
+                Sales Reel
+              </span>
+            </h1>
+            <p className="text-[var(--fog)] text-xs sm:text-sm font-medium tracking-wide text-center max-w-lg leading-relaxed px-4">
+              Describe your scene, upload your product, and watch high-converting AI video ads come to life.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* ── BOTTOM PROMPT BAR ── */}
+      </div>
 
       {/* Fullscreen Preview */}
       {fullscreenUrl && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#ffffff] backdrop-blur-sm animate-fade-in" onClick={() => setFullscreenUrl(null)}>
-          <button className="absolute top-6 right-6 p-3 bg-[#f4f4f5] hover:bg-[#ececee] rounded-full text-[#09090b] border border-[#ececee] transition-colors shadow-2xl"><CloseSvg /></button>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--scrim)] backdrop-blur-sm animate-fade-in" onClick={() => setFullscreenUrl(null)}>
+          <button className="absolute top-6 right-6 p-3 bg-[var(--night)] hover:bg-[var(--slab)] rounded-full text-[var(--chalk)] border border-[var(--line)] transition-colors shadow-2xl"><CloseSvg /></button>
           <video src={fullscreenUrl} controls autoPlay className="max-w-[95vw] max-h-[95vh] rounded-lg shadow-4xl animate-scale-up" onClick={e => e.stopPropagation()} />
         </div>
       )}
@@ -751,13 +797,13 @@ export default function MarketingStudio({
       {/* ── AVATAR FULLSCREEN PREVIEW MODAL ── */}
       {previewAvatar && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#f4f4f5] backdrop-blur-md animate-fade-in select-none"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--night)] backdrop-blur-md animate-fade-in select-none"
           onClick={() => setPreviewAvatar(null)}
         >
           {/* Close button (cross) in the right corner */}
           <button
             type="button"
-            className="absolute top-6 right-6 p-3 bg-[#f4f4f5] hover:bg-[#ececee] rounded-full text-[#09090b] transition-colors border border-[#ececee] z-50 animate-fade-in"
+            className="absolute top-6 right-6 p-3 bg-[var(--night)] hover:bg-[var(--slab)] rounded-full text-[var(--chalk)] transition-colors border border-[var(--line)] z-50 animate-fade-in"
             onClick={(e) => {
               e.stopPropagation();
               setPreviewAvatar(null);
@@ -804,7 +850,7 @@ export default function MarketingStudio({
           {previewAvatar.id !== "custom" && (
             <button
               type="button"
-              className="absolute left-6 p-4 bg-[#fafafa] hover:bg-[#f4f4f5] hover:text-primary rounded-full text-[#09090b] transition-all border border-[#ececee] z-50"
+              className="absolute left-6 p-4 bg-[var(--sunk)] hover:bg-[var(--night)] hover:text-primary rounded-full text-[var(--chalk)] transition-all border border-[var(--line)] z-50"
               onClick={(e) => {
                 e.stopPropagation();
                 const currentIndex = ASSETS.avatar.findIndex(a => a.id === previewAvatar.id);
@@ -825,7 +871,7 @@ export default function MarketingStudio({
           {previewAvatar.id !== "custom" && (
             <button
               type="button"
-              className="absolute right-6 p-4 bg-[#fafafa] hover:bg-[#f4f4f5] hover:text-primary rounded-full text-[#09090b] transition-all border border-[#ececee] z-50"
+              className="absolute right-6 p-4 bg-[var(--sunk)] hover:bg-[var(--night)] hover:text-primary rounded-full text-[var(--chalk)] transition-all border border-[var(--line)] z-50"
               onClick={(e) => {
                 e.stopPropagation();
                 const currentIndex = ASSETS.avatar.findIndex(a => a.id === previewAvatar.id);
@@ -856,7 +902,7 @@ export default function MarketingStudio({
                     setPreviewAvatar(prevAvatar);
                   }
                 }}
-                className="hidden md:flex flex-col items-center opacity-50 hover:opacity-60 scale-75 hover:scale-80 transition-all duration-300 cursor-pointer select-none max-w-[15vw] max-h-[50vh] rounded-xl overflow-hidden border border-[#ececee] bg-[#f4f4f5]/50"
+                className="hidden md:flex flex-col items-center opacity-50 hover:opacity-60 scale-75 hover:scale-80 transition-all duration-300 cursor-pointer select-none max-w-[15vw] max-h-[50vh] rounded-xl overflow-hidden border border-[var(--line)] bg-[color-mix(in_srgb,var(--night)_50%,transparent)]"
               >
                 <img
                   src={ASSETS.avatar[(ASSETS.avatar.findIndex(a => a.id === previewAvatar.id) - 1 + ASSETS.avatar.length) % ASSETS.avatar.length].url}
@@ -874,7 +920,7 @@ export default function MarketingStudio({
               }`}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="relative rounded-2xl overflow-hidden border border-[#ececee] bg-[#f4f4f5] shadow-2xl">
+              <div className="relative rounded-2xl overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-2xl">
                 <img
                   src={previewAvatar.url}
                   alt={previewAvatar.name}
@@ -883,7 +929,7 @@ export default function MarketingStudio({
                 
                 {/* Overlay with Name of the Avatar */}
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 pt-10 flex flex-col items-center justify-end gap-3">
-                  <h2 className="text-xl font-black text-[#09090b] tracking-wide uppercase">
+                  <h2 className="text-xl font-black text-[var(--chalk)] tracking-wide uppercase">
                     {previewAvatar.name}
                   </h2>
                   
@@ -895,7 +941,7 @@ export default function MarketingStudio({
                       setPreviewAvatar(null);
                       setDropdown(null);
                     }}
-                    className="bg-[#09090b] text-[#ffffff] px-6 py-2.5 rounded-full font-bold text-sm hover:opacity-95 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-[#09090b]/20"
+                    className="bg-[var(--action)] text-[var(--chalk)] px-6 py-2.5 rounded-full font-bold text-sm hover:opacity-95 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-[color-mix(in_srgb,var(--action)_20%,transparent)]"
                   >
                     <CheckSvg />
                     Select Avatar
@@ -916,7 +962,7 @@ export default function MarketingStudio({
                     setPreviewAvatar(nextAvatar);
                   }
                 }}
-                className="hidden md:flex flex-col items-center opacity-50 hover:opacity-60 scale-75 hover:scale-80 transition-all duration-300 cursor-pointer select-none max-w-[15vw] max-h-[50vh] rounded-xl overflow-hidden border border-[#ececee] bg-[#f4f4f5]/50"
+                className="hidden md:flex flex-col items-center opacity-50 hover:opacity-60 scale-75 hover:scale-80 transition-all duration-300 cursor-pointer select-none max-w-[15vw] max-h-[50vh] rounded-xl overflow-hidden border border-[var(--line)] bg-[color-mix(in_srgb,var(--night)_50%,transparent)]"
               >
                 <img
                   src={ASSETS.avatar[(ASSETS.avatar.findIndex(a => a.id === previewAvatar.id) + 1) % ASSETS.avatar.length].url}

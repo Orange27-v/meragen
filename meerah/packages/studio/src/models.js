@@ -7166,6 +7166,140 @@ export const t2vModels = [
     "provider_name": "ByteDance"
   },
   {
+    "id": "seedance-2.5-text-to-video-1080p",
+    "name": "Seedance 2.5 1080p",
+    "endpoint": "seedance-2.5-text-to-video-1080p",
+    "inputs": {
+      "prompt": {
+        "examples": [
+          "A photorealistic aerial view of a vast ancient temple complex at golden hour, rivers of molten light streaming between colossal stone pillars, slow majestic crane shot ascending to reveal surrounding jungle, 4K cinematic depth and color grading."
+        ],
+        "description": "Text prompt describing the video scene and motion.",
+        "type": "string",
+        "title": "Prompt",
+        "name": "prompt"
+      },
+      "aspect_ratio": {
+        "enum": [
+          "16:9",
+          "9:16",
+          "1:1",
+          "3:4",
+          "4:3",
+          "21:9"
+        ],
+        "title": "Aspect Ratio",
+        "name": "aspect_ratio",
+        "type": "string",
+        "description": "Aspect ratio of the output video.",
+        "default": "16:9"
+      },
+      "resolution": {
+        "enum": [
+          "1080p"
+        ],
+        "title": "Resolution",
+        "name": "resolution",
+        "type": "string",
+        "description": "Output video resolution.",
+        "default": "1080p"
+      },
+      "duration": {
+        "title": "Duration",
+        "name": "duration",
+        "type": "int",
+        "description": "The duration of the generated video in seconds.",
+        "default": 5,
+        "minValue": 4,
+        "maxValue": 16,
+        "step": 1
+      },
+      "generate_audio": {
+        "type": "boolean",
+        "title": "Generate Audio",
+        "name": "generate_audio",
+        "description": "Whether to generate audio for the video.",
+        "default": true
+      },
+      "camera_fixed": {
+        "type": "boolean",
+        "title": "Camera Fixed",
+        "name": "camera_fixed",
+        "description": "Whether to fix the camera position.",
+        "default": false
+      }
+    },
+    "provider": "bytedance",
+    "provider_name": "ByteDance"
+  },
+  {
+    "id": "seedance-2.5-text-to-video-4k",
+    "name": "Seedance 2.5 4K",
+    "endpoint": "seedance-2.5-text-to-video-4k",
+    "inputs": {
+      "prompt": {
+        "examples": [
+          "A photorealistic aerial view of a vast ancient temple complex at golden hour, rivers of molten light streaming between colossal stone pillars, slow majestic crane shot ascending to reveal surrounding jungle, 4K cinematic depth and color grading."
+        ],
+        "description": "Text prompt describing the video scene and motion.",
+        "type": "string",
+        "title": "Prompt",
+        "name": "prompt"
+      },
+      "aspect_ratio": {
+        "enum": [
+          "16:9",
+          "9:16",
+          "1:1",
+          "3:4",
+          "4:3",
+          "21:9"
+        ],
+        "title": "Aspect Ratio",
+        "name": "aspect_ratio",
+        "type": "string",
+        "description": "Aspect ratio of the output video.",
+        "default": "16:9"
+      },
+      "resolution": {
+        "enum": [
+          "4K"
+        ],
+        "title": "Resolution",
+        "name": "resolution",
+        "type": "string",
+        "description": "Output video resolution.",
+        "default": "4K"
+      },
+      "duration": {
+        "title": "Duration",
+        "name": "duration",
+        "type": "int",
+        "description": "The duration of the generated video in seconds.",
+        "default": 5,
+        "minValue": 4,
+        "maxValue": 16,
+        "step": 1
+      },
+      "generate_audio": {
+        "type": "boolean",
+        "title": "Generate Audio",
+        "name": "generate_audio",
+        "description": "Whether to generate audio for the video.",
+        "default": true
+      },
+      "camera_fixed": {
+        "type": "boolean",
+        "title": "Camera Fixed",
+        "name": "camera_fixed",
+        "description": "Whether to fix the camera position.",
+        "default": false
+      }
+    },
+    "provider": "bytedance",
+    "provider_name": "ByteDance"
+  },
+  {
     "id": "seedance-2.5-text-to-video-480p",
     "name": "Seedance 2.5 480p",
     "endpoint": "seedance-2.5-text-to-video-480p",

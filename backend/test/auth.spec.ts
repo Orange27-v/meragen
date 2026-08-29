@@ -20,7 +20,7 @@ class FakeFirebase extends FirebaseService {
 
 const prisma = new PrismaClient() as PrismaService;
 const firebase = new FakeFirebase();
-const auth = new AuthService(prisma, firebase);
+const auth = new AuthService(prisma, firebase, new ConfigService());
 
 const email = () => `auth-${crypto.randomUUID()}@meerahstudio.com`;
 

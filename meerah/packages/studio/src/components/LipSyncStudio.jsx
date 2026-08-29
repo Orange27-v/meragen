@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { SettingsRail, RailSection } from "./rail/SettingsRail";
+import { QualityPicker, useQualityTiers } from "./rail/QualityPicker";
+import { CostMeter } from "./rail/CostMeter";
 import toast, { Toaster } from "react-hot-toast";
-import { processLipSync, uploadFile } from "../muapi.js";
+import { processLipSync, uploadFile, getUserBalance } from "../muapi.js";
 import { formatErrorMessage } from "../utils/formatError.js";
 import { scopedPersistKey, migrateLegacyPersistKey } from "../persistKey.js";
 import MobileGenerationActions, {
@@ -104,7 +107,7 @@ function MediaPickerButton({
 
       {/* Uploading indicator */}
       {uploadState === UPLOAD_STATE.UPLOADING && (
-        <div className="flex flex-col items-center justify-center w-full h-full absolute inset-0 bg-[#ffffff] z-20 backdrop-blur-[2px]">
+        <div className="flex flex-col items-center justify-center w-full h-full absolute inset-0 bg-[var(--veil)] z-20 backdrop-blur-[2px]">
           <svg className="w-8 h-8 -rotate-90">
             <circle
               cx="16"
@@ -113,7 +116,7 @@ function MediaPickerButton({
               stroke="currentColor"
               strokeWidth="2"
               fill="transparent"
-              className="text-[#d4d4d8]"
+              className="text-[var(--ash)]"
             />
             <circle
               cx="16"
@@ -241,7 +244,7 @@ function HistoryThumb({ entry, isActive, onSelect, onDownload }) {
       className={`relative group/thumb cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-300 ${
         isActive
           ? "border-primary shadow-glow"
-          : "border-[#ececee] hover:border-[#d4d4d8]"
+          : "border-[var(--line)] hover:border-[var(--line)]"
       }`}
     >
       <video
@@ -250,14 +253,14 @@ function HistoryThumb({ entry, isActive, onSelect, onDownload }) {
         muted
         className="w-full aspect-square object-cover"
       />
-      <div className="absolute inset-0 bg-[#ffffff] opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center justify-center">
+      <div className="absolute inset-0 bg-[var(--veil)] opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center justify-center">
         <button
           type="button"
           onClick={(e) => {
             e.stopPropagation();
             onDownload(entry);
           }}
-          className="p-1.5 bg-primary rounded-lg text-[#09090b] hover:scale-110 transition-transform"
+          className="p-1.5 bg-primary rounded-lg text-[var(--chalk)] hover:scale-110 transition-transform"
           title="Download"
         >
           <svg
@@ -367,6 +370,10 @@ export default function LipSyncStudio({
   const [prompt, setPrompt] = useState("");
 
   // ── Generation / UI state ───────────────────────────────────────────────
+  // Which quality is chosen, and what the account has to spend — both feed the
+  // cost meter at the foot of the rail.
+  const [selectedTierId, setSelectedTierId] = useState("lipsync");
+  const [creditBalance, setCreditBalance] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generateError, setGenerateError] = useState(null);
   const [fullscreenUrl, setFullscreenUrl] = useState(null);
@@ -749,137 +756,45 @@ export default function LipSyncStudio({
     name: r,
   }));
 
-  // ── Render ──────────────────────────────────────────────────────────────
-  return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-app-bg relative overflow-hidden">
-      
-      {/* ── CENTRAL GALLERY AREA ── */}
-      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-40 lg:pb-32 px-2">
-        {history.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
-            {history.map((entry, idx) => (
-              <div
-                key={entry.id || idx}
-                className="relative group rounded-2xl overflow-hidden border border-[#ececee] bg-[#f4f4f5] shadow-xl hover:border-primary/50 transition-all duration-300 flex flex-col cursor-pointer"
-                onClick={() => setFullscreenUrl(entry.url)}
-              >
-                <video
-                  src={entry.url}
-                  className="w-full aspect-video object-cover bg-[#f4f4f5] hover:opacity-80 transition-opacity"
-                  controls={false}
-                  loop
-                  muted
-                  playsInline
-                  onMouseOver={(e) => e.target.play()}
-                  onMouseOut={(e) => {
-                    e.target.pause();
-                    e.target.currentTime = 0;
-                  }}
-                />
-                
-                {/* Overlay actions */}
-                <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <GenerationCopyButtons
-                    prompt={entry.prompt}
-                    onCopyError={onGenerationError}
-                  />
-                  <button
-                    type="button"
-                    title="Download"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      downloadFile(entry.url, `lipsync-${entry.id || idx}.mp4`);
-                    }}
-                    className="p-2 bg-[#ffffff] backdrop-blur-md rounded-full text-[#09090b] hover:bg-primary hover:text-[#09090b] transition-all border border-[#ececee]"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
-                    </svg>
-                  </button>
-                  <button
-                    type="button"
-                    title="Delete"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (confirm("Are you sure you want to delete this generated item?")) {
-                        setInternalHistory(prev => prev.filter((_, i) => i !== idx));
-                      }
-                    }}
-                    className="p-2 bg-[#ffffff] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[#09090b] transition-all border border-[#ececee]"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <polyline points="3 6 5 6 21 6" />
-                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                      <line x1="10" y1="11" x2="10" y2="17" />
-                      <line x1="14" y1="11" x2="14" y2="17" />
-                    </svg>
-                  </button>
-                </div>
-                <MobileGenerationActions
-                  prompt={entry.prompt}
-                  onCopyError={onGenerationError}
-                  actions={[
-                    {
-                      kind: "download",
-                      label: "Download",
-                      onSelect: () =>
-                        downloadFile(entry.url, `lipsync-${entry.id || idx}.mp4`),
-                    },
-                    {
-                      kind: "delete",
-                      label: "Delete",
-                      danger: true,
-                      onSelect: () => {
-                        if (confirm("Are you sure you want to delete this generated item?")) {
-                          setInternalHistory((prev) => prev.filter((_, i) => i !== idx));
-                        }
-                      },
-                    },
-                  ]}
-                />
+  const qualityTiers = useQualityTiers("lipsync");
+  const selectedTier = qualityTiers.find((t) => t.tierId === selectedTierId) || null;
 
-                {/* Details */}
-                <div className="p-3 bg-[#ffffff] backdrop-blur-sm border-t border-[#ececee] flex-1 flex flex-col justify-between gap-2">
-                  {entry.prompt && (
-                    <p className="text-[#3f3f46] text-xs line-clamp-2 leading-relaxed" title={entry.prompt}>
-                      {entry.prompt}
-                    </p>
-                  )}
-                  <div className="flex items-center justify-between flex-wrap gap-1 mt-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap">
-                        Lip Sync
-                      </span>
-                      {entry.resolution && (
-                        <span className="text-[10px] text-[#71717a]">{entry.resolution}</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full animate-fade-in-up transition-all duration-700 min-h-[50vh]">
-            {/* Overlapping floating cards */}
-            <div className="flex items-center justify-center gap-1.5 md:gap-3 mb-10 select-none scale-90 sm:scale-100">
-            </div>
+  // A tier names an exact model, and the server only honours the tier price
+  // when that exact id is submitted.
+  const handleTierSelect = useCallback((tier) => {
+    setSelectedTierId(tier.tierId);
+    setSelectedModelId(tier.modelId);
+  }, []);
 
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-center px-4 flex flex-col items-center">
-              <span className="text-[#71717a] text-sm font-medium tracking-wide mb-1">Start creating</span>
-              <span className="text-[#09090b] font-semibold text-2xl sm:text-4xl sm:mt-1 tracking-tight">
-                TalkSync
-              </span>
-            </h1>
-            <p className="text-[#71717a] text-xs sm:text-sm font-medium tracking-wide text-center max-w-lg leading-relaxed px-4">
-              Sync any voice with any face video to create premium talking avatars and videos.
-            </p>
-          </div>
-        )}
-      </div>
+  const refreshBalance = useCallback(() => {
+    getUserBalance(apiKey).then((r) => setCreditBalance(r.balance)).catch(() => {});
+  }, [apiKey]);
 
-      {/* ── BOTTOM PROMPT BAR ── */}
-      <PromptComposer>
+  useEffect(() => { refreshBalance(); }, [refreshBalance]);
+
+  // Buying credits belongs to the shell, which can show the sheet over any page.
+  const openTopUp = useCallback(() => {
+    window.dispatchEvent(new CustomEvent("meerah:buy-credits"));
+  }, []);
+
+  // ── the settings rail ─────────────────────────────────────────────────────
+  //
+  // The same column every tool uses: what you give it, what to make, how good,
+  // then what it costs. Replaces a floating bar of unlabelled pills whose price
+  // only appeared after the money was spent.
+  const settingsRail = (
+    <SettingsRail
+      footer={
+        <CostMeter
+          tier={selectedTier}
+          balance={creditBalance}
+          busy={isGenerating}
+          onGenerate={handleGenerate}
+          onBuyCredits={openTopUp}
+        />
+      }
+    >
+      <RailSection label="Face and script">
           {/* Mode toggle row */}
           <div className="flex items-center px-1">
             <PromptSegmentedControl>
@@ -925,7 +840,7 @@ export default function LipSyncStudio({
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
-                      className="text-[#71717a] group-hover:text-[#09090b] transition-colors"
+                      className="text-[var(--fog)] group-hover:text-[var(--chalk)] transition-colors"
                     >
                       <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                       <circle cx="8.5" cy="8.5" r="1.5" />
@@ -953,7 +868,7 @@ export default function LipSyncStudio({
                   accept="video/*"
                   label="Video"
                   icon={
-                    <VideoIcon className="text-[#71717a] group-hover:text-[#09090b] transition-colors" />
+                    <VideoIcon className="text-[var(--fog)] group-hover:text-[var(--chalk)] transition-colors" />
                   }
                   onUpload={handleVideoPick}
                   onClear={() => {
@@ -975,7 +890,7 @@ export default function LipSyncStudio({
                 accept="audio/*"
                 label="Audio"
                 icon={
-                  <MicIcon className="text-[#71717a] group-hover:text-[#09090b] transition-colors" />
+                  <MicIcon className="text-[var(--fog)] group-hover:text-[var(--chalk)] transition-colors" />
                 }
                 onUpload={handleAudioPick}
                 onClear={() => {
@@ -1004,45 +919,14 @@ export default function LipSyncStudio({
           </div>
 
           {/* Bottom controls row */}
-          <PromptFooter>
-            <PromptControls>
-              {/* Model selector */}
-              <div className="relative">
-                <button
-                  ref={modelBtnRef}
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setOpenDropdown(
-                      openDropdown === "model" ? null : "model",
-                    );
-                  }}
-                  className={promptControlClassName({
-                    active: openDropdown === "model",
-                  })}
-                >
-                  <div className="w-3.5 h-3.5 bg-[#09090b] rounded-sm flex items-center justify-center">
-                    <span className="text-[9px] font-black text-[#09090b]">
-                      S
-                    </span>
-                  </div>
-                  <span className={PROMPT_CONTROL_LABEL_CLASS}>
-                    {selectedModel?.name ?? "Select model"}
-                  </span>
-                  <PromptChevronIcon />
-                </button>
-                <Dropdown
-                  isOpen={openDropdown === "model"}
-                  title="Model"
-                  items={modelDropdownItems}
-                  selectedId={selectedModelId}
-                  onSelect={handleModelSelect}
-                  onClose={() => setOpenDropdown(null)}
-                  anchorRef={modelBtnRef}
-                  className="w-80 max-w-[calc(100vw-3rem)]"
-                />
-              </div>
+      </RailSection>
 
+      <RailSection label="Quality" hint="The price covers one lip-synced clip.">
+        <QualityPicker tiers={qualityTiers} value={selectedTierId} onChange={handleTierSelect} />
+      </RailSection>
+
+      <RailSection label="Settings">
+            <div className="flex flex-wrap items-center gap-2">
               {/* Resolution selector */}
               {showResolution && (
                 <div className="relative">
@@ -1075,38 +959,157 @@ export default function LipSyncStudio({
                   />
                 </div>
               )}
-            </PromptControls>
+            </div>
+      </RailSection>
+    </SettingsRail>
+  );
 
-            {/* Generate button */}
-            <PromptAction
-              onClick={handleGenerate}
-              disabled={isGenerating}
-            >
-              {isGenerating ? (
-                <>
-                  <span className="animate-spin inline-block text-[#09090b]">
-                    ◌
-                  </span>{" "}
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <span>Sync Lip</span>
-                </>
-              )}
-            </PromptAction>
-          </PromptFooter>
-      </PromptComposer>
+  // ── Render ──────────────────────────────────────────────────────────────
+  return (
+    <div className="w-full h-full flex flex-col lg:flex-row bg-app-bg relative overflow-hidden">
+      {/* ── LEFT: SETTINGS RAIL ── */}
+      {settingsRail}
+
+      {/* ── RIGHT: THE WORK ── */}
+      <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
+      
+      {/* ── CENTRAL GALLERY AREA ── */}
+      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-8 px-2">
+        {history.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
+            {history.map((entry, idx) => (
+              <div
+                key={entry.id || idx}
+                className="relative group rounded-2xl overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-primary/50 transition-all duration-300 flex flex-col cursor-pointer"
+                onClick={() => setFullscreenUrl(entry.url)}
+              >
+                <video
+                  src={entry.url}
+                  className="w-full aspect-video object-cover bg-[var(--night)] hover:opacity-80 transition-opacity"
+                  controls={false}
+                  loop
+                  muted
+                  playsInline
+                  onMouseOver={(e) => e.target.play()}
+                  onMouseOut={(e) => {
+                    e.target.pause();
+                    e.target.currentTime = 0;
+                  }}
+                />
+                
+                {/* Overlay actions */}
+                <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <GenerationCopyButtons
+                    prompt={entry.prompt}
+                    onCopyError={onGenerationError}
+                  />
+                  <button
+                    type="button"
+                    title="Download"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      downloadFile(entry.url, `lipsync-${entry.id || idx}.mp4`);
+                    }}
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-primary hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    title="Delete"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (confirm("Are you sure you want to delete this generated item?")) {
+                        setInternalHistory(prev => prev.filter((_, i) => i !== idx));
+                      }
+                    }}
+                    className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                      <line x1="10" y1="11" x2="10" y2="17" />
+                      <line x1="14" y1="11" x2="14" y2="17" />
+                    </svg>
+                  </button>
+                </div>
+                <MobileGenerationActions
+                  prompt={entry.prompt}
+                  onCopyError={onGenerationError}
+                  actions={[
+                    {
+                      kind: "download",
+                      label: "Download",
+                      onSelect: () =>
+                        downloadFile(entry.url, `lipsync-${entry.id || idx}.mp4`),
+                    },
+                    {
+                      kind: "delete",
+                      label: "Delete",
+                      danger: true,
+                      onSelect: () => {
+                        if (confirm("Are you sure you want to delete this generated item?")) {
+                          setInternalHistory((prev) => prev.filter((_, i) => i !== idx));
+                        }
+                      },
+                    },
+                  ]}
+                />
+
+                {/* Details */}
+                <div className="p-3 bg-[var(--surface)] backdrop-blur-sm border-t border-[var(--line)] flex-1 flex flex-col justify-between gap-2">
+                  {entry.prompt && (
+                    <p className="text-[var(--iron)] text-xs line-clamp-2 leading-relaxed" title={entry.prompt}>
+                      {entry.prompt}
+                    </p>
+                  )}
+                  <div className="flex items-center justify-between flex-wrap gap-1 mt-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded border border-primary/20 whitespace-nowrap">
+                        Lip Sync
+                      </span>
+                      {entry.resolution && (
+                        <span className="text-[10px] text-[var(--fog)]">{entry.resolution}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full animate-fade-in-up transition-all duration-700 min-h-[50vh]">
+            {/* Overlapping floating cards */}
+            <div className="flex items-center justify-center gap-1.5 md:gap-3 mb-10 select-none scale-90 sm:scale-100">
+            </div>
+
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-center px-4 flex flex-col items-center">
+              <span className="text-[var(--fog)] text-sm font-medium tracking-wide mb-1">Start creating</span>
+              <span className="text-[var(--chalk)] font-semibold text-2xl sm:text-4xl sm:mt-1 tracking-tight">
+                TalkSync
+              </span>
+            </h1>
+            <p className="text-[var(--fog)] text-xs sm:text-sm font-medium tracking-wide text-center max-w-lg leading-relaxed px-4">
+              Sync any voice with any face video to create premium talking avatars and videos.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* ── BOTTOM PROMPT BAR ── */}
+      </div>
 
       {/* ── FULLSCREEN MEDIA MODAL ── */}
       {fullscreenUrl && (
         <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#ffffff] backdrop-blur-sm animate-fade-in"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--scrim)] backdrop-blur-sm animate-fade-in"
           onClick={() => setFullscreenUrl(null)}
         >
           <button
             type="button"
-            className="absolute top-6 right-6 p-3 bg-[#f4f4f5] hover:bg-[#ececee] rounded-full text-[#09090b] transition-colors border border-[#ececee]"
+            className="absolute top-6 right-6 p-3 bg-[var(--night)] hover:bg-[var(--slab)] rounded-full text-[var(--chalk)] transition-colors border border-[var(--line)]"
             onClick={(e) => {
               e.stopPropagation();
               setFullscreenUrl(null);
@@ -1127,7 +1130,7 @@ export default function LipSyncStudio({
           />
         </div>
       )}
-      <Toaster position="top-right" containerStyle={{ zIndex: 99999 }} toastOptions={{ duration: 5000, style: { background: '#18181b', color: '#ffffff', border: '1px solid rgba(255,255,255,0.15)', fontSize: '13px', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.6)', maxWidth: '440px', wordBreak: 'break-word', whiteSpace: 'pre-wrap', padding: '12px 16px' } }} />
+      <Toaster position="top-right" containerStyle={{ zIndex: 99999 }} toastOptions={{ duration: 5000, style: { background: 'var(--slab-hi)', color: 'var(--surface)', border: '1px solid rgba(255,255,255,0.15)', fontSize: '13px', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.6)', maxWidth: '440px', wordBreak: 'break-word', whiteSpace: 'pre-wrap', padding: '12px 16px' } }} />
     </div>
   );
 }

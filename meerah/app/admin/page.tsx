@@ -1,9 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { api, getToken, clearToken, ApiError, type Metrics } from '@/lib/api';
+import { api, ApiError, type Metrics } from '@/lib/api';
+import { useSession } from '@/lib/useSession';
+import DashboardShell from '@/components/DashboardShell';
 import Sparkline from '@/components/Sparkline';
 
 const naira = (value: number) => `₦${Math.round(value).toLocaleString()}`;
@@ -18,7 +18,7 @@ const pct = (value: number) => `${value}%`;
  * retention, and without it user count plateaus as churn cancels new signups.
  */
 export default function AdminPage() {
-  const router = useRouter();
+  const { user, loading: authLoading, refresh, signOut } = useSession();
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [days, setDays] = useState(30);
   const [error, setError] = useState('');
@@ -28,56 +28,54 @@ export default function AdminPage() {
     try {
       setMetrics(await api.metrics(window));
     } catch (err) {
-      if (err instanceof ApiError && err.status === 401) {
-        clearToken();
-        router.replace('/signin');
-        return;
-      }
+      if (err instanceof ApiError && err.status === 401) return; // the session hook redirects
       setError(err instanceof ApiError && err.status === 403
         ? 'This page is for the account owner.'
         : (err as Error).message);
     }
-  }, [router]);
+  }, []);
 
   useEffect(() => {
-    if (!getToken()) { router.replace('/signin'); return; }
-    void load(days);
-  }, [days, load, router]);
+    if (!authLoading) void load(days);
+  }, [authLoading, days, load]);
 
   if (error) {
-    return <main className="auth-wrap"><div className="card"><p>{error}</p></div></main>;
+    return (
+      <DashboardShell user={user} onSignOut={signOut} refreshUser={refresh}>
+        <div className="card"><p>{error}</p></div>
+      </DashboardShell>
+    );
   }
   if (!metrics) {
-    return <main className="auth-wrap"><p className="muted">Loading…</p></main>;
+    return (
+      <DashboardShell user={user} onSignOut={signOut} refreshUser={refresh}>
+        <p className="muted">Loading…</p>
+      </DashboardShell>
+    );
   }
 
   const { people, money, work, stickiness, topModels, daily } = metrics;
   const maxRuns = Math.max(...topModels.map((m) => m.runs), 1);
 
   return (
-    <>
-      <header className="topbar">
-        <div className="shell topbar-in" style={{ maxWidth: 1200 }}>
-          <Link className="wordmark" href="/studio"><span className="mark" />Meerah</Link>
-          {/* Filters in one row above the charts. */}
-          <div style={{ marginLeft: 'auto', display: 'flex', gap: '.4rem' }}>
-            {[7, 30, 90].map((option) => (
-              <button key={option} type="button" onClick={() => setDays(option)}
-                style={{
-                  padding: '.45rem .8rem', borderRadius: 2, font: 'inherit', fontSize: '.8rem', fontWeight: 600,
-                  cursor: 'pointer',
-                  border: `1px solid ${days === option ? 'var(--obsidian)' : 'var(--line)'}`,
-                  background: days === option ? 'var(--ink-deep)' : 'transparent',
-                  color: days === option ? 'var(--chalk)' : 'var(--muted)',
-                }}>
-                {option}d
-              </button>
-            ))}
-          </div>
+    <DashboardShell user={user} onSignOut={signOut} refreshUser={refresh}>
+      <div style={{ display: 'grid', gap: '1.75rem' }}>
+        {/* Filters in one row above the charts. */}
+        <div style={{ display: 'flex', gap: '.4rem', justifyContent: 'flex-end' }}>
+          {[7, 30, 90].map((option) => (
+            <button key={option} type="button" onClick={() => setDays(option)}
+              style={{
+                padding: '.45rem .8rem', borderRadius: 'var(--radius-tag)', font: 'inherit',
+                fontSize: '.8rem', fontWeight: 600, cursor: 'pointer',
+                border: `1px solid ${days === option ? 'var(--obsidian)' : 'var(--line)'}`,
+                background: days === option ? 'var(--ink-deep)' : 'transparent',
+                color: days === option ? 'var(--chalk)' : 'var(--muted)',
+              }}>
+              {option}d
+            </button>
+          ))}
         </div>
-      </header>
 
-      <main className="shell" style={{ maxWidth: 1200, paddingBlock: '2rem 4rem', display: 'grid', gap: '1.75rem' }}>
         <div>
           <h1 className="display" style={{ fontSize: '1.7rem', marginBottom: '.3rem' }}>The numbers</h1>
           <p className="muted" style={{ fontSize: '.9rem' }}>
@@ -177,17 +175,17 @@ export default function AdminPage() {
             </div>
           )}
         </div>
-      </main>
-    </>
+      </div>
+    </DashboardShell>
   );
 }
 
 const cell = { padding: '.45rem .5rem', borderBottom: '1px solid var(--line)' } as const;
 
 const TONES = {
-  good:  { colour: '#28A56C', mark: '●' },
+  good:  { colour: 'var(--ok)', mark: '●' },
   watch: { colour: 'var(--ember)', mark: '▲' },
-  bad:   { colour: '#D14634', mark: '■' },
+  bad:   { colour: 'var(--danger)', mark: '■' },
 } as const;
 
 /** Status ships with a shape as well as a colour, never colour alone. */

@@ -21,7 +21,7 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: '#f4f4f5',
+  themeColor: 'var(--paper-ink)',
   // Installed apps sit under the notch; this keeps content clear of it.
   viewportFit: 'cover' as const,
   width: 'device-width',

@@ -73,15 +73,23 @@ export class StudioController {
   async history(@Req() req: AuthedRequest, @Query('limit') limit?: string) {
     const rows = await this.generations.history(req.userId!, Number(limit) || 50);
     return {
-      items: rows.map((row) => ({
-        request_id: row.id,
-        model: row.modelId,
-        feature: row.feature,
-        status: row.status,
-        outputs: row.outputUrl ? [row.outputUrl] : [],
-        cost: { amount_credits: row.costCredits },
-        created_at: row.createdAt,
-      })),
+      items: rows.map((row) => {
+        const params = (row.inputParams ?? {}) as Record<string, unknown>;
+        return {
+          request_id: row.id,
+          // The quality the customer chose, never the vendor's model id. The
+          // history cards render this straight onto the page, so putting
+          // `seedance-pro-t2v-fast` here would publish our supplier list.
+          quality: this.pricing.tierLabelForModel(row.modelId),
+          feature: row.feature,
+          status: row.status,
+          prompt: typeof params.prompt === 'string' ? params.prompt : '',
+          duration: typeof params.duration === 'number' ? params.duration : undefined,
+          outputs: row.outputUrl ? [row.outputUrl] : [],
+          cost: { amount_credits: row.costCredits },
+          created_at: row.createdAt,
+        };
+      }),
       // No cursor yet: 100 rows covers every real session, and paging can be
       // added when someone actually has more history than that.
       cursor: null,

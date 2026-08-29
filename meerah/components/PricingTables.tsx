@@ -35,8 +35,10 @@ export default function PricingTables() {
     return <p className="muted">Loading prices…</p>;
   }
 
-  const videos = tiers.filter((t) => t.spec.includes('5s'));
-  const others = tiers.filter((t) => !t.spec.includes('5s'));
+  // Grouped by what the tier makes, not by testing its description for "5s" —
+  // that quietly reshuffled this table whenever a spec was reworded.
+  const videos = tiers.filter((t) => t.kind === 'video');
+  const others = tiers.filter((t) => t.kind !== 'video');
 
   return (
     <>

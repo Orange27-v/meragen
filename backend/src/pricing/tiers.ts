@@ -12,9 +12,17 @@ import { Vendor } from '@prisma/client';
  * and the target margin below, so a vendor price change moves our price instead
  * of quietly eating the margin.
  */
+/**
+ * What the tier produces. The frontend filters on this rather than reading the
+ * spec string — a picker that decided "is this a video tier?" by looking for
+ * "5s" in the copy broke the day a spec was reworded.
+ */
+export type TierKind = 'video' | 'image' | 'lipsync' | 'audio' | 'upscale';
+
 export interface Tier {
   id: string;
   label: string;
+  kind: TierKind;
   /** Shown in the picker, e.g. "5s · 480p". */
   spec: string;
   vendor: Vendor;
@@ -32,6 +40,7 @@ export const VIDEO_TIERS: readonly Tier[] = [
   {
     id: 'draft',
     label: 'Draft',
+    kind: 'video',
     spec: '5s · fast · 480p',
     vendor: Vendor.muapi,
     modelId: 'seedance-pro-t2v-fast',
@@ -41,6 +50,7 @@ export const VIDEO_TIERS: readonly Tier[] = [
   {
     id: 'standard',
     label: 'Standard',
+    kind: 'video',
     spec: '5s · 720p',
     vendor: Vendor.muapi,
     modelId: 'seedance-2.1-text-to-video',
@@ -50,6 +60,7 @@ export const VIDEO_TIERS: readonly Tier[] = [
   {
     id: 'hd',
     label: 'HD',
+    kind: 'video',
     spec: '5s · 1080p',
     vendor: Vendor.muapi,
     modelId: 'seedance-2.5-text-to-video',
@@ -59,6 +70,7 @@ export const VIDEO_TIERS: readonly Tier[] = [
   {
     id: 'premium',
     label: 'Premium',
+    kind: 'video',
     spec: '5s · 1080p · top model',
     vendor: Vendor.muapi,
     modelId: 'seedance-2.5-text-to-video-1080p',
@@ -68,6 +80,7 @@ export const VIDEO_TIERS: readonly Tier[] = [
   {
     id: 'studio',
     label: 'Studio',
+    kind: 'video',
     spec: '5s · 4K',
     vendor: Vendor.muapi,
     modelId: 'seedance-2.5-text-to-video-4k',
@@ -81,6 +94,7 @@ export const FEATURE_TIERS: readonly Tier[] = [
   {
     id: 'image',
     label: 'Image',
+    kind: 'image',
     spec: '1 image',
     vendor: Vendor.muapi,
     modelId: 'nano-banana',
@@ -90,6 +104,7 @@ export const FEATURE_TIERS: readonly Tier[] = [
   {
     id: 'lipsync',
     label: 'TalkSync',
+    kind: 'lipsync',
     spec: 'lip-sync a face',
     vendor: Vendor.muapi,
     modelId: 'omnihuman-1-5',
@@ -97,8 +112,19 @@ export const FEATURE_TIERS: readonly Tier[] = [
     roundToNaira: 50,
   },
   {
+    id: 'audio',
+    label: 'SoundTrack',
+    kind: 'audio',
+    spec: 'a music track',
+    vendor: Vendor.muapi,
+    modelId: 'suno-create-music',
+    targetMargin: 0.55,
+    roundToNaira: 50,
+  },
+  {
     id: 'upscale',
     label: 'SharpUp',
+    kind: 'upscale',
     spec: 'upscale to 4K',
     vendor: Vendor.muapi,
     modelId: 'topaz-video-upscale',

@@ -62,16 +62,53 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   return body as T;
 }
 
-export interface User { id: string; email: string; creditBalance: number }
+export interface User {
+  id: string;
+  email: string;
+  creditBalance: number;
+  /**
+   * Whether to show the owner-only links. A display hint, not a permission:
+   * the metrics route re-checks the same list server-side on every request.
+   */
+  isAdmin: boolean;
+}
 export interface AuthResult { token: string; user: User }
 
 export interface Tier {
   tierId: string;
   label: string;
+  /** What this tier produces. Filter on this, never on the wording of `spec`. */
+  kind: 'video' | 'image' | 'lipsync' | 'audio' | 'upscale';
   spec: string;
+  /**
+   * The model this tier is pinned to. Submitting it is what earns the tier
+   * price: the server prefers a pinned tier over a live quote when the two
+   * agree, so the picker can name a quality and the charge stays fixed.
+   * Never shown to a customer.
+   */
+  modelId: string;
   credits: number;
   naira: number;
   breakdown: { outputMb: number };
+}
+
+/**
+ * One past generation.
+ *
+ * `quality` is the tier name the customer chose — "Draft", "HD". The vendor
+ * model id is deliberately not part of this shape: these rows are rendered
+ * straight onto the page.
+ */
+export interface HistoryItem {
+  request_id: string;
+  quality: string;
+  feature: string;
+  status: string;
+  prompt: string;
+  duration?: number;
+  outputs: string[];
+  cost: { amount_credits: number };
+  created_at: string;
 }
 
 export interface Pack {
@@ -161,11 +198,36 @@ export const api = {
 
   packs: () => request<{ packs: Pack[]; payg: PaygTerms }>('/api/v1/credit-packs'),
 
-  /** Pass a packId, or an amount in Naira to pay as you go. */
-  topup: (choice: { packId?: string; amountNaira?: number }) =>
+  /** Everything this account has made. The studios render it; nothing did before. */
+  history: (limit = 50) =>
+    request<{ items: HistoryItem[]; cursor: string | null }>(`/api/v1/history?limit=${limit}`),
+
+  /** The authoritative balance, for after a charge lands. */
+  balance: () => request<{ balance: number }>('/api/v1/account/balance'),
+
+  /**
+   * What a job would cost before committing to it. Only needed where cost
+   * varies with the input — a fixed tier is already priced by `pricing()`.
+   */
+  dynamicCost: (taskName: string, payload: Record<string, unknown>) =>
+    request<{ cost: number; credits: number; naira: number }>('/api/v1/app/calculate_dynamic_cost', {
+      method: 'POST',
+      body: JSON.stringify({ task_name: taskName, payload }),
+    }),
+
+  /**
+   * Pass a packId, or an amount in Naira to pay as you go.
+   *
+   * `returnTo` is the path Paystack sends the browser back to. It used to be
+   * hardcoded to /studio, so paying from anywhere else silently moved you.
+   */
+  topup: (choice: { packId?: string; amountNaira?: number }, returnTo = '/studio') =>
     request<{ authorizationUrl: string; reference: string }>('/api/v1/topup', {
       method: 'POST',
-      body: JSON.stringify({ ...choice, callbackUrl: `${window.location.origin}/studio?paid=1` }),
+      body: JSON.stringify({
+        ...choice,
+        callbackUrl: `${window.location.origin}${returnTo}${returnTo.includes('?') ? '&' : '?'}paid=1`,
+      }),
     }),
 
   verifyTopup: (reference: string) =>

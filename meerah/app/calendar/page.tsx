@@ -1,9 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { api, getToken, clearToken, ApiError, type PlannedPost, type PlannerPlan, type Tier } from '@/lib/api';
+import { api, ApiError, type PlannedPost, type PlannerPlan, type Tier } from '@/lib/api';
+import { useSession } from '@/lib/useSession';
+import DashboardShell from '@/components/DashboardShell';
+import MonthGrid from '@/components/MonthGrid';
 
 /**
  * `/calendar` — Post Planner.
@@ -18,6 +19,8 @@ import { api, getToken, clearToken, ApiError, type PlannedPost, type PlannerPlan
  * Gated on the monthly add-on: 60 credits (₦3,000), charged from the customer's
  * existing balance rather than a recurring card mandate.
  */
+
+/** The tiers that produce a video, which is all a planned post can be. */
 
 const STATUS: Record<PlannedPost['status'], { label: string; colour: string }> = {
   planned:   { label: 'Planned',   colour: 'var(--muted)' },
@@ -44,13 +47,17 @@ function tomorrowMorning(): string {
  * the customer wakes up to finished work instead of a queue.
  */
 export default function CalendarPage() {
-  const router = useRouter();
+  const { user, loading: authLoading, refresh, signOut } = useSession();
   const [posts, setPosts] = useState<PlannedPost[]>([]);
   const [plan, setPlan] = useState<PlannerPlan | null>(null);
   const [tiers, setTiers] = useState<Tier[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+
+  // Which month the grid shows, and the day filtering the list beneath it.
+  const [month, setMonth] = useState(() => new Date());
+  const [pickedDay, setPickedDay] = useState<Date | null>(null);
 
   const [when, setWhen] = useState(tomorrowMorning());
   const [tierId, setTierId] = useState('draft');
@@ -62,26 +69,25 @@ export default function CalendarPage() {
       const [calendar, pricing] = await Promise.all([api.planner.list(), api.pricing()]);
       setPosts(calendar.posts);
       setPlan(calendar.subscription);
-      setTiers(pricing.tiers.filter((t) => t.spec.includes('5s')));
+      // Video tiers only — a planned post is a video. The tier says what it
+      // makes, so nothing here has to keep a list of ids in step with the
+      // server's, and nothing tests a description for "5s".
+      setTiers(pricing.tiers.filter((t) => t.kind === 'video'));
     } catch (err) {
-      if (err instanceof ApiError && err.status === 401) {
-        clearToken();
-        router.replace('/signin');
-        return;
-      }
-      setError((err as Error).message);
+      // The shell's session hook owns the sign-out path.
+      if (!(err instanceof ApiError && err.status === 401)) setError((err as Error).message);
     } finally {
       setLoading(false);
     }
-  }, [router]);
+  }, []);
 
   useEffect(() => {
-    if (!getToken()) { router.replace('/signin'); return; }
+    if (authLoading) return;
     void load();
     // Posts move through making-it to ready on their own.
     const timer = setInterval(() => void load(), 30_000);
     return () => clearInterval(timer);
-  }, [load, router]);
+  }, [authLoading, load]);
 
   async function act(run: () => Promise<unknown>) {
     setError('');
@@ -98,19 +104,14 @@ export default function CalendarPage() {
 
   const selected = tiers.find((t) => t.tierId === tierId);
 
-  return (
-    <>
-      <header className="topbar">
-        <div className="shell topbar-in">
-          <Link className="wordmark" href="/studio"><span className="mark" />Meerah</Link>
-          <div style={{ marginLeft: 'auto', display: 'flex', gap: '.5rem' }}>
-            <Link className="btn btn-ghost" href="/studio">Studio</Link>
-            <Link className="btn btn-ghost" href="/saved">Saved</Link>
-          </div>
-        </div>
-      </header>
+  // Picking a day filters the list; with none picked it shows everything ahead.
+  const visiblePosts = pickedDay
+    ? posts.filter((p) => new Date(p.scheduledFor).toDateString() === pickedDay.toDateString())
+    : posts;
 
-      <main className="shell" style={{ paddingBlock: '2rem 4rem', display: 'grid', gap: '1.5rem' }}>
+  return (
+    <DashboardShell user={user} onSignOut={signOut} refreshUser={refresh}>
+      <div style={{ display: 'grid', gap: '1.5rem' }}>
         <div>
           <h1 className="display" style={{ fontSize: '1.8rem', marginBottom: '.4rem' }}>Post Planner</h1>
           <p className="muted">
@@ -189,13 +190,43 @@ export default function CalendarPage() {
               </p>
             </section>
 
+            <section className="card">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '1rem' }}>
+                <h2 className="display" style={{ fontSize: '1.2rem' }}>
+                  {month.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
+                </h2>
+                <div style={{ marginLeft: 'auto', display: 'flex', gap: '.35rem' }}>
+                  <button type="button" className="btn btn-ghost" style={monthStep}
+                    aria-label="Previous month"
+                    onClick={() => setMonth((m) => new Date(m.getFullYear(), m.getMonth() - 1, 1))}>‹</button>
+                  <button type="button" className="btn btn-ghost" style={monthStep}
+                    onClick={() => { setMonth(new Date()); setPickedDay(null); }}>Today</button>
+                  <button type="button" className="btn btn-ghost" style={monthStep}
+                    aria-label="Next month"
+                    onClick={() => setMonth((m) => new Date(m.getFullYear(), m.getMonth() + 1, 1))}>›</button>
+                </div>
+              </div>
+
+              <MonthGrid month={month} posts={posts} selected={pickedDay}
+                onPickDay={setPickedDay}
+                statusColour={(status) => STATUS[status].colour} />
+            </section>
+
             <section>
-              <h2 className="display" style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>Coming up</h2>
-              {posts.length === 0 ? (
-                <div className="card"><p className="muted">Nothing planned yet.</p></div>
+              <h2 className="display" style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>
+                {pickedDay
+                  ? pickedDay.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })
+                  : 'Coming up'}
+              </h2>
+              {visiblePosts.length === 0 ? (
+                <div className="card">
+                  <p className="muted">
+                    {pickedDay ? 'Nothing planned for this day.' : 'Nothing planned yet.'}
+                  </p>
+                </div>
               ) : (
                 <div style={{ display: 'grid', gap: '.6rem' }}>
-                  {posts.map((post) => (
+                  {visiblePosts.map((post) => (
                     <div key={post.id} className="card" style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
                       <div style={{ minWidth: 150 }}>
                         <div style={{ fontWeight: 700, fontSize: '.9rem' }}>
@@ -242,7 +273,9 @@ export default function CalendarPage() {
             </p>
           </>
         )}
-      </main>
-    </>
+      </div>
+    </DashboardShell>
   );
 }
+
+const monthStep = { padding: '.3rem .6rem', fontSize: '.85rem' } as const;

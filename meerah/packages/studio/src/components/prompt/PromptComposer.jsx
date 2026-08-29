@@ -12,31 +12,31 @@ const DEFAULT_POSITION_CLASS =
   "absolute bottom-4 w-full max-w-[95%] lg:max-w-4xl z-30 animate-fade-in-up";
 
 const DEFAULT_PANEL_CLASS =
-  "w-full bg-gradient-to-b from-[#ffffff]/90 via-[#f4f4f5]/90 to-[#f4f4f5]/95 backdrop-blur-2xl rounded-[2rem] border border-[#ececee] p-4 flex flex-col gap-3 shadow-[0_15px_50px_rgba(0,0,0,0.8)]";
+  "w-full bg-gradient-to-b from-[color-mix(in_srgb,var(--surface)_90%,transparent)] via-[color-mix(in_srgb,var(--night)_90%,transparent)] to-[color-mix(in_srgb,var(--night)_95%,transparent)] backdrop-blur-2xl rounded-[2rem] border border-[var(--line)] p-4 flex flex-col gap-3 shadow-[0_15px_50px_rgba(0,0,0,0.8)]";
 
 const DEFAULT_TEXTAREA_CLASS =
-  "w-full bg-transparent border-none text-[#09090b] text-sm placeholder:text-[#a1a1aa] focus:outline-none resize-none pt-1 leading-relaxed min-h-[40px] max-h-[150px] md:max-h-[250px] overflow-y-auto custom-scrollbar disabled:opacity-40";
+  "w-full bg-[var(--surface)] border border-[var(--line)] rounded-button px-3 py-2.5 text-[var(--chalk)] text-sm placeholder:text-[var(--ash)] focus:outline-none focus:border-[var(--peri)] resize-none leading-relaxed min-h-[92px] max-h-[150px] md:max-h-[250px] overflow-y-auto custom-scrollbar transition-colors disabled:opacity-40";
 
 const DEFAULT_ACTION_CLASS =
-  "bg-[#09090b] text-[#ffffff] px-7 py-3 rounded-full font-bold text-sm hover:opacity-95 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 w-full sm:w-auto shadow-lg shadow-[#09090b]/20 hover:shadow-[#09090b]/35 border border-[#09090b]/10 z-10 disabled:opacity-50 disabled:cursor-not-allowed";
+  "bg-[var(--action)] text-[var(--on-action)] px-7 py-3 rounded-full font-bold text-sm hover:opacity-95 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 w-full sm:w-auto shadow-lg shadow-[color-mix(in_srgb,var(--action)_20%,transparent)] hover:shadow-[color-mix(in_srgb,var(--action)_35%,transparent)] border border-[color-mix(in_srgb,var(--line-hi)_10%,transparent)] z-10 disabled:opacity-50 disabled:cursor-not-allowed";
 
 const CONTROL_LAYOUT_CLASS =
-  "h-[38px] flex items-center gap-2 rounded-md transition-all border group whitespace-nowrap shadow-inner focus:outline-none focus-visible:border-[#09090b]/45 focus-visible:ring-1 focus-visible:ring-[#09090b]/30";
+  "h-[38px] flex items-center gap-2 rounded-md transition-all border group whitespace-nowrap shadow-inner focus:outline-none focus-visible:border-[color-mix(in_srgb,var(--line-hi)_45%,transparent)] focus-visible:ring-1 focus-visible:ring-[color-mix(in_srgb,var(--action)_30%,transparent)]";
 
 const CONTROL_IDLE_CLASS =
-  "text-[#09090b] bg-[#ffffff]/60 hover:bg-[#ececee]/80 border-[#ececee]/[0.06]";
+  "text-[var(--chalk)] bg-[color-mix(in_srgb,var(--surface)_60%,transparent)] hover:bg-[color-mix(in_srgb,var(--slab)_80%,transparent)] border-[var(--line)]/[0.06]";
 
 const CONTROL_ACTIVE_CLASS =
-  "text-[#ffffff] bg-[#09090b]/10 hover:bg-[#09090b]/15 border-[#09090b]/25";
+  "text-[var(--chalk)] bg-[color-mix(in_srgb,var(--action)_10%,transparent)] hover:bg-[color-mix(in_srgb,var(--action)_15%,transparent)] border-[color-mix(in_srgb,var(--line-hi)_25%,transparent)]";
 
 const MEDIA_CONTROL_LAYOUT_CLASS =
-  "w-10 h-10 shrink-0 rounded-full border transition-all flex items-center justify-center relative overflow-hidden group focus:outline-none focus-visible:border-[#09090b]/45 focus-visible:ring-1 focus-visible:ring-[#09090b]/30";
+  "w-10 h-10 shrink-0 rounded-full border transition-all flex items-center justify-center relative overflow-hidden group focus:outline-none focus-visible:border-[color-mix(in_srgb,var(--line-hi)_45%,transparent)] focus-visible:ring-1 focus-visible:ring-[color-mix(in_srgb,var(--action)_30%,transparent)]";
 
 const DEFAULT_POPOVER_POSITION_CLASS =
   "absolute bottom-[calc(100%+12px)] left-0 z-50";
 
 const DEFAULT_POPOVER_CLASS =
-  "bg-[#f4f4f5]/95 rounded-xl p-3.5 shadow-[0_10px_40px_rgba(0,0,0,0.8)] border border-[#ececee] backdrop-blur-2xl min-w-[160px] max-h-[40vh] overflow-y-auto custom-scrollbar";
+  "bg-[color-mix(in_srgb,var(--night)_95%,transparent)] rounded-xl p-3.5 shadow-[0_10px_40px_rgba(0,0,0,0.8)] border border-[var(--line)] backdrop-blur-2xl min-w-[160px] max-h-[40vh] overflow-y-auto custom-scrollbar";
 
 function joinClasses(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -67,17 +67,17 @@ export function promptMediaButtonClassName({
   return joinClasses(
     MEDIA_CONTROL_LAYOUT_CLASS,
     active
-      ? "border-[#09090b]/60 bg-[#09090b]/5 hover:border-[#09090b]/70"
-      : "border-[#ececee] bg-[#fafafa] hover:bg-white/[0.06] hover:border-[#09090b]/40",
+      ? "border-[color-mix(in_srgb,var(--line-hi)_60%,transparent)] bg-[color-mix(in_srgb,var(--action)_5%,transparent)] hover:border-[color-mix(in_srgb,var(--line-hi)_70%,transparent)]"
+      : "border-[var(--line)] bg-[var(--sunk)] hover:bg-white/[0.06] hover:border-[color-mix(in_srgb,var(--line-hi)_40%,transparent)]",
     className,
   );
 }
 
 export const PROMPT_MEDIA_PREVIEW_CLASS =
-  "relative w-10 h-10 shrink-0 rounded-full border border-[#ececee] overflow-hidden shadow-md group";
+  "relative w-10 h-10 shrink-0 rounded-full border border-[var(--line)] overflow-hidden shadow-md group";
 
 export const PROMPT_CONTROL_LABEL_CLASS =
-  "text-xs font-semibold text-current opacity-70 group-hover:text-[#09090b] group-hover:opacity-100 transition-all";
+  "text-xs font-semibold text-current opacity-70 group-hover:text-[var(--chalk)] group-hover:opacity-100 transition-all";
 
 export function PromptChevronIcon({ className = "" }) {
   return (
@@ -188,7 +188,7 @@ export function PromptPopoverHeader({ children, className = "" }) {
   return (
     <div
       className={joinClasses(
-        "text-[11px] font-semibold text-[#71717a] uppercase tracking-wider pb-2 border-b border-[#ececee] mb-2 px-1",
+        "text-[11px] font-semibold text-[var(--fog)] uppercase tracking-wider pb-2 border-b border-[var(--line)] mb-2 px-1",
         className,
       )}
     >
@@ -221,14 +221,14 @@ export function PromptMenuItem({
       role="menuitemradio"
       className={joinClasses(
         "w-full min-h-10 flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl text-left cursor-pointer transition-all group/menu-item",
-        "text-xs font-semibold text-[#3f3f46] hover:bg-[#09090b]/10 hover:text-[#ffffff] focus:outline-none focus-visible:bg-[#09090b]/10 focus-visible:text-[#ffffff]",
+        "text-xs font-semibold text-[var(--iron)] hover:bg-[color-mix(in_srgb,var(--action)_10%,transparent)] hover:text-[var(--chalk)] focus:outline-none focus-visible:bg-[color-mix(in_srgb,var(--action)_10%,transparent)] focus-visible:text-[var(--chalk)]",
         className,
       )}
     >
       <span className="min-w-0">
         <span className="block truncate">{children}</span>
         {description && (
-          <span className="block text-[9px] font-medium text-[#09090b]/35 mt-0.5 truncate group-hover/menu-item:text-[#52525b]">
+          <span className="block text-[9px] font-medium text-[color-mix(in_srgb,var(--chalk)_35%,transparent)] mt-0.5 truncate group-hover/menu-item:text-[var(--steel)]">
             {description}
           </span>
         )}
@@ -255,7 +255,7 @@ export function PromptSegmentedControl({ children, className = "" }) {
   return (
     <div
       className={joinClasses(
-        "inline-flex items-center gap-1 bg-[#fafafa] border border-[#ececee] rounded-full p-0.5",
+        "inline-flex items-center gap-1 bg-[var(--sunk)] border border-[var(--line)] rounded-full p-0.5",
         className,
       )}
     >
@@ -278,10 +278,10 @@ export function PromptSegmentOption({
       aria-pressed={selected}
       className={joinClasses(
         "min-h-7 px-3 py-1 rounded-full text-xs font-semibold transition-all flex items-center justify-center gap-1.5",
-        "focus:outline-none focus-visible:ring-1 focus-visible:ring-[#09090b]/40",
+        "focus:outline-none focus-visible:ring-1 focus-visible:ring-[color-mix(in_srgb,var(--action)_40%,transparent)]",
         selected
-          ? "bg-[#09090b] text-[#ffffff] shadow-md shadow-[#09090b]/20"
-          : "text-[#71717a] hover:text-[#3f3f46]",
+          ? "bg-[var(--action)] text-[var(--chalk)] shadow-md shadow-[color-mix(in_srgb,var(--action)_20%,transparent)]"
+          : "text-[var(--fog)] hover:text-[var(--iron)]",
         className,
       )}
     >
@@ -366,7 +366,7 @@ export function PromptFooter({ children, className = "" }) {
   return (
     <div
       className={joinClasses(
-        "flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-3 border-t border-[#ececee] relative",
+        "flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-3 border-t border-[var(--line)] relative",
         className,
       )}
     >

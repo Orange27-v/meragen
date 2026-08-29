@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Vendor } from '@prisma/client';
 import { PrismaService } from '../common/prisma.service';
-import { Tier, getTier, ALL_TIERS, marginForCost, roundingForCost } from './tiers';
+import { Tier, TierKind, getTier, ALL_TIERS, marginForCost, roundingForCost } from './tiers';
 import { MarginFloorBreachError, UnpricedModelError } from './pricing.errors';
 import {
   usdMicrosToKobo, koboToNaira, roundUpToStep, grossMargin, retailForMargin, microsToUsd,
@@ -13,6 +13,8 @@ import { infrastructureCost, RETENTION_MONTHS } from './infrastructure';
 export interface Quote {
   tierId: string;
   label: string;
+  /** What this tier produces. The picker filters on this, not on the spec text. */
+  kind: TierKind;
   spec: string;
   modelId: string;
   /** What the customer pays, in credits. */
@@ -98,6 +100,7 @@ export class PricingService {
     return {
       tierId: tier.id,
       label: tier.label,
+      kind: tier.kind,
       spec: tier.spec,
       modelId: tier.modelId,
       credits: creditsFromKobo(retailKobo),
@@ -139,6 +142,17 @@ export class PricingService {
   }
 
   /**
+   * The customer-facing name for whatever a job ran on.
+   *
+   * Anything shown to a customer goes through here. Vendor model ids are a
+   * supplier detail: publishing them tells competitors exactly what we buy and
+   * ties us to a name we may want to swap out underneath a tier.
+   */
+  tierLabelForModel(modelId: string): string {
+    return ALL_TIERS.find((tier) => tier.modelId === modelId)?.label ?? 'Custom';
+  }
+
+  /**
    * Prices any model in the synced catalogue, tier or not.
    *
    * This is what lets the studio offer the full model picker: a curated tier is
@@ -160,6 +174,9 @@ export class PricingService {
       {
         id: modelId,
         label: modelId,
+        // An ad-hoc model is quoted for whatever the studio asked for; nothing
+        // filters on it, so it takes the least surprising kind.
+        kind: 'video',
         spec: price.category,
         vendor: Vendor.muapi,
         modelId,
