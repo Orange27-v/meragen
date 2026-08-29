@@ -526,11 +526,11 @@ export default function VibeMotionStudio({
           <div className="w-full pt-6 flex justify-center animate-fade-in-up">
             <div className="flex flex-col items-center gap-4 py-16">
               <div className="relative w-20 h-20">
-                <div className="absolute inset-0 rounded-full border-2 border-violet-500/20 animate-ping" />
+                <div className="absolute inset-0 rounded-full border-2 border-[color-mix(in_srgb,var(--peri)_20%,transparent)] animate-ping" />
                 <div className="absolute inset-2 rounded-full border-2 border-[color-mix(in_srgb,var(--line-hi)_30%,transparent)] animate-spin" />
-                <div className="absolute inset-4 rounded-full border-2 border-violet-400/50 animate-[spin_1.5s_linear_infinite_reverse]" />
+                <div className="absolute inset-4 rounded-full border-2 border-[color-mix(in_srgb,var(--lilac)_50%,transparent)] animate-[spin_1.5s_linear_infinite_reverse]" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-violet-400 animate-pulse">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--lilac)] animate-pulse">
                     <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
                   </svg>
                 </div>
@@ -576,7 +576,7 @@ export default function VibeMotionStudio({
                 <div className={`absolute top-2 left-2 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider backdrop-blur-sm border ${
                   entry.mode === "edit"
                     ? "bg-[color-mix(in_srgb,var(--action)_20%,transparent)] text-[var(--chalk)] border-[color-mix(in_srgb,var(--line-hi)_30%,transparent)]"
-                    : "bg-violet-600/30 text-violet-300 border-violet-500/30"
+                    : "bg-[color-mix(in_srgb,var(--action)_30%,transparent)] text-[var(--lilac)] border-[color-mix(in_srgb,var(--peri)_30%,transparent)]"
                 }`}>
                   {entry.mode === "edit" ? "✏ Edit" : "✦ Generated"}
                 </div>

@@ -204,7 +204,8 @@ Transparent on a 1px `--line`, text `--paper-ink`, `--radius-tag`, 4/8 padding, 
 - Do not put a flat card straight on the canvas — nest a core inside a shell, with a concentric radius
 - Do not ship a border below 1.8:1 against the surface behind it; measure, do not eyeball
 - Do not leave a work area empty — an empty state is the cheapest place to show what a tool makes
-- Do not show a vendor or model name anywhere a customer can read it — including error text
+- Do not show a vendor or model name anywhere a customer can read it — including error text, and including the network tab: vendor assets go through the `/vendor-img` and `/vendor-asset` rewrites, never a direct URL
+- Do not use a Tailwind palette hue (`violet-500`, `emerald-400`); every colour comes from a token
 - Do not set a display headline below weight 600
 - Do not use pure black; `--void` (`#050811`) is the deepest ground
 

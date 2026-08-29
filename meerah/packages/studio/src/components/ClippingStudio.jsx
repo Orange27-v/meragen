@@ -962,7 +962,7 @@ export default function ClippingStudio({
                                 {hl.label || `Highlight #${i + 1}`}
                               </span>
                               {hl.score && (
-                                <span className="text-[9px] font-black text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded border border-emerald-400/20">
+                                <span className="text-[9px] font-black text-[var(--ok)] bg-[color-mix(in_srgb,var(--ok)_10%,transparent)] px-1.5 py-0.5 rounded border border-[color-mix(in_srgb,var(--ok)_20%,transparent)]">
                                   {(hl.score * 100).toFixed(0)}% Score
                                 </span>
                               )}

@@ -330,7 +330,7 @@ function ScrollColumn({ title, items, columnKey, value, onChange }) {
       </div>
 
       <div className="relative h-[320px] overflow-hidden rounded-2xl border border-[var(--line)]/[0.06] bg-[var(--night)] shadow-inner">
-        <div className="pointer-events-none absolute inset-x-2 top-1/2 z-0 h-[82px] -translate-y-1/2 rounded-xl border border-[color-mix(in_srgb,var(--line-hi)_20%,transparent)] bg-gradient-to-r from-[color-mix(in_srgb,var(--action)_15%,transparent)] to-purple-500/10 shadow-[0_0_15px_rgba(34,211,238,0.1)]" />
+        <div className="pointer-events-none absolute inset-x-2 top-1/2 z-0 h-[82px] -translate-y-1/2 rounded-xl border border-[color-mix(in_srgb,var(--line-hi)_20%,transparent)] bg-gradient-to-r from-[color-mix(in_srgb,var(--action)_15%,transparent)] to-[color-mix(in_srgb,var(--lilac)_10%,transparent)] shadow-[0_0_15px_rgba(34,211,238,0.1)]" />
         <div className="pointer-events-none absolute inset-x-0 top-0 z-20 h-20 bg-gradient-to-b from-[var(--night)] via-[color-mix(in_srgb,var(--night)_85%,transparent)] to-transparent" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-20 bg-gradient-to-t from-[var(--night)] via-[color-mix(in_srgb,var(--night)_85%,transparent)] to-transparent" />
 

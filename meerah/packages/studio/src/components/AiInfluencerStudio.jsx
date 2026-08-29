@@ -11,7 +11,8 @@ import MobileGenerationActions, {
   GenerationCopyButtons,
 } from "./MobileGenerationActions.jsx";
 
-const CDN = "https://cdn.muapi.ai/influencer";
+// Proxied through our own origin — see the rewrites in next.config.
+const CDN = "/vendor-img/influencer";
 
 // ── Default image generation model ──────────────────────────────────────────
 const INFLUENCER_MODEL = "nano-banana-pro";
@@ -595,7 +596,7 @@ export default function AiInfluencerStudio({
                 onClick={() => setAspectRatio(r)}
                 className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all ${
                   aspectRatio === r
-                    ? "bg-violet-600 text-[var(--chalk)] shadow-md shadow-violet-600/40"
+                    ? "bg-[var(--action)] text-[var(--chalk)] shadow-md shadow-violet-600/40"
                     : "text-[var(--fog)] hover:text-[var(--chalk)]"
                 }`}
               >
@@ -636,7 +637,7 @@ export default function AiInfluencerStudio({
           >
             {isGenerating ? (
               <div className="flex flex-col items-center gap-4 text-center px-8 py-12">
-                <div className="w-12 h-12 border-[3px] border-violet-500/20 border-t-violet-500 rounded-full animate-spin" />
+                <div className="w-12 h-12 border-[3px] border-[color-mix(in_srgb,var(--peri)_20%,transparent)] border-t-violet-500 rounded-full animate-spin" />
                 <p className="text-sm text-[var(--steel)] font-medium">Generating your AI influencer…</p>
               </div>
             ) : previewUrl ? (
@@ -702,7 +703,7 @@ export default function AiInfluencerStudio({
             value={customPrompt}
             onChange={(e) => setCustomPrompt(e.target.value)}
             placeholder="Add extra details… e.g. neon cyberpunk lighting, dramatic shadows"
-            className="w-full h-9 bg-[var(--surface)] border border-[var(--line)] rounded-xl px-3 text-[12px] text-[var(--paper-ink)] placeholder-[var(--ash)] outline-none focus:border-violet-500/40 transition-colors"
+            className="w-full h-9 bg-[var(--surface)] border border-[var(--line)] rounded-xl px-3 text-[12px] text-[var(--paper-ink)] placeholder-[var(--ash)] outline-none focus:border-[color-mix(in_srgb,var(--peri)_40%,transparent)] transition-colors"
           />
         </div>
       </div>
@@ -737,7 +738,7 @@ export default function AiInfluencerStudio({
                 onKeyDown={(e) => e.key === "Enter" && setSelectedHistoryIdx(idx)}
                 className={`group relative w-full aspect-[3/4] rounded-xl overflow-hidden border transition-all cursor-pointer ${
                   selectedHistoryIdx === idx
-                    ? "border-violet-500 ring-1 ring-violet-500/40"
+                    ? "border-[var(--peri)] ring-1 ring-[color-mix(in_srgb,var(--peri)_40%,transparent)]"
                     : "border-[var(--line)] hover:border-[var(--line)]"
                 }`}
               >
