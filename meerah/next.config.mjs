@@ -1,5 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Where the build output goes. `next build` has no `--distDir` flag, so an
+  // environment variable is the only way to point a build somewhere other than
+  // the directory a running `next dev` is reading from — and a production build
+  // into that directory wipes the dev server's on-demand chunks, which takes the
+  // running site down until each route is requested again and recompiled.
+  //
+  // Unset, this is exactly the default. Set it to build without disturbing a dev
+  // server: `NEXT_DIST_DIR=.next-verify npx next build`.
+  distDir: process.env.NEXT_DIST_DIR ?? '.next',
+
   async rewrites() {
     // The browser talks to /api/* on its own origin; Next forwards to the API
     // process. Keeps the API key and session handling server-side and avoids

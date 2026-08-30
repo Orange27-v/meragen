@@ -1160,7 +1160,7 @@ export default function ImageStudio({
         onPickModel={setSelectedModelId}
       />
       {referenceVariant && (
-        <RailSection label="Start from a picture" hint="Optional. Leave it empty to make a picture from words alone.">
+        <RailSection label="Start from a picture" hint="Optional. Leave it empty to make a picture from words alone." variant="card">
             {/* Inline list of uploaded files */}
             <div className="flex items-center gap-2.5 flex-wrap">
               {uploadedImageUrls && uploadedImageUrls.length > 0 && uploadedImageUrls.map((url, idx) => (
@@ -1208,7 +1208,7 @@ export default function ImageStudio({
         </RailSection>
       )}
 
-      <RailSection label="Your prompt">
+      <RailSection label="Your prompt" variant="card">
             {/* Input prompt text area */}
             <PromptTextarea
               ref={textareaRef}
@@ -1219,7 +1219,7 @@ export default function ImageStudio({
       </RailSection>
 
 
-      <RailSection label="Picture settings">
+      <RailSection label="Picture settings" weight="chips">
             <div ref={dropdownRef} className="flex flex-wrap items-center gap-2">
               {/* Aspect ratio button */}
               <div className="relative">
@@ -1369,13 +1369,13 @@ export default function ImageStudio({
 
   // ── Render ───────────────────────────────────────────────────────────────
   return (
-    <div className="w-full h-full flex flex-col lg:flex-row bg-app-bg relative overflow-hidden">
+    <div className="w-full h-full flex flex-col lg:flex-row bg-nova-bg relative overflow-hidden">
       {/* ── LEFT: SETTINGS RAIL ── */}
       {settingsRail}
 
       {/* ── RIGHT: THE WORK ── */}
       <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
-      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar px-4 pb-8">
+      <div className="flex-1 min-h-0 w-full">
         <WorkTabs
           toolId="pixcraft"
           hasResults={history.length > 0}

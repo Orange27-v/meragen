@@ -2031,7 +2031,7 @@ export default function LayersStudio({
 
       {/* Right Inspector Panel */}
       {isSidebarOpen && (
-        <div className="w-[370px] h-full bg-[var(--surface)] border-r border-[var(--line)] flex flex-col justify-between z-20 animate-fade-in order-first">
+        <div className="w-[320px] h-full bg-[var(--surface)] border-r border-[var(--line)] flex flex-col justify-between z-20 animate-fade-in order-first">
           {/* Top Header & Panel Content */}
           <div className="p-5 flex-1 overflow-y-auto custom-scrollbar">
             {/* Header with Back, Title & Close */}

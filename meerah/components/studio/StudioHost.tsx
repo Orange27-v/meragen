@@ -7,9 +7,11 @@ import type { StudioProps } from '@meerah/studio';
 import { api, type Tier } from '@/lib/api';
 import { useSession } from '@/lib/useSession';
 import { TOOLS, toolById } from '@/lib/tools';
+import { retryChunk, chunkRecoveryDone } from '@/lib/lazy';
 import { GUIDES } from '@/lib/guides';
 import DashboardShell from '@/components/DashboardShell';
 import HowItWorks from '@/components/studio/HowItWorks';
+import { Skeleton } from '@/components/ui/page';
 
 
 /**
@@ -47,24 +49,47 @@ const SHOWCASE = Object.fromEntries(
 
 function studio(name: StudioName) {
   return dynamic(
-    () => import('@meerah/studio').then((m) => {
+    retryChunk(() => import('@meerah/studio').then((m) => {
       // Registered inside the same dynamic import the studio arrives on, so the
       // copy is in place before it mounts and the package still loads lazily.
       // A plain `import { setShowcase }` at the top of this file would drag the
       // whole barrel — models.js included — into the first load of every tool.
       m.setShowcase(SHOWCASE);
       return m[name];
-    }),
+    })),
     { ssr: false, loading: Loading },
   );
 }
 
 /** Loaded when it is opened, not when the page is. It costs cmdk plus the dialog
  *  primitives, and most visits never open it. */
-const ModelPicker = dynamic(() => import('@/components/models/ModelPicker'), { ssr: false });
+const ModelPicker = dynamic(retryChunk(() => import('@/components/models/ModelPicker')), { ssr: false });
 
+/**
+ * A studio arriving.
+ *
+ * It used to be the word "Loading…" in grey, which says nothing about what is
+ * coming and lets the page jump when it lands. This holds the shape of a studio
+ * — a control column beside a work surface — so the real thing renders into a
+ * space already the right size.
+ */
 function Loading() {
-  return <p className="muted" style={{ padding: 32 }}>Loading…</p>;
+  return (
+    <div
+      className="grid h-full gap-4 p-4 md:grid-cols-[minmax(0,18rem)_minmax(0,1fr)]"
+      role="status"
+      aria-label="Loading the studio"
+    >
+      <div className="hidden flex-col gap-3 md:flex">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-24 w-full rounded-lg" />
+        <Skeleton className="h-9 w-full rounded-md" />
+        <Skeleton className="h-9 w-full rounded-md" />
+        <Skeleton className="mt-auto h-10 w-full rounded-md" />
+      </div>
+      <Skeleton className="min-h-[16rem] w-full rounded-lg" />
+    </div>
+  );
 }
 
 /** Tool id to the component that implements it. Kept apart from `lib/tools.ts`
@@ -82,7 +107,7 @@ const COMPONENTS: Record<string, ComponentType<StudioProps>> = {
   salesreel:  studio('MarketingStudio'),
   soundtrack: studio('AudioStudio'),
   // Ours, not the fork's — so it is built on the shell's own components.
-  myvoice: dynamic(() => import('@/components/voice/VoiceStudio'), { ssr: false, loading: Loading }),
+  myvoice: dynamic(retryChunk(() => import('@/components/voice/VoiceStudio')), { ssr: false, loading: Loading }),
 };
 
 export default function StudioHost({ toolId }: { toolId: string }) {
@@ -128,6 +153,10 @@ export default function StudioHost({ toolId }: { toolId: string }) {
 
   useEffect(() => { if (token) loadHistory(); }, [token, loadHistory]);
 
+  // The app is running, so whatever chunk failed before is resolved. Clearing
+  // the guard here means the next deploy gets its own recovery attempt.
+  useEffect(() => { chunkRecoveryDone(); }, []);
+
   // The showcase sits inside the studio package, which cannot reach this state
   // directly. It asks by event, the same way the cost meter asks for the top-up
   // sheet.
@@ -147,7 +176,15 @@ export default function StudioHost({ toolId }: { toolId: string }) {
   }, []);
 
   if (loading || !token) {
-    return <main className="auth-wrap"><p className="muted">Loading…</p></main>;
+    return (
+      <main className="auth-wrap" role="status" aria-label="Signing you in">
+        <div className="w-full max-w-sm">
+          <Skeleton className="mx-auto h-9 w-9 rounded-md" />
+          <Skeleton className="mx-auto mt-4 h-4 w-40" />
+          <Skeleton className="mx-auto mt-2.5 h-3 w-56" />
+        </div>
+      </main>
+    );
   }
 
   const Tool = COMPONENTS[tool.id] ?? COMPONENTS.videngine;

@@ -1,52 +1,67 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { Bookmark, MoreHorizontal, Pencil, Trash2, AlertCircle } from 'lucide-react';
 import { api, ApiError, type BrandAsset, type BrandAssetType } from '@/lib/api';
 import { useSession } from '@/lib/useSession';
 import { exampleImage } from '@/lib/tools';
 import DashboardShell from '@/components/DashboardShell';
+import { Page, PageHeader, Segmented, EmptyState, SkeletonCards } from '@/components/ui/page';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 /**
  * `/saved` — characters, cloned voices and brand kits.
  *
  * This is the stickiness layer made visible. The point of the page is that a
  * second visit is faster than the first, which is what makes leaving expensive.
- * Items are ordered by how often they are reused, so what someone reaches for
- * constantly sits first.
+ *
+ * The design pass: the four filters were hand-styled buttons that appeared
+ * again, differently, on the metrics page; both are now the shared segmented
+ * control. Rename and Delete were two underlined links under every card —
+ * permanently visible, and Delete sat one pixel from Rename. They are in a
+ * per-item menu now, and the destructive one is marked as destructive.
  */
 
-/**
- * The tabs, and what each says when it holds nothing.
- *
- * An empty tab used to be one line of grey text in a card — the moment a
- * customer is least sure what this page is for is the moment it explained
- * least. Each now shows the kind of thing that belongs here, borrowed from the
- * tool that makes it, and points at that tool.
- */
 const KINDS: Array<{
   id: BrandAssetType | 'all';
   label: string;
+  emptyTitle: string;
   empty: string;
-  /** The tool whose stills illustrate this tab, and where its Make button goes. */
+  /** The tool whose stills illustrate this tab, and where its button goes. */
   from?: { tool: string; label: string };
 }> = [
-  { id: 'all',           label: 'Everything',  empty: 'Nothing saved yet. Anything you keep from a result lands here.',
-    from: { tool: 'starmaker',  label: 'Open Star Maker' } },
-  { id: 'character',     label: 'Characters',  empty: 'Save a face from any result and reuse it in every video, so every post shows the same person.',
-    from: { tool: 'starmaker',  label: 'Build a character' } },
-  { id: 'voice_profile', label: 'Voices',      empty: 'Your cloned voices will live here once MyVoice is ready. Until then, SoundTrack makes the voiceover.',
-    from: { tool: 'soundtrack', label: 'Open SoundTrack' } },
-  { id: 'template',      label: 'Brand kits',  empty: 'Save your colours, logo and fonts so every advert matches without you setting them again.',
-    from: { tool: 'salesreel',  label: 'Open Sales Reel' } },
+  {
+    id: 'all', label: 'Everything',
+    emptyTitle: 'Nothing saved yet',
+    empty: 'Anything you keep from a result lands here, ready to reuse in the next one.',
+    from: { tool: 'starmaker', label: 'Open Star Maker' },
+  },
+  {
+    id: 'character', label: 'Characters',
+    emptyTitle: 'No characters yet',
+    empty: 'Save a face from any result and reuse it in every video, so every post shows the same person.',
+    from: { tool: 'starmaker', label: 'Build a character' },
+  },
+  {
+    id: 'voice_profile', label: 'Voices',
+    emptyTitle: 'No voices yet',
+    empty: 'Your cloned voices will live here once MyVoice is ready. Until then, SoundTrack makes the voiceover.',
+    from: { tool: 'soundtrack', label: 'Open SoundTrack' },
+  },
+  {
+    id: 'template', label: 'Brand kits',
+    emptyTitle: 'No brand kits yet',
+    empty: 'Save your colours, logo and fonts so every advert matches without you setting them again.',
+    from: { tool: 'salesreel', label: 'Open Sales Reel' },
+  },
 ];
 
-/**
- * Everything this account has saved.
- *
- * The point of this page is that the second visit is faster than the first —
- * that is what makes leaving expensive (planning.md §7 Phase 9).
- */
 export default function SavedPage() {
   const { user, loading: authLoading, refresh, signOut } = useSession();
   const [items, setItems] = useState<BrandAsset[]>([]);
@@ -83,7 +98,7 @@ export default function SavedPage() {
   }
 
   async function remove(asset: BrandAsset) {
-    if (!window.confirm(`Delete "${asset.name}"? This cannot be undone.`)) return;
+    if (!window.confirm(`Delete “${asset.name}”? This cannot be undone.`)) return;
     try {
       await api.brand.remove(asset.id);
       setItems((current) => current.filter((a) => a.id !== asset.id));
@@ -93,76 +108,114 @@ export default function SavedPage() {
   }
 
   const active = KINDS.find((k) => k.id === kind)!;
+  const options = useMemo(() => KINDS.map(({ id, label }) => ({ value: id, label })), []);
 
   return (
     <DashboardShell user={user} onSignOut={signOut} refreshUser={refresh}>
-        <h1 className="display" style={{ fontSize: '1.8rem', marginBottom: '.5rem' }}>Saved</h1>
-        <p className="muted" style={{ marginBottom: '1.5rem' }}>
-          Your characters, voices and brand kits. Reuse them so every video looks like you.
-        </p>
+      <Page>
+        <PageHeader
+          title="Library"
+          description="Your characters, voices and brand kits. Reuse them so every video looks like the same business made it."
+          actions={
+            <Segmented
+              label="Filter library"
+              options={options}
+              value={kind}
+              onChange={(next) => { setLoading(true); setKind(next); }}
+            />
+          }
+        />
 
-        {error && <div className="alert">{error}</div>}
-
-        <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-          {KINDS.map((option) => (
-            <button key={option.id} type="button" onClick={() => { setLoading(true); setKind(option.id); }}
-              style={{
-                padding: '.5rem .9rem', borderRadius: 'var(--radius-tag)', font: 'inherit', fontWeight: 600, fontSize: '.85rem',
-                cursor: 'pointer',
-                border: `1px solid ${kind === option.id ? 'var(--obsidian)' : 'var(--line)'}`,
-                background: kind === option.id ? 'var(--ink-deep)' : 'transparent',
-                color: kind === option.id ? 'var(--chalk)' : 'var(--muted)',
-              }}>
-              {option.label}
-            </button>
-          ))}
-        </div>
+        {error && (
+          <div className="alert mb-4">
+            <AlertCircle className="mt-px size-4 shrink-0 text-danger" aria-hidden />
+            <span>{error}</span>
+          </div>
+        )}
 
         {loading ? (
-          <p className="muted">Loading…</p>
+          <SkeletonCards count={8} />
         ) : items.length === 0 ? (
           <EmptyTab kind={active} />
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: '1rem' }}>
+          <div
+            className="grid gap-4 rise-stagger"
+            style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}
+          >
             {items.map((asset) => (
-              <div key={asset.id} className="card" style={{ padding: '.75rem' }}>
-                <div style={{
-                  aspectRatio: '1', borderRadius: 'var(--radius-tag)', overflow: 'hidden', marginBottom: '.6rem',
-                  background: 'var(--ink-deep)', display: 'grid', placeItems: 'center',
-                }}>
+              <article key={asset.id} className="card card-tight card-hover group">
+                <div className="aspect-square overflow-hidden rounded-md bg-surface-inset">
                   {asset.previewUrl ? (
-                    /* Lazy and async: a grid of previews must not cost data
-                       for rows nobody scrolls to. */
-                    <img src={asset.previewUrl} alt="" loading="lazy" decoding="async"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    /* Lazy and async: a grid of previews must not cost data for
+                       rows nobody scrolls to. */
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={asset.previewUrl}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      className="size-full object-cover transition duration-slow group-hover:scale-[1.03]"
+                    />
                   ) : (
-                    <span className="muted" style={{ fontSize: '.75rem' }}>No preview</span>
+                    <div className="grid size-full place-items-center text-ink-disabled">
+                      <Bookmark className="size-5" aria-hidden />
+                    </div>
                   )}
                 </div>
 
-                <div style={{ fontWeight: 700, fontSize: '.9rem', wordBreak: 'break-word' }}>{asset.name}</div>
-                <div className="muted" style={{ fontSize: '.75rem' }}>
-                  {asset.usedCount > 0 ? `Used ${asset.usedCount} time${asset.usedCount === 1 ? '' : 's'}` : 'Not used yet'}
-                </div>
+                <div className="mt-3 flex items-start gap-1.5">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate text-sm font-medium text-ink-primary" title={asset.name}>
+                      {asset.name}
+                    </h3>
+                    <p className="mt-0.5 text-xs text-ink-tertiary">
+                      {asset.usedCount > 0
+                        ? `Used ${asset.usedCount} time${asset.usedCount === 1 ? '' : 's'}`
+                        : 'Not used yet'}
+                    </p>
+                  </div>
 
-                <div style={{ display: 'flex', gap: '.4rem', marginTop: '.6rem' }}>
-                  <button type="button" onClick={() => void rename(asset)} style={linkButton}>Rename</button>
-                  <button type="button" onClick={() => void remove(asset)} style={{ ...linkButton, color: 'var(--danger)' }}>
-                    Delete
-                  </button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        type="button"
+                        className="icon-btn size-7 shrink-0"
+                        aria-label={`Actions for ${asset.name}`}
+                      >
+                        <MoreHorizontal className="size-4" aria-hidden />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-40 rounded-lg border border-edge bg-surface-overlay p-1.5 shadow-modal"
+                    >
+                      <DropdownMenuItem
+                        onSelect={() => void rename(asset)}
+                        className="flex cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-sm
+                                   text-ink-secondary focus:bg-surface-hover focus:text-ink-primary"
+                      >
+                        <Pencil className="size-4 text-ink-tertiary" aria-hidden />
+                        Rename
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onSelect={() => void remove(asset)}
+                        className="flex cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-sm
+                                   text-danger focus:bg-danger-wash focus:text-danger"
+                      >
+                        <Trash2 className="size-4" aria-hidden />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         )}
+      </Page>
     </DashboardShell>
   );
 }
-
-const linkButton = {
-  background: 'none', border: 0, padding: 0, font: 'inherit', fontSize: '.8rem',
-  color: 'var(--muted)', cursor: 'pointer', textDecoration: 'underline',
-} as const;
 
 /**
  * A tab with nothing in it — an invitation rather than a dead end.
@@ -172,29 +225,39 @@ const linkButton = {
  */
 function EmptyTab({ kind }: { kind: (typeof KINDS)[number] }) {
   return (
-    <div className="card" style={{ padding: 'var(--card-pad)' }}>
-      <p style={{ fontSize: 'var(--text-body)', maxWidth: '46ch', lineHeight: 1.55 }}>{kind.empty}</p>
-
-      {kind.from && (
+    <EmptyState
+      icon={<Bookmark className="size-5" aria-hidden />}
+      title={kind.emptyTitle}
+      body={
         <>
-          <div style={{
-            display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-            gap: '.6rem', margin: '1.25rem 0 1.1rem',
-          }}>
-            {[1, 2, 3].map((n) => (
-              <img key={n} src={exampleImage(kind.from!.tool, n)} alt="" aria-hidden
-                width={640} height={360} loading="lazy" decoding="async"
-                style={{
-                  width: '100%', aspectRatio: '16 / 9', objectFit: 'cover', display: 'block',
-                  borderRadius: 'var(--radius)', border: '1px solid var(--line-inner)',
-                }} />
-            ))}
-          </div>
+          {kind.empty}
+          {kind.from && (
+            <span className="mt-5 grid grid-cols-3 gap-2">
+              {[1, 2, 3].map((n) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={n}
+                  src={exampleImage(kind.from!.tool, n)}
+                  alt=""
+                  aria-hidden
+                  width={640}
+                  height={360}
+                  loading="lazy"
+                  decoding="async"
+                  className="aspect-video w-full rounded-md border border-edge-subtle object-cover"
+                />
+              ))}
+            </span>
+          )}
+        </>
+      }
+      actions={
+        kind.from && (
           <Link href={`/create/${kind.from.tool}`} className="btn btn-primary">
             {kind.from.label}
           </Link>
-        </>
-      )}
-    </div>
+        )
+      }
+    />
   );
 }

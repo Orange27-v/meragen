@@ -837,7 +837,7 @@ export default function RecastStudio({
         kind="video"
         onPickModel={setSelectedModelId}
       />
-      <RailSection label="Your video">
+      <RailSection label="Your video" variant="card">
           {/* Uploads row */}
           <div className="flex items-center gap-2 px-1">
             <div className="flex items-center gap-2">
@@ -1032,7 +1032,7 @@ export default function RecastStudio({
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="w-full h-full flex flex-col lg:flex-row bg-app-bg relative overflow-hidden">
+    <div className="w-full h-full flex flex-col lg:flex-row bg-nova-bg relative overflow-hidden">
       {/* ── LEFT: SETTINGS RAIL ── */}
       {settingsRail}
 
@@ -1040,7 +1040,7 @@ export default function RecastStudio({
       <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
 
       {/* ── CENTRAL GALLERY AREA ── */}
-      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-8 px-2">
+      <div className="flex-1 min-h-0 w-full">
         <WorkTabs
           toolId="bodydouble"
           hasResults={history.length > 0}

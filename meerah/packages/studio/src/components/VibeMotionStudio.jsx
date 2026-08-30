@@ -305,7 +305,7 @@ export default function VibeMotionStudio({
         onChange={handleTierSelect}
         kind="video"
       />
-      <RailSection label="Your prompt">
+      <RailSection label="Your prompt" variant="card">
 
           {/* ── Top Row: Mode Toggle & Edit Source Banner ── */}
           <div className="flex items-center justify-between gap-3 px-1">
@@ -499,7 +499,7 @@ export default function VibeMotionStudio({
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="w-full h-full flex flex-col lg:flex-row bg-app-bg relative overflow-hidden">
+    <div className="w-full h-full flex flex-col lg:flex-row bg-nova-bg relative overflow-hidden">
       {/* ── LEFT: SETTINGS RAIL ── */}
       {settingsRail}
 
@@ -525,7 +525,7 @@ export default function VibeMotionStudio({
       )}
 
       {/* ── GALLERY AREA ── */}
-      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-8 px-2">
+      <div className="flex-1 min-h-0 w-full">
         {generating && (
           /* ── Loading card at top of grid ── */
           <div className="w-full pt-6 flex justify-center animate-fade-in-up">

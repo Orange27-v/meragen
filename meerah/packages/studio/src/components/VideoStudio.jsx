@@ -7,9 +7,7 @@ import { formatErrorMessage } from "../utils/formatError.js";
 import { scopedPersistKey, migrateLegacyPersistKey } from "../persistKey.js";
 import DrawModal from "./DrawModal.jsx";
 import ModelParameterControls from "./ModelParameterControls.jsx";
-import MobileGenerationActions, {
-  GenerationCopyButtons,
-} from "./MobileGenerationActions.jsx";
+import MobileGenerationActions, { GenerationCopyButtons } from "./MobileGenerationActions.jsx";
 import {
   t2vModels,
   getAspectRatiosForVideoModel,
@@ -29,9 +27,25 @@ import {
 } from "../modelFamilies.js";
 import {
   SettingsRail,
+  RailTabs,
+  RailSegmented,
   RailSection,
+  RailCard,
+  RailCardTitle,
+  RailRow,
+  RailInlineRow,
+  RailPillRow,
+  RailPill,
+  RailChip,
   Collapsible,
   OptionRow,
+  RailWell,
+  ClockIcon,
+  FrameIcon,
+  GemIcon,
+  EqualiserIcon,
+  AtIcon,
+  PencilIcon,
 } from "./rail/SettingsRail";
 import { QualityPicker, useQualityTiers } from "./rail/QualityPicker";
 import { QualityPoster } from "./rail/QualityPoster";
@@ -51,8 +65,6 @@ import {
 import {
   appendVideoWorkflowMedia,
   buildVideoWorkflowMediaParams,
-  getVideoWorkflowControlLabel,
-  getVideoWorkflowControlState,
   getVideoWorkflowDraftKey,
   getVideoWorkflowFamily,
   getVideoWorkflowMediaConfig,
@@ -68,22 +80,12 @@ import {
   validateVideoWorkflowMedia,
 } from "../videoWorkflows.js";
 import {
-  PROMPT_CONTROL_LABEL_CLASS,
   PROMPT_MEDIA_PREVIEW_CLASS,
-  PromptAspectRatioIcon,
-  PromptAction,
-  PromptChevronIcon,
-  PromptComposer,
-  PromptControls,
-  PromptFooter,
   PromptMenuItem,
   PromptMenuList,
   PromptPopover,
   PromptPopoverHeader,
-  PromptDurationIcon,
-  PromptQualityIcon,
   PromptTextarea,
-  promptControlClassName,
   promptMediaButtonClassName,
 } from "./prompt/PromptComposer.jsx";
 
@@ -109,6 +111,42 @@ function mergeReferenceUrls(current, incoming, limit) {
 }
 
 const EMPTY_WORKFLOW_MEDIA_DRAFT = Object.freeze({});
+
+/**
+ * The six workflows, grouped into the three things a customer comes here to do.
+ *
+ * The grouping is the tab bar across the top of the rail. A workflow missing
+ * from every group would be unreachable, so anything added to
+ * `VIDEO_WORKFLOW_IDS` belongs in one of these lists too.
+ */
+/**
+ * Where a pill's menu opens.
+ *
+ * Upward, because the pills sit near the bottom of the rail and a menu below
+ * them would open off the panel. The last pill in a row anchors right so a
+ * 210px menu on a 90px pill stays inside the rail instead of over the canvas.
+ */
+const POPOVER_ABOVE_LEFT = "absolute bottom-[calc(100%+8px)] left-0 z-50";
+const POPOVER_ABOVE_RIGHT = "absolute bottom-[calc(100%+8px)] right-0 z-50";
+
+const WORKFLOW_BASE_ID = "__base";
+const WORKFLOW_TABS = Object.freeze([
+  {
+    id: "create",
+    label: "Create Video",
+    workflows: ["animate_image", "keyframes", "references"],
+  },
+  {
+    id: "edit",
+    label: "Edit Video",
+    workflows: ["edit_video", "extend_uploaded_video"],
+  },
+  {
+    id: "motion",
+    label: "Motion Control",
+    workflows: ["motion_transfer"],
+  },
+]);
 
 function workflowContextKey(familyId, workflowId) {
   return `${familyId}:${workflowId || "base"}`;
@@ -140,14 +178,7 @@ function ReferenceMediaLabel({ label, required = false }) {
   );
 }
 
-function ReferencePreview({
-  type,
-  url,
-  index,
-  onRemove,
-  label = null,
-  description = null,
-}) {
+function ReferencePreview({ type, url, index, onRemove, label = null, description = null }) {
   const mediaLabel = label || (type === "image" ? "image" : type === "video" ? "video" : "audio");
   const actionLabel = description || mediaLabel;
   return (
@@ -159,7 +190,14 @@ function ReferencePreview({
           <video src={url} className="w-full h-full object-cover" muted />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-[var(--sunk)] text-[var(--lilac)]">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
               <path d="M9 18V5l10-2v13" />
               <circle cx="6" cy="18" r="3" />
               <circle cx="16" cy="16" r="3" />
@@ -197,17 +235,10 @@ function ReferenceUploadButton({
 }) {
   const localInputRef = useRef(null);
   const resolvedInputRef = inputRef || localInputRef;
-  const announcedProgress = Math.min(
-    100,
-    Math.max(0, Math.floor(progress / 10) * 10),
-  );
+  const announcedProgress = Math.min(100, Math.max(0, Math.floor(progress / 10) * 10));
   return (
     <div
-      className={
-        label
-          ? "relative flex min-w-[60px] flex-col items-center gap-1.5"
-          : "relative"
-      }
+      className={label ? "relative flex min-w-[60px] flex-col items-center gap-1.5" : "relative"}
     >
       <input
         ref={resolvedInputRef}
@@ -229,7 +260,15 @@ function ReferenceUploadButton({
         {uploading ? (
           <div className="flex flex-col items-center justify-center w-full h-full absolute inset-0 bg-[var(--veil)] z-20 backdrop-blur-[2px]">
             <svg className="w-8 h-8 -rotate-90">
-              <circle cx="16" cy="16" r="14" stroke="currentColor" strokeWidth="2" fill="transparent" className="text-[var(--ash)]" />
+              <circle
+                cx="16"
+                cy="16"
+                r="14"
+                stroke="currentColor"
+                strokeWidth="2"
+                fill="transparent"
+                className="text-[var(--ash)]"
+              />
               <circle
                 cx="16"
                 cy="16"
@@ -242,32 +281,51 @@ function ReferenceUploadButton({
                 className="text-[var(--chalk)] transition-all duration-300"
               />
             </svg>
-            <span className="absolute text-[9px] font-black text-[var(--chalk)] leading-none">{progress}%</span>
+            <span className="absolute text-[9px] font-black text-[var(--chalk)] leading-none">
+              {progress}%
+            </span>
           </div>
         ) : type === "video" ? (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-[var(--fog)] group-hover:text-[var(--chalk)] transition-colors">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="text-[var(--fog)] group-hover:text-[var(--chalk)] transition-colors"
+          >
             <polygon points="23 7 16 12 23 17 23 7" />
             <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
           </svg>
         ) : type === "audio" ? (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-[var(--fog)] group-hover:text-[var(--chalk)] transition-colors">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            className="text-[var(--fog)] group-hover:text-[var(--chalk)] transition-colors"
+          >
             <path d="M9 18V5l10-2v13" />
             <circle cx="6" cy="18" r="3" />
             <circle cx="16" cy="16" r="3" />
           </svg>
         ) : (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-[var(--fog)] group-hover:text-[var(--chalk)] transition-colors">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            className="text-[var(--fog)] group-hover:text-[var(--chalk)] transition-colors"
+          >
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
         )}
       </button>
-      <span
-        className="sr-only"
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-      >
+      <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
         {uploading ? `${title}: ${announcedProgress}% uploaded` : ""}
       </span>
       <ReferenceMediaLabel label={label} required={required} />
@@ -278,14 +336,7 @@ function ReferenceUploadButton({
 // ── SVG icons (kept inline to avoid extra deps) ───────────────────────────────
 
 const CheckSvg = () => (
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="#22d3ee"
-    strokeWidth="4"
-  >
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" strokeWidth="4">
     <polyline points="20 6 9 17 4 12" />
   </svg>
 );
@@ -323,9 +374,7 @@ const VideoReadySvg = () => (
 
 // ── Dropdown components ───────────────────────────────────────────────────────
 
-
-const invertLogos = ['openai', 'blackforest', 'runway', 'ideogram', 'lightricks', 'grok'];
-
+const invertLogos = ["openai", "blackforest", "runway", "ideogram", "lightricks", "grok"];
 
 // ── Control button ────────────────────────────────────────────────────────────
 
@@ -439,11 +488,7 @@ export default function VideoStudio({
   const videoFileInputRef = useRef(null);
   const audioFileInputRef = useRef(null);
   const resultVideoRef = useRef(null);
-  const workflowTriggerRef = useRef(null);
-  const workflowMenuRef = useRef(null);
-  const workflowMenuFocusTargetRef = useRef("selected");
-  const workflowControlId = useId();
-  const workflowMenuId = `${workflowControlId}-menu`;
+  const promptFieldId = `${useId()}-prompt`;
   const hasRestored = useRef(false);
   const selectionRef = useRef(null);
   selectionRef.current = {
@@ -473,33 +518,29 @@ export default function VideoStudio({
   // (White Label / backfilled sessions), localHistory isn't what's rendered,
   // so removal has to go through the parent to delete server-side and
   // update the same state `history` reads from.
-  const handleDeleteEntry = useCallback(async (entry, idx) => {
-    if (historyItems && onDeleteHistoryItem) {
-      await onDeleteHistoryItem(entry);
-    } else {
-      setLocalHistory((prev) => prev.filter((_, i) => i !== idx));
-    }
-  }, [historyItems, onDeleteHistoryItem]);
+  const handleDeleteEntry = useCallback(
+    async (entry, idx) => {
+      if (historyItems && onDeleteHistoryItem) {
+        await onDeleteHistoryItem(entry);
+      } else {
+        setLocalHistory((prev) => prev.filter((_, i) => i !== idx));
+      }
+    },
+    [historyItems, onDeleteHistoryItem],
+  );
 
   const getCurrentAspectRatios = useCallback(
-    (id) =>
-      imageMode
-        ? getAspectRatiosForI2VModel(id)
-        : getAspectRatiosForVideoModel(id),
+    (id) => (imageMode ? getAspectRatiosForI2VModel(id) : getAspectRatiosForVideoModel(id)),
     [imageMode],
   );
 
   const getCurrentDurations = useCallback(
-    (id) =>
-      imageMode ? getDurationsForI2VModel(id) : getDurationsForModel(id),
+    (id) => (imageMode ? getDurationsForI2VModel(id) : getDurationsForModel(id)),
     [imageMode],
   );
 
   const getCurrentResolutions = useCallback(
-    (id) =>
-      imageMode
-        ? getResolutionsForI2VModel(id)
-        : getResolutionsForVideoModel(id),
+    (id) => (imageMode ? getResolutionsForI2VModel(id) : getResolutionsForVideoModel(id)),
     [imageMode],
   );
 
@@ -508,119 +549,136 @@ export default function VideoStudio({
     [selectedModel],
   );
 
-  const isMotionControlSelection = useCallback(
-    (modelId, isV2v) => {
-      if (!isV2v) return false;
-      const m = videoModelCatalog.variantById.get(modelId)?.model;
-      return !!m?.imageField;
-    },
-    [],
-  );
+  const isMotionControlSelection = useCallback((modelId, isV2v) => {
+    if (!isV2v) return false;
+    const m = videoModelCatalog.variantById.get(modelId)?.model;
+    return !!m?.imageField;
+  }, []);
 
   // ── update controls when the selected model changes ─────────────────────
-  const applyControlsForModel = useCallback(
-    (modelId, isImageMode, isV2vMode) => {
-      if (isV2vMode) {
-        setShowAr(false);
-        setShowDuration(false);
-        setShowResolution(false);
-        setShowQuality(false);
-        setShowEffect(false);
-        return;
-      }
+  const applyControlsForModel = useCallback((modelId, isImageMode, isV2vMode) => {
+    if (isV2vMode) {
+      setShowAr(false);
+      setShowDuration(false);
+      setShowResolution(false);
+      setShowQuality(false);
+      setShowEffect(false);
+      return;
+    }
 
-      const model = videoModelCatalog.variantById.get(modelId)?.model;
+    const model = videoModelCatalog.variantById.get(modelId)?.model;
 
-      const ars = isImageMode
-        ? getAspectRatiosForI2VModel(modelId)
-        : getAspectRatiosForVideoModel(modelId);
-      if (ars.length > 0) {
-        setSelectedAr(ars[0]);
-        setShowAr(true);
-      } else {
-        setShowAr(false);
-      }
+    const ars = isImageMode
+      ? getAspectRatiosForI2VModel(modelId)
+      : getAspectRatiosForVideoModel(modelId);
+    if (ars.length > 0) {
+      setSelectedAr(ars[0]);
+      setShowAr(true);
+    } else {
+      setShowAr(false);
+    }
 
-      const durations = isImageMode
-        ? getDurationsForI2VModel(modelId)
-        : getDurationsForModel(modelId);
-      if (durations.length > 0) {
-        setSelectedDuration(model?.inputs?.duration?.default ?? durations[0]);
-        setShowDuration(true);
-      } else {
-        setShowDuration(false);
-      }
+    const durations = isImageMode
+      ? getDurationsForI2VModel(modelId)
+      : getDurationsForModel(modelId);
+    if (durations.length > 0) {
+      setSelectedDuration(model?.inputs?.duration?.default ?? durations[0]);
+      setShowDuration(true);
+    } else {
+      setShowDuration(false);
+    }
 
-      const resolutions = isImageMode
-        ? getResolutionsForI2VModel(modelId)
-        : getResolutionsForVideoModel(modelId);
-      if (resolutions.length > 0) {
-        setSelectedResolution(resolutions[0]);
-        setShowResolution(true);
-      } else {
-        setShowResolution(false);
-      }
+    const resolutions = isImageMode
+      ? getResolutionsForI2VModel(modelId)
+      : getResolutionsForVideoModel(modelId);
+    if (resolutions.length > 0) {
+      setSelectedResolution(resolutions[0]);
+      setShowResolution(true);
+    } else {
+      setShowResolution(false);
+    }
 
-      const qualities = model?.inputs?.quality?.enum || [];
-      if (qualities.length > 0) {
-        setSelectedQuality(model?.inputs?.quality?.default || qualities[0]);
-        setShowQuality(true);
-      } else {
-        setSelectedQuality("");
-        setShowQuality(false);
-      }
+    const qualities = model?.inputs?.quality?.enum || [];
+    if (qualities.length > 0) {
+      setSelectedQuality(model?.inputs?.quality?.default || qualities[0]);
+      setShowQuality(true);
+    } else {
+      setSelectedQuality("");
+      setShowQuality(false);
+    }
 
-      const effects = isImageMode ? getEffectsForI2VModel(modelId) : [];
-      if (effects.length > 0) {
-        setSelectedEffect(getDefaultEffectForI2VModel(modelId) || effects[0]);
-        setShowEffect(true);
-      } else {
-        setSelectedEffect("");
-        setShowEffect(false);
-      }
-    },
-    [],
-  );
+    const effects = isImageMode ? getEffectsForI2VModel(modelId) : [];
+    if (effects.length > 0) {
+      setSelectedEffect(getDefaultEffectForI2VModel(modelId) || effects[0]);
+      setShowEffect(true);
+    } else {
+      setSelectedEffect("");
+      setShowEffect(false);
+    }
+  }, []);
 
-  const selectedFamily =
-    videoModelCatalog.familyById.get(selectedFamilyId) || defaultFamily;
+  const selectedFamily = videoModelCatalog.familyById.get(selectedFamilyId) || defaultFamily;
   const currentFamilyMode = v2vMode ? "v2v" : imageMode ? "i2v" : "t2v";
   const workflowFamily = getVideoWorkflowFamily(selectedFamilyId);
-  const selectedWorkflow = selectedWorkflowId
-    ? workflowFamily?.workflowById.get(selectedWorkflowId) || null
-    : null;
-  const workflowControlState = getVideoWorkflowControlState(
-    workflowFamily,
-    selectedModel,
+
+  // ── the rail's three places ──────────────────────────────────────────────
+  //
+  // The six workflows answer three different questions — am I making footage,
+  // changing footage I have, or driving a character with footage — and the rail
+  // is a different instrument in each case. They were previously one dropdown
+  // labelled "Source", which put "Animate Image" and "Motion Transfer" in the
+  // same list as if they were alternatives.
+  //
+  // The tab is *derived* from the chosen workflow rather than held in state, so
+  // there is no second source of truth to fall out of step when the model
+  // changes underneath it.
+  const availableWorkflowIds = new Set(
+    (workflowFamily?.workflows || []).map((workflow) => workflow.id),
   );
+  const railTabs = WORKFLOW_TABS.map((tab) => ({
+    ...tab,
+    available: tab.workflows.filter((id) => availableWorkflowIds.has(id)),
+  })).filter((tab) =>
+    tab.id === "create"
+      ? workflowFamily?.hasBase || tab.available.length > 0
+      : tab.available.length > 0,
+  );
+  const activeTabId =
+    railTabs.find((tab) => tab.available.includes(selectedWorkflowId))?.id ?? "create";
+  const activeTab = railTabs.find((tab) => tab.id === activeTabId) ?? null;
+  const segmentOptions = [
+    // Base generation is a real choice on this tab, not the absence of one, so
+    // it gets a segment with a name rather than being"whatever is left".
+    ...(activeTabId === "create" && workflowFamily?.hasBase
+      ? [{ id: WORKFLOW_BASE_ID, label: "Text to Video" }]
+      : []),
+    ...(activeTab?.available || []).map((id) => ({
+      id,
+      label: workflowFamily?.workflowById.get(id)?.label || id,
+    })),
+  ];
   const workflowMediaDraftKey = selectedWorkflowId
     ? getVideoWorkflowDraftKey(selectedFamilyId, selectedWorkflowId)
     : null;
   const selectedVariant = videoModelCatalog.variantById.get(selectedModel);
   const selectedPickerEntry = videoModelPickerEntryByVariantId.get(selectedModel);
   const activeWorkflowMediaDraft = useMemo(
-    () => workflowMediaDraftKey
-      ? projectVideoWorkflowMedia(
-          selectedVariant?.model,
-          selectedWorkflowId,
-          workflowMediaDrafts[workflowMediaDraftKey] || EMPTY_WORKFLOW_MEDIA_DRAFT,
-        )
-      : null,
-    [
-      selectedVariant,
-      selectedWorkflowId,
-      workflowMediaDraftKey,
-      workflowMediaDrafts,
-    ],
+    () =>
+      workflowMediaDraftKey
+        ? projectVideoWorkflowMedia(
+            selectedVariant?.model,
+            selectedWorkflowId,
+            workflowMediaDrafts[workflowMediaDraftKey] || EMPTY_WORKFLOW_MEDIA_DRAFT,
+          )
+        : null,
+    [selectedVariant, selectedWorkflowId, workflowMediaDraftKey, workflowMediaDrafts],
   );
-  const promptDisabled = shouldDisableVideoPrompt(
-    selectedVariant?.model,
-    currentFamilyMode,
-  );
+  const promptDisabled = shouldDisableVideoPrompt(selectedVariant?.model, currentFamilyMode);
   const workflowMediaSlots = useMemo(
-    () => selectedWorkflowId
-      ? getVideoWorkflowMediaSlots(selectedVariant?.model, selectedWorkflowId)
-      : [],
+    () =>
+      selectedWorkflowId
+        ? getVideoWorkflowMediaSlots(selectedVariant?.model, selectedWorkflowId)
+        : [],
     [selectedVariant, selectedWorkflowId],
   );
   const currentModelCapabilities = getModelMediaCapabilities(selectedVariant?.model);
@@ -654,9 +712,7 @@ export default function VideoStudio({
       setSelectedFamilyId(family.id);
       setSelectedModel(model.id);
       setSelectedWorkflowId(workflowId);
-      setModelParameterValues((values) =>
-        createModelParameterValues(model, values),
-      );
+      setModelParameterValues((values) => createModelParameterValues(model, values));
       setV2vMode(nextV2VMode);
       setImageMode(nextImageMode);
       applyControlsForModel(model.id, nextImageMode, nextV2VMode);
@@ -725,10 +781,7 @@ export default function VideoStudio({
             setSelectedFamilyId(restored.family.id);
             setSelectedWorkflowId(restored.workflowId);
             setModelParameterValues(
-              createModelParameterValues(
-                restored.variant.model,
-                data.modelParameterValues || {},
-              ),
+              createModelParameterValues(restored.variant.model, data.modelParameterValues || {}),
             );
           }
         }
@@ -756,20 +809,17 @@ export default function VideoStudio({
             ? { ...data.workflowMediaDrafts }
             : {};
         if (restoredWorkflowId) {
-          const draftKey = getVideoWorkflowDraftKey(
-            restoredFamilyId,
-            restoredWorkflowId,
-          );
+          const draftKey = getVideoWorkflowDraftKey(restoredFamilyId, restoredWorkflowId);
           if (!persistedDrafts[draftKey]) {
             persistedDrafts[draftKey] = legacyVideoMediaToWorkflowDraft(
               restoredModel,
               restoredWorkflowId,
               {
-                imageUrls: data.uploadedImageUrls ||
-                  (data.uploadedImageUrl ? [data.uploadedImageUrl] : []),
+                imageUrls:
+                  data.uploadedImageUrls || (data.uploadedImageUrl ? [data.uploadedImageUrl] : []),
                 endImageUrl: data.uploadedEndImageUrl || null,
-                videoUrls: data.uploadedVideoUrls ||
-                  (data.uploadedVideoUrl ? [data.uploadedVideoUrl] : []),
+                videoUrls:
+                  data.uploadedVideoUrls || (data.uploadedVideoUrl ? [data.uploadedVideoUrl] : []),
                 audioUrls: data.uploadedAudioUrls || [],
               },
             );
@@ -780,11 +830,7 @@ export default function VideoStudio({
         if (data.localHistory) setLocalHistory(data.localHistory);
 
         // Update control visibility based on restored model/mode
-        applyControlsForModel(
-          restoredModelId,
-          restoredMode === "i2v",
-          restoredMode === "v2v",
-        );
+        applyControlsForModel(restoredModelId, restoredMode === "i2v", restoredMode === "v2v");
       }
     } catch (err) {
       console.warn("Failed to load VideoStudio persistence:", err);
@@ -893,11 +939,7 @@ export default function VideoStudio({
         resolvedTarget.variant.model.id === selectionRef.current.selectedModel;
       if (!isCurrentVariant) {
         reconcileReferencesForModel(resolvedTarget.variant.model);
-        applySelectedVariant(
-          resolvedTarget.variant,
-          resolvedTarget.mode,
-          resolvedTarget.family,
-        );
+        applySelectedVariant(resolvedTarget.variant, resolvedTarget.mode, resolvedTarget.family);
       }
 
       const activeWorkflowId = selectionRef.current.selectedWorkflowId;
@@ -911,11 +953,12 @@ export default function VideoStudio({
             ? workflowConfig.videoLimit
             : workflowConfig.audioLimit
         : getModelMediaCapabilities(resolvedTarget.variant.model)[mediaType].maxItems;
-      const setter = mediaType === "image"
-        ? setUploadedImageUrls
-        : mediaType === "video"
-          ? setUploadedVideoUrls
-          : setUploadedAudioUrls;
+      const setter =
+        mediaType === "image"
+          ? setUploadedImageUrls
+          : mediaType === "video"
+            ? setUploadedVideoUrls
+            : setUploadedAudioUrls;
       setter((current) => mergeReferenceUrls(current, validUrls, limit));
     },
     [applySelectedVariant, reconcileReferencesForModel, resolveMediaTarget],
@@ -1002,37 +1045,44 @@ export default function VideoStudio({
     async (draftKey, slot, files, context = null) => {
       if (!draftKey || !slot || workflowUploadSlotRef.current) return;
       const selectionAtStart = context?.selection || { ...selectionRef.current };
-      const targetModel = videoModelCatalog.variantById.get(
-        selectionAtStart.selectedModel,
-      )?.model;
+      const targetModel = videoModelCatalog.variantById.get(selectionAtStart.selectedModel)?.model;
       const workflowIdAtStart = selectionAtStart.selectedWorkflowId;
       const draftSession = context?.session ?? workflowDraftSessionRef.current;
       const currentDraft = workflowMediaDraftsRef.current[draftKey] || {};
-      const activeDraft = projectVideoWorkflowMedia(
-        targetModel,
-        workflowIdAtStart,
-        currentDraft,
-      );
+      const activeDraft = projectVideoWorkflowMedia(targetModel, workflowIdAtStart, currentDraft);
       const remaining = getVideoWorkflowSlotRemaining(slot, activeDraft);
       if (remaining === 0) return;
 
       const selectedFiles = Array.from(files).slice(0, remaining);
       if (selectedFiles.length === 0) return;
-      const options = slot.mediaType === "image"
-        ? { label: slot.label, maxBytes: 10 * 1024 * 1024, setUploading: setImageUploading, setProgress: setImageProgress }
-        : slot.mediaType === "video"
-          ? { label: slot.label, maxBytes: 50 * 1024 * 1024, setUploading: setVideoUploading, setProgress: setVideoProgress }
-          : { label: slot.label, maxBytes: 50 * 1024 * 1024, setUploading: setAudioUploading, setProgress: setAudioProgress };
+      const options =
+        slot.mediaType === "image"
+          ? {
+              label: slot.label,
+              maxBytes: 10 * 1024 * 1024,
+              setUploading: setImageUploading,
+              setProgress: setImageProgress,
+            }
+          : slot.mediaType === "video"
+            ? {
+                label: slot.label,
+                maxBytes: 50 * 1024 * 1024,
+                setUploading: setVideoUploading,
+                setProgress: setVideoProgress,
+              }
+            : {
+                label: slot.label,
+                maxBytes: 50 * 1024 * 1024,
+                setUploading: setAudioUploading,
+                setProgress: setAudioProgress,
+              };
 
       const uploadKey = `${draftKey}:${slot.id}`;
       workflowUploadSlotRef.current = uploadKey;
       setWorkflowUploadSlotId(uploadKey);
       try {
         const urls = await uploadFiles(selectedFiles, options);
-        if (
-          urls.length > 0 &&
-          draftSession === workflowDraftSessionRef.current
-        ) {
+        if (urls.length > 0 && draftSession === workflowDraftSessionRef.current) {
           const latestDraft = workflowMediaDraftsRef.current[draftKey] || {};
           const latestActiveDraft = projectVideoWorkflowMedia(
             targetModel,
@@ -1062,9 +1112,7 @@ export default function VideoStudio({
       if (!workflowMediaDraftKey) return;
       const dropSession = workflowDraftSessionRef.current;
       const dropSelection = { ...selectionRef.current };
-      const dropModel = videoModelCatalog.variantById.get(
-        dropSelection.selectedModel,
-      )?.model;
+      const dropModel = videoModelCatalog.variantById.get(dropSelection.selectedModel)?.model;
       const remainingFiles = Array.from(files);
       for (const slot of workflowMediaSlots) {
         if (dropSession !== workflowDraftSessionRef.current) break;
@@ -1096,17 +1144,15 @@ export default function VideoStudio({
     [uploadWorkflowSlotFiles, workflowMediaDraftKey, workflowMediaSlots],
   );
 
-  const removeWorkflowMedia = useCallback((slotId, index) => {
-    if (!workflowMediaDraftKey) return;
-    setWorkflowMediaDrafts((drafts) =>
-      removeVideoWorkflowMedia(
-        drafts,
-        workflowMediaDraftKey,
-        slotId,
-        index,
-      ),
-    );
-  }, [workflowMediaDraftKey]);
+  const removeWorkflowMedia = useCallback(
+    (slotId, index) => {
+      if (!workflowMediaDraftKey) return;
+      setWorkflowMediaDrafts((drafts) =>
+        removeVideoWorkflowMedia(drafts, workflowMediaDraftKey, slotId, index),
+      );
+    },
+    [workflowMediaDraftKey],
+  );
 
   const uploadReferences = useCallback(
     async (mediaType, files) => {
@@ -1119,16 +1165,14 @@ export default function VideoStudio({
       }
       const capability = getModelMediaCapabilities(target.variant.model)[mediaType];
       const workflowConfig = selectionAtStart.selectedWorkflowId
-        ? getVideoWorkflowMediaConfig(
-            target.variant.model,
-            selectionAtStart.selectedWorkflowId,
-          )
+        ? getVideoWorkflowMediaConfig(target.variant.model, selectionAtStart.selectedWorkflowId)
         : null;
-      const currentUrls = mediaType === "image"
-        ? mediaRef.current.imageUrls
-        : mediaType === "video"
-          ? mediaRef.current.videoUrls
-          : mediaRef.current.audioUrls;
+      const currentUrls =
+        mediaType === "image"
+          ? mediaRef.current.imageUrls
+          : mediaType === "video"
+            ? mediaRef.current.videoUrls
+            : mediaRef.current.audioUrls;
       const configuredLimit = workflowConfig
         ? mediaType === "image"
           ? workflowConfig.imageLimit
@@ -1137,18 +1181,33 @@ export default function VideoStudio({
             : workflowConfig.audioLimit
         : capability.maxItems;
       const mainLimit =
-        mediaType === "image" &&
-        (capability.separateLastItem || workflowConfig?.separateEndImage)
+        mediaType === "image" && (capability.separateLastItem || workflowConfig?.separateEndImage)
           ? Math.min(configuredLimit, 1)
           : configuredLimit;
       const remaining = Math.max(mainLimit - currentUrls.length, 0);
       if (remaining === 0) return;
 
-      const options = mediaType === "image"
-        ? { label: "Image", maxBytes: 10 * 1024 * 1024, setUploading: setImageUploading, setProgress: setImageProgress }
-        : mediaType === "video"
-          ? { label: "Video", maxBytes: 50 * 1024 * 1024, setUploading: setVideoUploading, setProgress: setVideoProgress }
-          : { label: "Audio", maxBytes: 50 * 1024 * 1024, setUploading: setAudioUploading, setProgress: setAudioProgress };
+      const options =
+        mediaType === "image"
+          ? {
+              label: "Image",
+              maxBytes: 10 * 1024 * 1024,
+              setUploading: setImageUploading,
+              setProgress: setImageProgress,
+            }
+          : mediaType === "video"
+            ? {
+                label: "Video",
+                maxBytes: 50 * 1024 * 1024,
+                setUploading: setVideoUploading,
+                setProgress: setVideoProgress,
+              }
+            : {
+                label: "Audio",
+                maxBytes: 50 * 1024 * 1024,
+                setUploading: setAudioUploading,
+                setProgress: setAudioProgress,
+              };
       const urls = await uploadFiles(Array.from(files).slice(0, remaining), options);
       applyReferenceUrls(mediaType, urls, target, selectionAtStart);
     },
@@ -1160,9 +1219,7 @@ export default function VideoStudio({
     if (droppedFiles && droppedFiles.length > 0) {
       if (selectedWorkflowId) {
         if (workflowUploadSlotRef.current) {
-          toast.error(
-            "Wait for the current upload to finish, then add these files again.",
-          );
+          toast.error("Wait for the current upload to finish, then add these files again.");
           onFilesHandled?.();
           return;
         }
@@ -1170,10 +1227,10 @@ export default function VideoStudio({
         onFilesHandled?.();
         return;
       }
-      const imageFiles = droppedFiles.filter(f => f.type.startsWith('image/'));
-      const videoFiles = droppedFiles.filter(f => f.type.startsWith('video/'));
-      const audioFiles = droppedFiles.filter(f => f.type.startsWith('audio/'));
-      
+      const imageFiles = droppedFiles.filter((f) => f.type.startsWith("image/"));
+      const videoFiles = droppedFiles.filter((f) => f.type.startsWith("video/"));
+      const audioFiles = droppedFiles.filter((f) => f.type.startsWith("audio/"));
+
       if (videoFiles.length > 0) {
         uploadReferences("video", videoFiles);
       } else if (imageFiles.length > 0) {
@@ -1313,27 +1370,26 @@ export default function VideoStudio({
   const handleModelSelect = useCallback(
     (pickerEntry, category = "all") => {
       const { family, variantsByMode, defaultVariant } = pickerEntry;
-      const target = category !== "all"
-        ? variantsByMode[category]
-        : variantsByMode[currentFamilyMode] || defaultVariant;
+      const target =
+        category !== "all"
+          ? variantsByMode[category]
+          : variantsByMode[currentFamilyMode] || defaultVariant;
       if (!target) return;
 
       const targetWorkflowFamily = getVideoWorkflowFamily(family.id);
       if (targetWorkflowFamily) {
-        const workflowId = targetWorkflowFamily.base.variantIds.has(target.model.id) ||
+        const workflowId =
+          targetWorkflowFamily.base.variantIds.has(target.model.id) ||
           targetWorkflowFamily.unmanagedVariantIds.has(target.model.id)
-          ? null
-          : inferVideoWorkflowId(family.id, target.model.id);
+            ? null
+            : inferVideoWorkflowId(family.id, target.model.id);
         applyUserSelectedVariant(target, target.mode, family, workflowId);
         return;
       }
 
       applyUserSelectedVariant(target, target.mode, family);
     },
-    [
-      applyUserSelectedVariant,
-      currentFamilyMode,
-    ],
+    [applyUserSelectedVariant, currentFamilyMode],
   );
 
   // The price list, and the tier currently chosen from it.
@@ -1374,32 +1430,101 @@ export default function VideoStudio({
     [applyUserSelectedVariant, selectedFamily],
   );
 
-  const handleWorkflowSelect = useCallback((workflowId) => {
-    const preferred = workflowVariantPreferencesRef.current.get(
-      workflowContextKey(selectedFamilyId, workflowId),
-    );
-    const target = resolveVideoWorkflowVariant(
-      selectedFamilyId,
-      workflowId,
-      selectedModel,
-      preferred,
-    );
-    if (target) {
-      applyUserSelectedVariant(target, target.mode, selectedFamily, workflowId);
-    }
-  }, [applyUserSelectedVariant, selectedFamily, selectedFamilyId, selectedModel]);
+  const handleWorkflowSelect = useCallback(
+    (workflowId) => {
+      const preferred = workflowVariantPreferencesRef.current.get(
+        workflowContextKey(selectedFamilyId, workflowId),
+      );
+      const target = resolveVideoWorkflowVariant(
+        selectedFamilyId,
+        workflowId,
+        selectedModel,
+        preferred,
+      );
+      if (target) {
+        applyUserSelectedVariant(target, target.mode, selectedFamily, workflowId);
+      }
+    },
+    [applyUserSelectedVariant, selectedFamily, selectedFamilyId, selectedModel],
+  );
 
   const clearWorkflow = useCallback(() => {
     const preferred = workflowVariantPreferencesRef.current.get(
       workflowContextKey(selectedFamilyId, null),
     );
-    const target = resolveVideoBaseVariant(
-      selectedFamilyId,
-      selectedModel,
-      preferred,
-    );
+    const target = resolveVideoBaseVariant(selectedFamilyId, selectedModel, preferred);
     if (target) applyUserSelectedVariant(target, target.mode, selectedFamily, null);
   }, [applyUserSelectedVariant, selectedFamily, selectedFamilyId, selectedModel]);
+
+  /**
+   * A model chosen in the picker drawer.
+   *
+   * The drawer hands back a variant id, and a variant id alone is not a
+   * selection: the family, the mode, the model's own parameters and the
+   * workflow all follow from it. Setting `selectedModel` on its own — which is
+   * what this used to do — left the rail showing one model's name over another
+   * model's family, so picking Wan 2.7 Video Edit from Seedance kept Seedance's
+   * workflows.
+   */
+  const applyPickedModel = useCallback(
+    (variantId) => {
+      const variant = videoModelCatalog.variantById.get(variantId);
+      const family = videoModelCatalog.familyByVariantId.get(variantId);
+      if (!variant || !family) {
+        setSelectedModel(variantId);
+        return;
+      }
+      const targetWorkflowFamily = getVideoWorkflowFamily(family.id);
+      const workflowId =
+        !targetWorkflowFamily ||
+        targetWorkflowFamily.base.variantIds.has(variantId) ||
+        targetWorkflowFamily.unmanagedVariantIds.has(variantId)
+          ? null
+          : inferVideoWorkflowId(family.id, variantId);
+      applyUserSelectedVariant(variant, variant.mode, family, workflowId);
+    },
+    [applyUserSelectedVariant],
+  );
+
+  // The picker drawer lives in the app shell, so the Model row asks by event
+  // and the choice comes back as one. The listener is on the studio rather than
+  // inside the quality dialog, which exists only while that dialog is open —
+  // the rail's Model row can be pressed at any time.
+  useEffect(() => {
+    const picked = (event) => {
+      const id = event.detail?.modelId;
+      if (id) applyPickedModel(id);
+    };
+    window.addEventListener("meerah:model-picked", picked);
+    return () => window.removeEventListener("meerah:model-picked", picked);
+  }, [applyPickedModel]);
+
+  /** A segment is a workflow, except the one that means"no workflow". */
+  const handleSegmentSelect = useCallback(
+    (id) => {
+      if (id === WORKFLOW_BASE_ID) clearWorkflow();
+      else handleWorkflowSelect(id);
+    },
+    [clearWorkflow, handleWorkflowSelect],
+  );
+
+  /**
+   * Moving to a tab lands on its first workflow, because a tab with nothing
+   * selected under it would be a place you can stand where the rail does
+   * nothing. Create Video prefers base generation when the family has it.
+   */
+  const handleRailTabSelect = useCallback(
+    (tabId, tabs) => {
+      const tab = tabs.find((candidate) => candidate.id === tabId);
+      if (!tab) return;
+      if (tab.id === "create" && workflowFamily?.hasBase) {
+        clearWorkflow();
+        return;
+      }
+      if (tab.available.length > 0) handleWorkflowSelect(tab.available[0]);
+    },
+    [clearWorkflow, handleWorkflowSelect, workflowFamily],
+  );
 
   // ── add to local history ──────────────────────────────────────────────────
   const addToLocalHistory = useCallback((entry) => {
@@ -1490,11 +1615,7 @@ export default function VideoStudio({
     try {
       let res;
       const referenceParams = selectedWorkflowId
-        ? buildVideoWorkflowMediaParams(
-            currentModel,
-            selectedWorkflowId,
-            workflowMedia,
-          )
+        ? buildVideoWorkflowMediaParams(currentModel, selectedWorkflowId, workflowMedia)
         : buildReferenceParams(currentModel, workflowMedia);
 
       if (v2vMode) {
@@ -1684,22 +1805,25 @@ export default function VideoStudio({
     setTimeout(() => textareaRef.current?.focus(), 50);
   }, [applyUserSelectedVariant, resetToPromptBar]);
 
-  const handleExtend = useCallback((requestId, sourceModelId) => {
-    if (!requestId) return;
-    resetToPromptBar();
-    setPrompt("");
-    setUploadedImageUrls([]);
-    setUploadedEndImageUrl(null);
-    setUploadedVideoUrls([]);
-    setUploadedAudioUrls([]);
-    const family = videoModelCatalog.familyById.get("seedance-2");
-    const target = videoModelCatalog.variantById.get("seedance-2-extend");
-    setGenerationSources((sources) =>
-      recordGenerationSource(sources, family.id, requestId, sourceModelId),
-    );
-    applyUserSelectedVariant(target, "t2v", family);
-    setTimeout(() => textareaRef.current?.focus(), 50);
-  }, [applyUserSelectedVariant, resetToPromptBar]);
+  const handleExtend = useCallback(
+    (requestId, sourceModelId) => {
+      if (!requestId) return;
+      resetToPromptBar();
+      setPrompt("");
+      setUploadedImageUrls([]);
+      setUploadedEndImageUrl(null);
+      setUploadedVideoUrls([]);
+      setUploadedAudioUrls([]);
+      const family = videoModelCatalog.familyById.get("seedance-2");
+      const target = videoModelCatalog.variantById.get("seedance-2-extend");
+      setGenerationSources((sources) =>
+        recordGenerationSource(sources, family.id, requestId, sourceModelId),
+      );
+      applyUserSelectedVariant(target, "t2v", family);
+      setTimeout(() => textareaRef.current?.focus(), 50);
+    },
+    [applyUserSelectedVariant, resetToPromptBar],
+  );
 
   // ── derived UI values ────────────────────────────────────────────────────
   const isSeedance2Canvas =
@@ -1714,8 +1838,7 @@ export default function VideoStudio({
     ? workflowMediaConfig.imageLimit > 0
     : workflowFamily
       ? currentModelCapabilities.image.maxItems > 0
-    : currentModelCapabilities.image.maxItems > 0 ||
-      (!v2vMode && selectedFamily.supports.i2v);
+      : currentModelCapabilities.image.maxItems > 0 || (!v2vMode && selectedFamily.supports.i2v);
   // Whether this model takes any media at all — governs the upload section.
   const canStartFromMedia =
     canUploadImageReference ||
@@ -1748,119 +1871,58 @@ export default function VideoStudio({
     ? workflowMediaConfig.separateEndImage
     : imageUploadCapability.separateLastItem;
 
-  const promptPlaceholder = selectedWorkflowId === "edit_video"
-    ? "Describe how to edit the video"
-    : selectedWorkflowId === "extend_uploaded_video"
-      ? "Describe how to continue the video"
-      : selectedWorkflowId === "motion_transfer"
-        ? "Describe the motion"
-        : v2vMode
-          ? currentModelObj?.imageField
-            ? currentModelObj?.promptRequired
-              ? "Describe the motion"
-              : "Describe the motion (optional)"
-            : "Video ready — click Generate to remove watermark"
-          : imageMode
-            ? currentModelObj?.promptRequired
-              ? "Describe the motion or effect"
-              : "Describe the motion or effect (optional)"
-            : isExtendMode
-              ? "Optional: describe how to continue the video..."
-              : "Describe the video you want to create";
-
-  const focusWorkflowMenuItem = useCallback((target = "selected") => {
-    const items = Array.from(
-      workflowMenuRef.current?.querySelectorAll(
-        '[role="menuitemradio"], [role="menuitem"]',
-      ) || [],
+  // What the empty drop well should say it takes. Naming only the kinds this
+  // model actually accepts is the difference between an invitation and a lie:
+  // the well used to offer "PNG, JPG or MP4" on models that take neither.
+  const acceptedMediaTypes = [
+    imageUploadLimit > 0 && "image",
+    videoUploadLimit > 0 && "video",
+    audioUploadLimit > 0 && "audio",
+  ].filter(Boolean);
+  const acceptedMediaHint = acceptedMediaTypes
+    .map((type) => (type === "image" ? "Image" : type === "video" ? "Video" : "Audio"))
+    .reduce(
+      (sentence, word, index, all) =>
+        index === 0
+          ? word
+          : index === all.length - 1
+            ? `${sentence} or ${word}`
+            : `${sentence}, ${word}`,
+      "",
     );
-    if (items.length === 0) return;
+  const hasUploadedMedia =
+    uploadedImageUrls.length > 0 ||
+    uploadedVideoUrls.length > 0 ||
+    uploadedAudioUrls.length > 0 ||
+    Boolean(uploadedEndImageUrl);
+  // One invitation, not two. The well and the row of small upload buttons used
+  // to appear together, which read as two different ways to do the same thing.
+  const showMediaWell = !selectedWorkflowId && !hasUploadedMedia && acceptedMediaTypes.length > 0;
 
-    const item = target === "last"
-      ? items[items.length - 1]
-      : target === "first"
-        ? items[0]
-        : items.find((candidate) => candidate.getAttribute("aria-checked") === "true") ||
-          items[0];
-    item.focus();
-  }, []);
+  // How many of duration, shape and resolution this model actually offers —
+  // the grid needs the count up front, because a `false` child still counts.
+  const sizePillCount = [showDuration, showAr, showResolution].filter(Boolean).length;
 
-  const closeWorkflowMenu = useCallback((restoreFocus = false) => {
-    setOpenDropdown(null);
-    if (restoreFocus) {
-      requestAnimationFrame(() => workflowTriggerRef.current?.focus());
-    }
-  }, []);
-
-  const handleWorkflowTriggerKeyDown = useCallback(
-    (event) => {
-      const focusTarget = event.key === "ArrowUp" || event.key === "End"
-        ? "last"
-        : event.key === "ArrowDown" || event.key === "Home"
-          ? "first"
-          : null;
-      if (!focusTarget) return;
-
-      event.preventDefault();
-      event.stopPropagation();
-      if (openDropdown === "workflow") {
-        focusWorkflowMenuItem(focusTarget);
-        return;
-      }
-      workflowMenuFocusTargetRef.current = focusTarget;
-      setOpenDropdown("workflow");
-    },
-    [focusWorkflowMenuItem, openDropdown],
-  );
-
-  const handleWorkflowMenuKeyDown = useCallback(
-    (event) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        event.stopPropagation();
-        closeWorkflowMenu(true);
-        return;
-      }
-      if (event.key === "Tab") {
-        setOpenDropdown(null);
-        return;
-      }
-      if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
-
-      const items = Array.from(
-        workflowMenuRef.current?.querySelectorAll(
-          '[role="menuitemradio"], [role="menuitem"]',
-        ) || [],
-      );
-      if (items.length === 0) return;
-
-      event.preventDefault();
-      event.stopPropagation();
-      const currentIndex = items.indexOf(document.activeElement);
-      const nextIndex = event.key === "Home"
-        ? 0
-        : event.key === "End"
-          ? items.length - 1
-          : event.key === "ArrowDown"
-            ? currentIndex < 0
-              ? 0
-              : (currentIndex + 1) % items.length
-            : currentIndex < 0
-              ? items.length - 1
-              : (currentIndex - 1 + items.length) % items.length;
-      items[nextIndex].focus();
-    },
-    [closeWorkflowMenu],
-  );
-
-  useEffect(() => {
-    if (openDropdown !== "workflow") return undefined;
-    const frame = requestAnimationFrame(() => {
-      focusWorkflowMenuItem(workflowMenuFocusTargetRef.current);
-      workflowMenuFocusTargetRef.current = "selected";
-    });
-    return () => cancelAnimationFrame(frame);
-  }, [focusWorkflowMenuItem, openDropdown, selectedWorkflowId]);
+  const promptPlaceholder =
+    selectedWorkflowId === "edit_video"
+      ? "Describe how to edit the video"
+      : selectedWorkflowId === "extend_uploaded_video"
+        ? "Describe how to continue the video"
+        : selectedWorkflowId === "motion_transfer"
+          ? "Describe the motion"
+          : v2vMode
+            ? currentModelObj?.imageField
+              ? currentModelObj?.promptRequired
+                ? "Describe the motion"
+                : "Describe the motion (optional)"
+              : "Video ready — click Generate to remove watermark"
+            : imageMode
+              ? currentModelObj?.promptRequired
+                ? "Describe the motion or effect"
+                : "Describe the motion or effect (optional)"
+              : isExtendMode
+                ? "Optional: describe how to continue the video..."
+                : "Describe the video you want to create";
 
   const toggleDropdown = (type) => (e) => {
     e.stopPropagation();
@@ -1875,6 +1937,16 @@ export default function VideoStudio({
   // revealed only after the money was spent.
   const settingsRail = (
     <SettingsRail
+      tabs={
+        railTabs.length > 1 ? (
+          <RailTabs
+            label="What to make"
+            tabs={railTabs}
+            value={activeTabId}
+            onChange={(tabId) => handleRailTabSelect(tabId, railTabs)}
+          />
+        ) : null
+      }
       footer={
         <CostMeter
           tier={selectedTier}
@@ -1892,25 +1964,53 @@ export default function VideoStudio({
         value={selectedTierId}
         onChange={handleTierSelect}
         kind="video"
-        onPickModel={setSelectedModel}
+        onPickModel={applyPickedModel}
       />
+
+      {/* Where the footage comes from, on this tab. This replaces a dropdown
+          labelled "Source": the options are two or three words each and the
+          choice changes what every control below it means, so it should be
+          readable without opening anything. */}
+      {segmentOptions.length > 1 && (
+        <div className="pt-0.5">
+          <RailSegmented
+            label="Source"
+            options={segmentOptions}
+            value={selectedWorkflowId || WORKFLOW_BASE_ID}
+            onChange={handleSegmentSelect}
+          />
+        </div>
+      )}
       {/* Only when this quality can actually take a photo or video. A labelled
-          section with nothing inside it reads as something that failed to load. */}
+        section with nothing inside it reads as something that failed to load. */}
       {canStartFromMedia && (
-      <RailSection label="Start from a photo or video" hint="Optional. Leave it empty to make a video from words alone.">
-          {!selectedWorkflowId && (
+        <RailSection>
+          {showMediaWell && (
             <RailWell
-              label="Add a photo or video"
-              hint="PNG, JPG or MP4 — or leave it and describe the shot"
-              badge="Optional"
+              label="Add references"
+              hint={acceptedMediaHint}
+              types={acceptedMediaTypes}
               onClick={() => {
-                workflowMenuFocusTargetRef.current = "selected";
-                setOpenDropdown("workflow");
+                // Straight to the file picker for whatever this model takes
+                // first. It used to open the workflow menu, which is now the
+                // segmented control above — so the well was pointing at a
+                // control the customer had already answered.
+                if (imageUploadLimit > 0) imageFileInputRef.current?.click();
+                else if (videoUploadLimit > 0) videoFileInputRef.current?.click();
+                else audioFileInputRef.current?.click();
               }}
             />
           )}
-          <div className="flex flex-col gap-3">
-            {/* Inline list of uploaded media files */}
+          {/* Once the well is gone the slots take its place — in a card, so the
+            upload buttons sit on a surface rather than floating on the panel. */}
+          <div
+            className={
+              showMediaWell ? "hidden" : "flex flex-col gap-3 rounded-nova-card bg-nova-card p-5"
+            }
+          >
+            {/* Inline list of uploaded media files. Kept mounted but hidden
+              behind the well, because the file inputs it owns are what the
+                well clicks. */}
             <div className="flex items-start gap-2.5 flex-wrap">
               {selectedWorkflowId ? (
                 <>
@@ -1922,18 +2022,10 @@ export default function VideoStudio({
                         type={slot.mediaType}
                         url={url}
                         index={index}
-                        onRemove={(itemIndex) =>
-                          removeWorkflowMedia(slot.id, itemIndex)
-                        }
-                        label={
-                          values.length > 1
-                            ? `${slot.label} · ${index + 1}`
-                            : slot.label
-                        }
+                        onRemove={(itemIndex) => removeWorkflowMedia(slot.id, itemIndex)}
+                        label={values.length > 1 ? `${slot.label} · ${index + 1}` : slot.label}
                         description={
-                          values.length > 1
-                            ? `${slot.description} ${index + 1}`
-                            : slot.description
+                          values.length > 1 ? `${slot.description} ${index + 1}` : slot.description
                         }
                       />
                     ));
@@ -1941,18 +2033,16 @@ export default function VideoStudio({
 
                   {workflowMediaSlots.map((slot) => {
                     const values = activeWorkflowMediaDraft?.[slot.id] || [];
-                    const remaining = getVideoWorkflowSlotRemaining(
-                      slot,
-                      activeWorkflowMediaDraft,
-                    );
+                    const remaining = getVideoWorkflowSlotRemaining(slot, activeWorkflowMediaDraft);
                     if (remaining <= 0) return null;
                     const uploadKey = `${workflowMediaDraftKey}:${slot.id}`;
                     const uploading = workflowUploadSlotId === uploadKey;
-                    const progress = slot.mediaType === "image"
-                      ? imageProgress
-                      : slot.mediaType === "video"
-                        ? videoProgress
-                        : audioProgress;
+                    const progress =
+                      slot.mediaType === "image"
+                        ? imageProgress
+                        : slot.mediaType === "video"
+                          ? videoProgress
+                          : audioProgress;
                     return (
                       <ReferenceUploadButton
                         key={slot.id}
@@ -1961,11 +2051,7 @@ export default function VideoStudio({
                         onChange={async (event) => {
                           const files = Array.from(event.target.files || []);
                           event.target.value = "";
-                          await uploadWorkflowSlotFiles(
-                            workflowMediaDraftKey,
-                            slot,
-                            files,
-                          );
+                          await uploadWorkflowSlotFiles(workflowMediaDraftKey, slot, files);
                         }}
                         title={`${slot.description || slot.label}${slot.required ? " (required)" : " (optional)"}`}
                         uploading={uploading}
@@ -1980,498 +2066,378 @@ export default function VideoStudio({
                 </>
               ) : (
                 <>
-              {uploadedImageUrls.map((url, index) => (
-                <ReferencePreview
-                  key={url}
-                  type="image"
-                  url={url}
-                  index={index}
-                  onRemove={removeImageAtIndex}
-                  label={
-                    uploadedImageUrls.length > 1
-                      ? `Image · ${index + 1}`
-                      : "Image"
-                  }
-                />
-              ))}
+                  {uploadedImageUrls.map((url, index) => (
+                    <ReferencePreview
+                      key={url}
+                      type="image"
+                      url={url}
+                      index={index}
+                      onRemove={removeImageAtIndex}
+                      label={uploadedImageUrls.length > 1 ? `Image · ${index + 1}` : "Image"}
+                    />
+                  ))}
 
-              {uploadedEndImageUrl && (
-                <ReferencePreview
-                  type="image"
-                  url={uploadedEndImageUrl}
-                  index={0}
-                  onRemove={clearEndImage}
-                  label="End frame"
-                />
-              )}
+                  {uploadedEndImageUrl && (
+                    <ReferencePreview
+                      type="image"
+                      url={uploadedEndImageUrl}
+                      index={0}
+                      onRemove={clearEndImage}
+                      label="End frame"
+                    />
+                  )}
 
-              {uploadedVideoUrls.map((url, index) => (
-                <ReferencePreview
-                  key={url}
-                  type="video"
-                  url={url}
-                  index={index}
-                  onRemove={removeVideoAtIndex}
-                  label={
-                    uploadedVideoUrls.length > 1
-                      ? `Video · ${index + 1}`
-                      : "Video"
-                  }
-                />
-              ))}
+                  {uploadedVideoUrls.map((url, index) => (
+                    <ReferencePreview
+                      key={url}
+                      type="video"
+                      url={url}
+                      index={index}
+                      onRemove={removeVideoAtIndex}
+                      label={uploadedVideoUrls.length > 1 ? `Video · ${index + 1}` : "Video"}
+                    />
+                  ))}
 
-              {uploadedAudioUrls.map((url, index) => (
-                <ReferencePreview
-                  key={url}
-                  type="audio"
-                  url={url}
-                  index={index}
-                  onRemove={removeAudioAtIndex}
-                  label={
-                    uploadedAudioUrls.length > 1
-                      ? `Audio · ${index + 1}`
-                      : "Audio"
-                  }
-                />
-              ))}
+                  {uploadedAudioUrls.map((url, index) => (
+                    <ReferencePreview
+                      key={url}
+                      type="audio"
+                      url={url}
+                      index={index}
+                      onRemove={removeAudioAtIndex}
+                      label={uploadedAudioUrls.length > 1 ? `Audio · ${index + 1}` : "Audio"}
+                    />
+                  ))}
 
-              {/* Upload trigger buttons */}
-              {canUploadImageReference && uploadedImageUrls.length < imageUploadLimit && (
-                <ReferenceUploadButton
-                  inputRef={imageFileInputRef}
-                  accept="image/*"
-                  multiple={imageUploadLimit - uploadedImageUrls.length > 1}
-                  onChange={handleImageFileChange}
-                  onClick={() => imageFileInputRef.current?.click()}
-                  title={
-                    selectedWorkflowId === "keyframes"
-                      ? "Upload start frame"
-                      : `Upload up to ${imageUploadLimit} reference images`
-                  }
-                  uploading={imageUploading}
-                  progress={imageProgress}
-                  type="image"
-                />
-              )}
+                  {/* Upload trigger buttons */}
+                  {canUploadImageReference && uploadedImageUrls.length < imageUploadLimit && (
+                    <ReferenceUploadButton
+                      inputRef={imageFileInputRef}
+                      accept="image/*"
+                      multiple={imageUploadLimit - uploadedImageUrls.length > 1}
+                      onChange={handleImageFileChange}
+                      onClick={() => imageFileInputRef.current?.click()}
+                      title={
+                        selectedWorkflowId === "keyframes"
+                          ? "Upload start frame"
+                          : `Upload up to ${imageUploadLimit} reference images`
+                      }
+                      uploading={imageUploading}
+                      progress={imageProgress}
+                      type="image"
+                    />
+                  )}
 
-              {showEndImageUpload && !uploadedEndImageUrl && (
-                <ReferenceUploadButton
-                  inputRef={endImageFileInputRef}
-                  accept="image/*"
-                  multiple={false}
-                  onChange={handleEndImageFileChange}
-                  onClick={() => endImageFileInputRef.current?.click()}
-                  title="Upload end frame"
-                  uploading={endImageUploading}
-                  progress={endImageProgress}
-                  type="image"
-                />
-              )}
+                  {showEndImageUpload && !uploadedEndImageUrl && (
+                    <ReferenceUploadButton
+                      inputRef={endImageFileInputRef}
+                      accept="image/*"
+                      multiple={false}
+                      onChange={handleEndImageFileChange}
+                      onClick={() => endImageFileInputRef.current?.click()}
+                      title="Upload end frame"
+                      uploading={endImageUploading}
+                      progress={endImageProgress}
+                      type="image"
+                    />
+                  )}
 
-              {videoUploadLimit > 0 && uploadedVideoUrls.length < videoUploadLimit && (
-                <ReferenceUploadButton
-                  inputRef={videoFileInputRef}
-                  accept="video/*"
-                  multiple={videoUploadLimit - uploadedVideoUrls.length > 1}
-                  onChange={handleVideoFileChange}
-                  onClick={() => videoFileInputRef.current?.click()}
-                  title={`Upload up to ${videoUploadLimit} reference videos`}
-                  uploading={videoUploading}
-                  progress={videoProgress}
-                  type="video"
-                />
-              )}
+                  {videoUploadLimit > 0 && uploadedVideoUrls.length < videoUploadLimit && (
+                    <ReferenceUploadButton
+                      inputRef={videoFileInputRef}
+                      accept="video/*"
+                      multiple={videoUploadLimit - uploadedVideoUrls.length > 1}
+                      onChange={handleVideoFileChange}
+                      onClick={() => videoFileInputRef.current?.click()}
+                      title={`Upload up to ${videoUploadLimit} reference videos`}
+                      uploading={videoUploading}
+                      progress={videoProgress}
+                      type="video"
+                    />
+                  )}
 
-              {audioUploadLimit > 0 && uploadedAudioUrls.length < audioUploadLimit && (
-                <ReferenceUploadButton
-                  inputRef={audioFileInputRef}
-                  accept="audio/*"
-                  multiple={audioUploadLimit - uploadedAudioUrls.length > 1}
-                  onChange={handleAudioFileChange}
-                  onClick={() => audioFileInputRef.current?.click()}
-                  title={`Upload up to ${audioUploadLimit} reference audio files`}
-                  uploading={audioUploading}
-                  progress={audioProgress}
-                  type="audio"
-                />
-              )}
+                  {audioUploadLimit > 0 && uploadedAudioUrls.length < audioUploadLimit && (
+                    <ReferenceUploadButton
+                      inputRef={audioFileInputRef}
+                      accept="audio/*"
+                      multiple={audioUploadLimit - uploadedAudioUrls.length > 1}
+                      onChange={handleAudioFileChange}
+                      onClick={() => audioFileInputRef.current?.click()}
+                      title={`Upload up to ${audioUploadLimit} reference audio files`}
+                      uploading={audioUploading}
+                      progress={audioProgress}
+                      type="audio"
+                    />
+                  )}
                 </>
               )}
             </div>
           </div>
-      </RailSection>
+        </RailSection>
       )}
 
-      <RailSection label="Your prompt">
+      {/* The prompt, as a card rather than a labelled input.
 
-            {/* Prompt textarea */}
-            <div className="flex-1 flex flex-col gap-1">
-              <PromptTextarea
-                ref={textareaRef}
-                value={prompt}
-                onChange={handlePromptInput}
-                placeholder={promptPlaceholder}
-                disabled={promptDisabled}
-              />
-            </div>
-
-      </RailSection>
-
-          {/* Extend banner */}
-          {isExtendMode && (
-            <div className="flex items-center gap-2 px-3 py-1.5 mx-3 bg-[var(--slab-hi)] border border-[var(--line)] rounded-lg text-[10px] text-[var(--lilac)]/80 font-medium tracking-tight">
-              <svg
-                width="13"
-                height="13"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
+          The name sits in the card's header and the controls that belong to the
+          prompt — references, drawing — sit in its footer, each behind a
+          hairline. So the whole of "what to say" is one object with three
+          registers, instead of a heading, a box, and a distant row of pills. */}
+      <RailCard
+        className="cursor-text"
+        onClick={() => textareaRef.current?.focus()}
+        header={
+          <label htmlFor={promptFieldId} className="block cursor-text">
+            <RailCardTitle>Prompt</RailCardTitle>
+          </label>
+        }
+        footer={
+          <div className="flex flex-wrap items-center gap-2">
+            <RailChip
+              icon={<AtIcon />}
+              disabled={imageUploadLimit < 1 || uploadedImageUrls.length >= imageUploadLimit}
+              onClick={(event) => {
+                event.stopPropagation();
+                imageFileInputRef.current?.click();
+              }}
+            >
+              Elements
+            </RailChip>
+            {canUploadImageReference && (
+              <RailChip
+                icon={<PencilIcon size={14} />}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setIsDrawModalOpen(true);
+                }}
               >
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-              <span>Continuing the previous VidEngine generation</span>
-            </div>
-          )}
+                Draw
+              </RailChip>
+            )}
+          </div>
+        }
+      >
+        <PromptTextarea
+          id={promptFieldId}
+          ref={textareaRef}
+          value={prompt}
+          onChange={handlePromptInput}
+          placeholder={promptPlaceholder}
+          disabled={promptDisabled}
+        />
+      </RailCard>
 
+      {/* Continuing an earlier generation. A statement of fact about the job,
+        not a control, so it is the quietest thing in the rail. */}
+      {isExtendMode && (
+        <div className="flex items-center gap-2.5 rounded-nova-btn bg-nova-card px-5 py-3.5 text-[14px] font-medium text-nova-muted">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            className="flex-shrink-0"
+            aria-hidden
+          >
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+          <span>Continuing the previous VidEngine generation</span>
+        </div>
+      )}
 
-      {/* The controls the chosen quality actually supports. */}
-      <RailSection label="Video settings" weight="chips">
-            <div ref={dropdownRef} className="flex flex-wrap items-center gap-2">
-              {workflowControlState.kind !== "hidden" && (
-                <div className="relative flex items-center gap-1">
-                  <button
-                    type="button"
-                    ref={workflowTriggerRef}
-                    id={workflowControlId}
-                    aria-haspopup={
-                      workflowControlState.kind === "menu" ? "menu" : undefined
-                    }
-                    aria-controls={
-                      workflowControlState.kind === "menu" ? workflowMenuId : undefined
-                    }
-                    aria-expanded={
-                      workflowControlState.kind === "menu"
-                        ? openDropdown === "workflow"
-                        : undefined
-                    }
-                    aria-pressed={
-                      workflowControlState.kind === "direct"
-                        ? Boolean(selectedWorkflowId)
-                        : undefined
-                    }
-                    onClick={(event) => {
-                      if (workflowControlState.kind === "direct") {
-                        event.stopPropagation();
-                        if (selectedWorkflowId) {
-                          clearWorkflow();
-                        } else if (workflowControlState.workflow) {
-                          handleWorkflowSelect(workflowControlState.workflow.id);
-                        }
-                        setOpenDropdown(null);
-                        return;
-                      }
-                      event.stopPropagation();
-                      if (openDropdown === "workflow") {
-                        setOpenDropdown(null);
-                        return;
-                      }
-                      workflowMenuFocusTargetRef.current = "selected";
-                      setOpenDropdown("workflow");
-                    }}
-                    onKeyDown={
-                      workflowControlState.kind === "menu"
-                        ? handleWorkflowTriggerKeyDown
-                        : undefined
-                    }
-                    className={promptControlClassName({
-                      active: openDropdown === "workflow",
-                    })}
-                  >
-                    <span className={PROMPT_CONTROL_LABEL_CLASS}>
-                      {getVideoWorkflowControlLabel(selectedWorkflow)}
-                    </span>
-                    {workflowControlState.kind === "menu" && <PromptChevronIcon />}
-                  </button>
-                  {workflowControlState.kind === "menu" && openDropdown === "workflow" && (
-                    <PromptPopover
-                      className="min-w-[210px]"
-                      style={{ maxHeight: "55vh" }}
-                      onClick={(event) => event.stopPropagation()}
-                    >
-                      <PromptPopoverHeader>Source</PromptPopoverHeader>
-                      <div
-                        ref={workflowMenuRef}
-                        id={workflowMenuId}
-                        role="menu"
-                        aria-labelledby={workflowControlId}
-                        onKeyDown={handleWorkflowMenuKeyDown}
-                        className="flex flex-col gap-1"
-                      >
-                        {workflowFamily.workflows.map((workflow) => (
-                          <PromptMenuItem
-                            key={workflow.id}
-                            selected={selectedWorkflowId === workflow.id}
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              handleWorkflowSelect(workflow.id);
-                              closeWorkflowMenu(true);
-                            }}
-                          >
-                            {workflow.label}
-                          </PromptMenuItem>
-                        ))}
-                        {selectedWorkflow && workflowFamily?.hasBase && (
-                          <div className="mt-2 border-t border-[var(--line)] pt-2">
-                            <button
-                              type="button"
-                              role="menuitemradio"
-                              aria-checked={false}
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                clearWorkflow();
-                                closeWorkflowMenu(true);
-                              }}
-                              className="flex min-h-9 w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[11px] font-semibold text-[var(--fog)] transition-colors hover:bg-white/[0.04] hover:text-[var(--iron)] focus:outline-none focus-visible:bg-white/[0.04] focus-visible:text-[var(--iron)]"
-                            >
-                              <svg
-                                width="13"
-                                height="13"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                aria-hidden="true"
-                              >
-                                <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
-                                <path d="M3 3v5h5" />
-                              </svg>
-                              <span>Base generation</span>
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </PromptPopover>
-                  )}
-                </div>
-              )}
+      {/* The controls the chosen quality actually supports.
+          Model first, on a row of its own: it is the decision every control
+            under it depends on, so it is not a pill among pills. Then duration,
+              shape and resolution side by side, because they are three answers to
+                one question — how big is this — and given a row each they read as
+                  three separate decisions. */}
+      <div ref={dropdownRef} className="space-y-2">
+        <RailRow
+          label="Model"
+          value={selectedPickerEntry?.name || selectedFamily?.name || "Choose a model"}
+          adornment={
+            <span className="flex-shrink-0 text-nova-accent">
+              <EqualiserIcon size={15} />
+            </span>
+          }
+          onClick={() =>
+            window.dispatchEvent(
+              new CustomEvent("meerah:pick-model", { detail: { kind: "video" } }),
+            )
+          }
+        />
 
-              <ModelParameterControls
-                inputs={supplementalInputs}
-                values={modelParameterValues}
-                onChange={(key, value) =>
-                  setModelParameterValues((values) => ({ ...values, [key]: value }))
-                }
-                open={openDropdown === "parameters"}
-                onToggle={toggleDropdown("parameters")}
-              />
-
-              {/* Aspect ratio btn */}
-              {showAr && (
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={toggleDropdown("ar")}
-                    className={promptControlClassName({
-                      active: openDropdown === "ar",
-                    })}
-                  >
-                    <PromptAspectRatioIcon />
-                    <span className={PROMPT_CONTROL_LABEL_CLASS}>
-                      {selectedAr}
-                    </span>
-                  </button>
-                  {openDropdown === "ar" && (
-                    <PromptPopover
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <PromptPopoverHeader>
-                        Aspect Ratio
-                      </PromptPopoverHeader>
-                      <PromptMenuList>
-                        {getCurrentAspectRatios(selectedModel).map((r) => (
-                          <PromptMenuItem
-                            key={r}
-                            selected={selectedAr === r}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedAr(r);
-                              setOpenDropdown(null);
-                            }}
-                          >
-                            {r}
-                          </PromptMenuItem>
-                        ))}
-                      </PromptMenuList>
-                    </PromptPopover>
-                  )}
-                </div>
-              )}
-
-              {/* Effect btn */}
-              {showEffect && (
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={toggleDropdown("effect")}
-                    className={promptControlClassName({
-                      active: openDropdown === "effect",
-                    })}
-                  >
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      className="opacity-40 text-[var(--chalk)]"
-                    >
-                      <path d="M5 3l14 9-14 9V3z" />
-                    </svg>
-                    <span className={`${PROMPT_CONTROL_LABEL_CLASS} max-w-[140px] truncate`}>
-                      {selectedEffect || "Effect"}
-                    </span>
-                  </button>
-                  {openDropdown === "effect" && (
-                    <PromptPopover
-                      onClick={(e) => e.stopPropagation()}
-                      className="min-w-[200px]"
-                    >
-                      <PromptPopoverHeader>
-                        Effect Type
-                      </PromptPopoverHeader>
-                      <PromptMenuList>
-                        {getEffectsForI2VModel(selectedModel).map((eff) => (
-                          <PromptMenuItem
-                            key={eff}
-                            selected={selectedEffect === eff}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedEffect(eff);
-                              setOpenDropdown(null);
-                            }}
-                          >
-                            {eff}
-                          </PromptMenuItem>
-                        ))}
-                      </PromptMenuList>
-                    </PromptPopover>
-                  )}
-                </div>
-              )}
-
-              {/* Duration btn */}
-              {showDuration && (
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={toggleDropdown("duration")}
-                    className={promptControlClassName({
-                      active: openDropdown === "duration",
-                    })}
-                  >
-                    <PromptDurationIcon />
-                    <span className={PROMPT_CONTROL_LABEL_CLASS}>
-                      {selectedDuration}s
-                    </span>
-                  </button>
-                  {openDropdown === "duration" && (
-                    <PromptPopover
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <PromptPopoverHeader>
-                        Duration
-                      </PromptPopoverHeader>
-                      <PromptMenuList>
-                        {getCurrentDurations(selectedModel).map((d) => (
-                          <PromptMenuItem
-                            key={d}
-                            selected={selectedDuration === d}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedDuration(d);
-                              setOpenDropdown(null);
-                            }}
-                          >
-                            {d}s
-                          </PromptMenuItem>
-                        ))}
-                      </PromptMenuList>
-                    </PromptPopover>
-                  )}
-                </div>
-              )}
-
-              {/* Resolution btn */}
-              {showResolution && (
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={toggleDropdown("resolution")}
-                    className={promptControlClassName({
-                      active: openDropdown === "resolution",
-                    })}
-                  >
-                    <PromptQualityIcon />
-                    <span className={PROMPT_CONTROL_LABEL_CLASS}>
-                      {selectedResolution || "720p"}
-                    </span>
-                  </button>
-                  {openDropdown === "resolution" && (
-                    <PromptPopover
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <PromptPopoverHeader>
-                        Resolution
-                      </PromptPopoverHeader>
-                      <PromptMenuList>
-                        {getCurrentResolutions(selectedModel).map((r) => (
-                          <PromptMenuItem
-                            key={r}
-                            selected={selectedResolution === r}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedResolution(r);
-                              setOpenDropdown(null);
-                            }}
-                          >
-                            {r}
-                          </PromptMenuItem>
-                        ))}
-                      </PromptMenuList>
-                    </PromptPopover>
-                  )}
-                </div>
-              )}
-
-              {canUploadImageReference && (
-                <button
-                  type="button"
-                  className={promptControlClassName()}
-                  onClick={() => setIsDrawModalOpen(true)}
+        {sizePillCount > 0 && (
+          <RailPillRow columns={sizePillCount}>
+            {showDuration && (
+              <div className="relative">
+                <RailPill
+                  icon={<ClockIcon size={16} />}
+                  active={openDropdown === "duration"}
+                  onClick={toggleDropdown("duration")}
                 >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    className="opacity-40 text-[var(--chalk)] group-hover:text-[var(--chalk)] transition-colors"
+                  {selectedDuration}s
+                </RailPill>
+                {openDropdown === "duration" && (
+                  <PromptPopover
+                    positionClassName={POPOVER_ABOVE_LEFT}
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    <path d="M12 20h9" />
-                    <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
-                  </svg>
-                  <span className={PROMPT_CONTROL_LABEL_CLASS}>Draw</span>
-                </button>
-              )}
-            </div>
-      </RailSection>
+                    <PromptPopoverHeader>Duration</PromptPopoverHeader>
+                    <PromptMenuList>
+                      {getCurrentDurations(selectedModel).map((d) => (
+                        <PromptMenuItem
+                          key={d}
+                          selected={selectedDuration === d}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedDuration(d);
+                            setOpenDropdown(null);
+                          }}
+                        >
+                          {d}s
+                        </PromptMenuItem>
+                      ))}
+                    </PromptMenuList>
+                  </PromptPopover>
+                )}
+              </div>
+            )}
 
+            {showAr && (
+              <div className="relative">
+                <RailPill
+                  icon={<FrameIcon size={16} />}
+                  active={openDropdown === "ar"}
+                  onClick={toggleDropdown("ar")}
+                >
+                  {selectedAr}
+                </RailPill>
+                {openDropdown === "ar" && (
+                  <PromptPopover
+                    positionClassName={POPOVER_ABOVE_LEFT}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <PromptPopoverHeader>Aspect Ratio</PromptPopoverHeader>
+                    <PromptMenuList>
+                      {getCurrentAspectRatios(selectedModel).map((r) => (
+                        <PromptMenuItem
+                          key={r}
+                          selected={selectedAr === r}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedAr(r);
+                            setOpenDropdown(null);
+                          }}
+                        >
+                          {r}
+                        </PromptMenuItem>
+                      ))}
+                    </PromptMenuList>
+                  </PromptPopover>
+                )}
+              </div>
+            )}
 
+            {showResolution && (
+              <div className="relative">
+                <RailPill
+                  icon={<GemIcon size={16} />}
+                  active={openDropdown === "resolution"}
+                  onClick={toggleDropdown("resolution")}
+                >
+                  {selectedResolution || "720p"}
+                </RailPill>
+                {openDropdown === "resolution" && (
+                  <PromptPopover
+                    positionClassName={POPOVER_ABOVE_RIGHT}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <PromptPopoverHeader>Resolution</PromptPopoverHeader>
+                    <PromptMenuList>
+                      {getCurrentResolutions(selectedModel).map((r) => (
+                        <PromptMenuItem
+                          key={r}
+                          selected={selectedResolution === r}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedResolution(r);
+                            setOpenDropdown(null);
+                          }}
+                        >
+                          {r}
+                        </PromptMenuItem>
+                      ))}
+                    </PromptMenuList>
+                  </PromptPopover>
+                )}
+              </div>
+            )}
+          </RailPillRow>
+        )}
+
+        {showEffect && (
+          <div className="relative">
+            <RailInlineRow
+              icon={
+                <svg
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  className="flex-shrink-0"
+                  aria-hidden
+                >
+                  <path d="M6 4l13 8-13 8V4z" strokeLinejoin="round" />
+                </svg>
+              }
+              label="Effect"
+              value={selectedEffect || "None"}
+              onClick={toggleDropdown("effect")}
+            />
+            {openDropdown === "effect" && (
+              <PromptPopover
+                positionClassName={POPOVER_ABOVE_LEFT}
+                className="min-w-[200px]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <PromptPopoverHeader>Effect Type</PromptPopoverHeader>
+                <PromptMenuList>
+                  {getEffectsForI2VModel(selectedModel).map((eff) => (
+                    <PromptMenuItem
+                      key={eff}
+                      selected={selectedEffect === eff}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedEffect(eff);
+                        setOpenDropdown(null);
+                      }}
+                    >
+                      {eff}
+                    </PromptMenuItem>
+                  ))}
+                </PromptMenuList>
+              </PromptPopover>
+            )}
+          </div>
+        )}
+
+        {/* Model-specific knobs, closed. Long, model-specific and irrelevant to
+          most jobs — but hiding them entirely is what made the old UI feel
+            like it was keeping secrets. */}
+        <ModelParameterControls
+          inputs={supplementalInputs}
+          values={modelParameterValues}
+          onChange={(key, value) =>
+            setModelParameterValues((values) => ({ ...values, [key]: value }))
+          }
+          open={openDropdown === "parameters"}
+          onToggle={toggleDropdown("parameters")}
+        />
+      </div>
     </SettingsRail>
   );
 
@@ -2479,295 +2445,364 @@ export default function VideoStudio({
   return (
     <div
       ref={containerRef}
-      className="w-full h-full flex flex-col lg:flex-row bg-app-bg relative overflow-hidden"
+      className="w-full h-full flex flex-col lg:flex-row bg-nova-bg relative overflow-hidden"
     >
       {/* ── LEFT: SETTINGS RAIL ── */}
       {settingsRail}
 
       {/* ── RIGHT: THE WORK ── */}
       <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
-      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar px-4 pb-8">
-        <WorkTabs
-          toolId="videngine"
-          hasResults={history.length > 0}
-          results={<>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
-            {history.map((entry, idx) => {
-              const isSeedance2 = entry.model === "seedance-v2.0-t2v" || entry.model === "seedance-v2.0-i2v";
-              return (
-                <div
-                  key={entry.id || idx}
-                  className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-[var(--line-hi)] transition-all duration-300 flex flex-col cursor-pointer"
-                  onClick={() => setFullscreenUrl(entry.url)}
-                >
-                  <video
-                    src={entry.url}
-                    className="w-full aspect-video object-cover bg-[var(--night)] hover:opacity-80 transition-opacity"
-                    controls={false}
-                    loop
-                    muted
-                    playsInline
-                    onMouseOver={(e) => e.target.play()}
-                    onMouseOut={(e) => {
-                      e.target.pause();
-                      e.target.currentTime = 0;
-                    }}
-                  />
-                  
-                  {/* Overlay actions */}
-                  <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <GenerationCopyButtons
-                      prompt={entry.prompt}
-                      onCopyError={onGenerationError}
-                    />
-                    <button
-                      type="button"
-                      title="Download"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        downloadFile(entry.url, `video-${entry.id || idx}.mp4`);
-                      }}
-                      className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
-                      </svg>
-                    </button>
-                    {isSeedance2 && (
-                      <button
-                        type="button"
-                        title="Extend this video using Seedance 2.0 Extend"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleExtend(entry.id, entry.model);
-                        }}
-                        className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+        <div className="flex-1 min-h-0 w-full">
+          <WorkTabs
+            toolId="videngine"
+            hasResults={history.length > 0}
+            results={
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
+                  {history.map((entry, idx) => {
+                    const isSeedance2 =
+                      entry.model === "seedance-v2.0-t2v" || entry.model === "seedance-v2.0-i2v";
+                    return (
+                      <div
+                        key={entry.id || idx}
+                        className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-[var(--line-hi)] transition-all duration-300 flex flex-col cursor-pointer"
+                        onClick={() => setFullscreenUrl(entry.url)}
                       >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      title="Delete"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (confirm("Are you sure you want to delete this generated item?")) {
-                          handleDeleteEntry(entry, idx).catch((err) => {
-                            onGenerationError?.(err.message || "Failed to delete item");
-                          });
-                        }
-                      }}
-                      className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                        <line x1="10" y1="11" x2="10" y2="17" />
-                        <line x1="14" y1="11" x2="14" y2="17" />
-                      </svg>
-                    </button>
-                  </div>
-                  <MobileGenerationActions
-                    prompt={entry.prompt}
-                    onCopyError={onGenerationError}
-                    actions={[
-                      {
-                        kind: "download",
-                        label: "Download",
-                        onSelect: () =>
-                          downloadFile(entry.url, `video-${entry.id || idx}.mp4`),
-                      },
-                      isSeedance2 && {
-                        kind: "extend",
-                        label: "Extend",
-                        onSelect: () => handleExtend(entry.id, entry.model),
-                      },
-                      {
-                        kind: "delete",
-                        label: "Delete",
-                        danger: true,
-                        onSelect: () => {
-                          if (confirm("Are you sure you want to delete this generated item?")) {
-                            handleDeleteEntry(entry, idx).catch((err) => {
-                              onGenerationError?.(err.message || "Failed to delete item");
-                            });
-                          }
-                        },
-                      },
-                    ]}
-                  />
+                        <video
+                          src={entry.url}
+                          className="w-full aspect-video object-cover bg-[var(--night)] hover:opacity-80 transition-opacity"
+                          controls={false}
+                          loop
+                          muted
+                          playsInline
+                          onMouseOver={(e) => e.target.play()}
+                          onMouseOut={(e) => {
+                            e.target.pause();
+                            e.target.currentTime = 0;
+                          }}
+                        />
 
-                  {/* Prompt & Details */}
-                  <div className="p-3 bg-[var(--surface)] backdrop-blur-sm border-t border-[var(--line)] flex-1 flex flex-col justify-between gap-2">
-                    <p className="text-[var(--iron)] text-xs line-clamp-3 leading-relaxed" title={entry.prompt}>
-                      {entry.prompt || "No prompt provided"}
-                    </p>
-                    <div className="flex items-center justify-between mt-1 flex-wrap gap-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-[var(--slab-hi)] rounded border border-[var(--line)] whitespace-nowrap capitalize">
-                          {entry.model?.replace("-", " ") || "Video Studio"}
-                        </span>
-                        <div className="flex gap-2">
-                          {entry.resolution && (
-                            <span className="text-[10px] text-[var(--fog)]">{entry.resolution}</span>
+                        {/* Overlay actions */}
+                        <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <GenerationCopyButtons
+                            prompt={entry.prompt}
+                            onCopyError={onGenerationError}
+                          />
+                          <button
+                            type="button"
+                            title="Download"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              downloadFile(entry.url, `video-${entry.id || idx}.mp4`);
+                            }}
+                            className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                          >
+                            <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                            >
+                              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                            </svg>
+                          </button>
+                          {isSeedance2 && (
+                            <button
+                              type="button"
+                              title="Extend this video using Seedance 2.0 Extend"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleExtend(entry.id, entry.model);
+                              }}
+                              className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                            >
+                              <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              >
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                              </svg>
+                            </button>
                           )}
-                          {entry.duration && (
-                            <span className="text-[10px] text-[var(--fog)]">{entry.duration}s</span>
-                          )}
+                          <button
+                            type="button"
+                            title="Delete"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (confirm("Are you sure you want to delete this generated item?")) {
+                                handleDeleteEntry(entry, idx).catch((err) => {
+                                  onGenerationError?.(err.message || "Failed to delete item");
+                                });
+                              }
+                            }}
+                            className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                          >
+                            <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                            >
+                              <polyline points="3 6 5 6 21 6" />
+                              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                              <line x1="10" y1="11" x2="10" y2="17" />
+                              <line x1="14" y1="11" x2="14" y2="17" />
+                            </svg>
+                          </button>
+                        </div>
+                        <MobileGenerationActions
+                          prompt={entry.prompt}
+                          onCopyError={onGenerationError}
+                          actions={[
+                            {
+                              kind: "download",
+                              label: "Download",
+                              onSelect: () =>
+                                downloadFile(entry.url, `video-${entry.id || idx}.mp4`),
+                            },
+                            isSeedance2 && {
+                              kind: "extend",
+                              label: "Extend",
+                              onSelect: () => handleExtend(entry.id, entry.model),
+                            },
+                            {
+                              kind: "delete",
+                              label: "Delete",
+                              danger: true,
+                              onSelect: () => {
+                                if (
+                                  confirm("Are you sure you want to delete this generated item?")
+                                ) {
+                                  handleDeleteEntry(entry, idx).catch((err) => {
+                                    onGenerationError?.(err.message || "Failed to delete item");
+                                  });
+                                }
+                              },
+                            },
+                          ]}
+                        />
+
+                        {/* Prompt & Details */}
+                        <div className="p-3 bg-[var(--surface)] backdrop-blur-sm border-t border-[var(--line)] flex-1 flex flex-col justify-between gap-2">
+                          <p
+                            className="text-[var(--iron)] text-xs line-clamp-3 leading-relaxed"
+                            title={entry.prompt}
+                          >
+                            {entry.prompt || "No prompt provided"}
+                          </p>
+                          <div className="flex items-center justify-between mt-1 flex-wrap gap-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-[var(--slab-hi)] rounded border border-[var(--line)] whitespace-nowrap capitalize">
+                                {entry.model?.replace("-", "") || "Video Studio"}
+                              </span>
+                              <div className="flex gap-2">
+                                {entry.resolution && (
+                                  <span className="text-[10px] text-[var(--fog)]">
+                                    {entry.resolution}
+                                  </span>
+                                )}
+                                {entry.duration && (
+                                  <span className="text-[10px] text-[var(--fog)]">
+                                    {entry.duration}s
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
-          </div>
-          </>}
-          history={history.length > 0 ? <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
-            {history.map((entry, idx) => {
-              const isSeedance2 = entry.model === "seedance-v2.0-t2v" || entry.model === "seedance-v2.0-i2v";
-              return (
-                <div
-                  key={entry.id || idx}
-                  className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-[var(--line-hi)] transition-all duration-300 flex flex-col cursor-pointer"
-                  onClick={() => setFullscreenUrl(entry.url)}
-                >
-                  <video
-                    src={entry.url}
-                    className="w-full aspect-video object-cover bg-[var(--night)] hover:opacity-80 transition-opacity"
-                    controls={false}
-                    loop
-                    muted
-                    playsInline
-                    onMouseOver={(e) => e.target.play()}
-                    onMouseOut={(e) => {
-                      e.target.pause();
-                      e.target.currentTime = 0;
-                    }}
-                  />
-                  
-                  {/* Overlay actions */}
-                  <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <GenerationCopyButtons
-                      prompt={entry.prompt}
-                      onCopyError={onGenerationError}
-                    />
-                    <button
-                      type="button"
-                      title="Download"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        downloadFile(entry.url, `video-${entry.id || idx}.mp4`);
-                      }}
-                      className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
-                      </svg>
-                    </button>
-                    {isSeedance2 && (
-                      <button
-                        type="button"
-                        title="Extend this video using Seedance 2.0 Extend"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleExtend(entry.id, entry.model);
-                        }}
-                        className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      title="Delete"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (confirm("Are you sure you want to delete this generated item?")) {
-                          handleDeleteEntry(entry, idx).catch((err) => {
-                            onGenerationError?.(err.message || "Failed to delete item");
-                          });
-                        }
-                      }}
-                      className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                        <line x1="10" y1="11" x2="10" y2="17" />
-                        <line x1="14" y1="11" x2="14" y2="17" />
-                      </svg>
-                    </button>
-                  </div>
-                  <MobileGenerationActions
-                    prompt={entry.prompt}
-                    onCopyError={onGenerationError}
-                    actions={[
-                      {
-                        kind: "download",
-                        label: "Download",
-                        onSelect: () =>
-                          downloadFile(entry.url, `video-${entry.id || idx}.mp4`),
-                      },
-                      isSeedance2 && {
-                        kind: "extend",
-                        label: "Extend",
-                        onSelect: () => handleExtend(entry.id, entry.model),
-                      },
-                      {
-                        kind: "delete",
-                        label: "Delete",
-                        danger: true,
-                        onSelect: () => {
-                          if (confirm("Are you sure you want to delete this generated item?")) {
-                            handleDeleteEntry(entry, idx).catch((err) => {
-                              onGenerationError?.(err.message || "Failed to delete item");
-                            });
-                          }
-                        },
-                      },
-                    ]}
-                  />
+              </>
+            }
+            history={
+              history.length > 0 ? (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
+                    {history.map((entry, idx) => {
+                      const isSeedance2 =
+                        entry.model === "seedance-v2.0-t2v" || entry.model === "seedance-v2.0-i2v";
+                      return (
+                        <div
+                          key={entry.id || idx}
+                          className="relative group rounded-lg overflow-hidden border border-[var(--line)] bg-[var(--night)] shadow-xl hover:border-[var(--line-hi)] transition-all duration-300 flex flex-col cursor-pointer"
+                          onClick={() => setFullscreenUrl(entry.url)}
+                        >
+                          <video
+                            src={entry.url}
+                            className="w-full aspect-video object-cover bg-[var(--night)] hover:opacity-80 transition-opacity"
+                            controls={false}
+                            loop
+                            muted
+                            playsInline
+                            onMouseOver={(e) => e.target.play()}
+                            onMouseOut={(e) => {
+                              e.target.pause();
+                              e.target.currentTime = 0;
+                            }}
+                          />
 
-                  {/* Prompt & Details */}
-                  <div className="p-3 bg-[var(--surface)] backdrop-blur-sm border-t border-[var(--line)] flex-1 flex flex-col justify-between gap-2">
-                    <p className="text-[var(--iron)] text-xs line-clamp-3 leading-relaxed" title={entry.prompt}>
-                      {entry.prompt || "No prompt provided"}
-                    </p>
-                    <div className="flex items-center justify-between mt-1 flex-wrap gap-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-[var(--slab-hi)] rounded border border-[var(--line)] whitespace-nowrap capitalize">
-                          {entry.model?.replace("-", " ") || "Video Studio"}
-                        </span>
-                        <div className="flex gap-2">
-                          {entry.resolution && (
-                            <span className="text-[10px] text-[var(--fog)]">{entry.resolution}</span>
-                          )}
-                          {entry.duration && (
-                            <span className="text-[10px] text-[var(--fog)]">{entry.duration}s</span>
-                          )}
+                          {/* Overlay actions */}
+                          <div className="absolute top-2 right-2 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <GenerationCopyButtons
+                              prompt={entry.prompt}
+                              onCopyError={onGenerationError}
+                            />
+                            <button
+                              type="button"
+                              title="Download"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                downloadFile(entry.url, `video-${entry.id || idx}.mp4`);
+                              }}
+                              className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                            >
+                              <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.5"
+                              >
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                              </svg>
+                            </button>
+                            {isSeedance2 && (
+                              <button
+                                type="button"
+                                title="Extend this video using Seedance 2.0 Extend"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleExtend(entry.id, entry.model);
+                                }}
+                                className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-[var(--chalk)] hover:bg-[var(--slab-hi)] hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                              >
+                                <svg
+                                  width="14"
+                                  height="14"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                >
+                                  <path d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              title="Delete"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (
+                                  confirm("Are you sure you want to delete this generated item?")
+                                ) {
+                                  handleDeleteEntry(entry, idx).catch((err) => {
+                                    onGenerationError?.(err.message || "Failed to delete item");
+                                  });
+                                }
+                              }}
+                              className="p-2 bg-[var(--surface)] backdrop-blur-md rounded-full text-red-400 hover:bg-red-500 hover:text-[var(--chalk)] transition-all border border-[var(--line)]"
+                            >
+                              <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.5"
+                              >
+                                <polyline points="3 6 5 6 21 6" />
+                                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                                <line x1="10" y1="11" x2="10" y2="17" />
+                                <line x1="14" y1="11" x2="14" y2="17" />
+                              </svg>
+                            </button>
+                          </div>
+                          <MobileGenerationActions
+                            prompt={entry.prompt}
+                            onCopyError={onGenerationError}
+                            actions={[
+                              {
+                                kind: "download",
+                                label: "Download",
+                                onSelect: () =>
+                                  downloadFile(entry.url, `video-${entry.id || idx}.mp4`),
+                              },
+                              isSeedance2 && {
+                                kind: "extend",
+                                label: "Extend",
+                                onSelect: () => handleExtend(entry.id, entry.model),
+                              },
+                              {
+                                kind: "delete",
+                                label: "Delete",
+                                danger: true,
+                                onSelect: () => {
+                                  if (
+                                    confirm("Are you sure you want to delete this generated item?")
+                                  ) {
+                                    handleDeleteEntry(entry, idx).catch((err) => {
+                                      onGenerationError?.(err.message || "Failed to delete item");
+                                    });
+                                  }
+                                },
+                              },
+                            ]}
+                          />
+
+                          {/* Prompt & Details */}
+                          <div className="p-3 bg-[var(--surface)] backdrop-blur-sm border-t border-[var(--line)] flex-1 flex flex-col justify-between gap-2">
+                            <p
+                              className="text-[var(--iron)] text-xs line-clamp-3 leading-relaxed"
+                              title={entry.prompt}
+                            >
+                              {entry.prompt || "No prompt provided"}
+                            </p>
+                            <div className="flex items-center justify-between mt-1 flex-wrap gap-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-bold text-[var(--lilac)] px-2 py-0.5 bg-[var(--slab-hi)] rounded border border-[var(--line)] whitespace-nowrap capitalize">
+                                  {entry.model?.replace("-", "") || "Video Studio"}
+                                </span>
+                                <div className="flex gap-2">
+                                  {entry.resolution && (
+                                    <span className="text-[10px] text-[var(--fog)]">
+                                      {entry.resolution}
+                                    </span>
+                                  )}
+                                  {entry.duration && (
+                                    <span className="text-[10px] text-[var(--fog)]">
+                                      {entry.duration}s
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
+                      );
+                    })}
                   </div>
-                </div>
-              );
-            })}
-          </div>
-          </> : null}
-        />
-      </div>
-
+                </>
+              ) : null
+            }
+          />
+        </div>
       </div>
 
       {/* ── FULLSCREEN VIDEO MODAL ── */}
       {fullscreenUrl && (
-        <div 
+        <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--scrim)] backdrop-blur-sm animate-fade-in"
           onClick={() => setFullscreenUrl(null)}
         >
@@ -2779,17 +2814,26 @@ export default function VideoStudio({
               setFullscreenUrl(null);
             }}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
-          <video 
-            src={fullscreenUrl} 
-            controls 
-            autoPlay 
-            loop 
-            className="max-w-[95vw] max-h-[95vh] rounded-2xl shadow-2xl object-contain animate-scale-up" 
+          <video
+            src={fullscreenUrl}
+            controls
+            autoPlay
+            loop
+            className="max-w-[95vw] max-h-[95vh] rounded-2xl shadow-2xl object-contain animate-scale-up"
             onClick={(e) => e.stopPropagation()}
           />
         </div>
@@ -2802,7 +2846,25 @@ export default function VideoStudio({
         batchSize={1}
         onAddHistoryItem={handleDrawReference}
       />
-      <Toaster position="top-right" containerStyle={{ zIndex: 99999 }} toastOptions={{ duration: 5000, style: { background: 'var(--slab-hi)', color: 'var(--surface)', border: '1px solid rgba(255,255,255,0.15)', fontSize: '13px', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.6)', maxWidth: '440px', wordBreak: 'break-word', whiteSpace: 'pre-wrap', padding: '12px 16px' } }} />
+      <Toaster
+        position="top-right"
+        containerStyle={{ zIndex: 99999 }}
+        toastOptions={{
+          duration: 5000,
+          style: {
+            background: "var(--slab-hi)",
+            color: "var(--surface)",
+            border: "1px solid rgba(255,255,255,0.15)",
+            fontSize: "13px",
+            borderRadius: "12px",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.6)",
+            maxWidth: "440px",
+            wordBreak: "break-word",
+            whiteSpace: "pre-wrap",
+            padding: "12px 16px",
+          },
+        }}
+      />
     </div>
   );
 }

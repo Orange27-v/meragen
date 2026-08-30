@@ -127,7 +127,7 @@ export default function PricingTables() {
 function cell(options: { align?: 'left' | 'right'; color?: string; weight?: number; fontSize?: string } = {}) {
   return {
     padding: '.85rem .5rem',
-    borderBottom: '1px solid var(--line)',
+    borderBottom: '1px solid var(--border-default)',
     textAlign: options.align ?? 'left',
     color: options.color,
     fontWeight: options.weight,

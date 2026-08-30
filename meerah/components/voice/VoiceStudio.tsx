@@ -83,7 +83,7 @@ export default function VoiceStudio() {
   return (
     <div className="flex h-full w-full flex-col lg:flex-row bg-background">
       {/* ── Settings rail ─────────────────────────────────────────────── */}
-      <aside className="w-full shrink-0 bg-[var(--sunk)] lg:w-[370px] flex flex-col">
+      <aside className="w-full shrink-0 bg-surface-panel border-r border-edge lg:w-[320px] flex flex-col">
         <div className="custom-scrollbar flex flex-1 flex-col gap-6 overflow-y-auto px-5 py-6">
           <section>
             <Label className="mb-2.5 block">Language</Label>
@@ -92,10 +92,10 @@ export default function VoiceStudio() {
                 {status.languages.map((entry) => (
                   <button key={entry.code} type="button" onClick={() => setLanguage(entry.code)}
                     aria-pressed={language === entry.code}
-                    className={`rounded px-3 py-2.5 text-left text-[13px] transition-colors ${
+                    className={`rounded-lg border px-3 py-2.5 text-left text-[13px] transition-all ${
                       language === entry.code
-                        ? 'bg-[var(--slab-hi)] text-[var(--lilac)]-foreground font-semibold'
-                        : 'bg-card text-[var(--iron)] hover:bg-secondary hover:text-[var(--chalk)]'
+                        ? 'border-edge-strong bg-surface-raised text-ink-primary font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_2px_4px_rgba(0,0,0,0.35)]'
+                        : 'border-edge bg-surface-base text-ink-secondary hover:border-edge-strong hover:text-ink-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]'
                     }`}>
                     {entry.name}
                   </button>
@@ -103,7 +103,7 @@ export default function VoiceStudio() {
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-1.5">
-                {[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-10" />)}
+                {[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-10 rounded-lg" />)}
               </div>
             )}
           </section>
@@ -114,7 +114,7 @@ export default function VoiceStudio() {
               <Switch checked={useOwnVoice} onCheckedChange={setUseOwnVoice}
                 aria-label="Use my own voice" className="ml-auto" />
             </div>
-            <p className="text-[12.5px] leading-relaxed text-[var(--steel)]">
+            <p className="text-[12.5px] leading-relaxed text-ink-secondary">
               {useOwnVoice
                 ? 'Your own voice reads the script.'
                 : 'A preset voice reads the script. Switch this on to use your own.'}
@@ -127,17 +127,17 @@ export default function VoiceStudio() {
                     {voices.map((voice) => (
                       <button key={voice.id} type="button" onClick={() => setVoiceId(voice.id)}
                         aria-pressed={voiceId === voice.id}
-                        className={`rounded px-3 py-2.5 text-left text-[13px] transition-colors ${
+                        className={`rounded-lg border px-3 py-2.5 text-left text-[13px] transition-all ${
                           voiceId === voice.id
-                            ? 'bg-secondary font-semibold text-[var(--chalk)]'
-                            : 'bg-card text-[var(--iron)] hover:bg-secondary'
+                            ? 'border-edge-strong bg-surface-raised font-semibold text-ink-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_2px_4px_rgba(0,0,0,0.35)]'
+                            : 'border-edge bg-surface-base text-ink-secondary hover:border-edge-strong hover:text-ink-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]'
                         }`}>
                         {voice.name}
                       </button>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-[12.5px] leading-relaxed text-[var(--fog)]">
+                  <p className="text-[12.5px] leading-relaxed text-ink-tertiary">
                     You have not registered a voice yet. Record one on the right — it is free.
                   </p>
                 )}
@@ -149,31 +149,31 @@ export default function VoiceStudio() {
             <Label htmlFor="script" className="mb-2.5 block">Script</Label>
             <Textarea id="script" value={script} onChange={(e) => setScript(e.target.value)}
               placeholder="Abeg come see wetin we get this weekend — price better pass last week" className="min-h-[140px]" />
-            <p className={`mt-1.5 text-right text-[11px] tabular-nums ${over ? 'text-destructive' : 'text-[var(--fog)]'}`}>
+            <p className={`mt-1.5 text-right text-xs tabular-nums ${over ? 'text-destructive' : 'text-[var(--ink-tertiary)]'}`}>
               {script.length.toLocaleString()} / {MAX_CHARACTERS.toLocaleString()}
             </p>
           </section>
         </div>
 
         {/* Pinned foot: the price, then the action. */}
-        <div className="px-5 py-4">
-          <div className="rounded bg-card px-4 py-3">
+        <div className="border-t border-edge bg-surface-panel px-5 py-4">
+          <div className="rounded-xl border border-edge bg-surface-raised px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_2px_4px_rgba(0,0,0,0.35)]">
             {quote ? (
               <>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-[13px] font-semibold text-[var(--chalk)]">
+                  <span className="text-[13px] font-semibold text-ink-primary">
                     {quote.credits} credit{quote.credits === 1 ? '' : 's'}
                   </span>
-                  <span className="tabular-nums text-[13px] font-semibold text-[var(--chalk)]">
+                  <span className="tabular-nums text-[13px] font-semibold text-ink-primary">
                     ₦{quote.naira.toLocaleString()}
                   </span>
                 </div>
-                <p className="mt-1 text-[11.5px] text-[var(--fog)]">
+                <p className="mt-1 text-xs text-ink-tertiary">
                   Exact, not an estimate — this is charged per character.
                 </p>
               </>
             ) : (
-              <p className="text-[12.5px] text-[var(--fog)]">Type a script to see the price.</p>
+              <p className="text-[12.5px] text-ink-tertiary">Type a script to see the price.</p>
             )}
           </div>
 
@@ -181,7 +181,7 @@ export default function VoiceStudio() {
             {speaking ? <Loader2 className="animate-spin" /> : null}
             {speaking ? 'Speaking…' : quote ? `Speak · ₦${quote.naira.toLocaleString()}` : 'Speak'}
           </Button>
-          <p className="mt-2 text-center text-[11px] leading-relaxed text-[var(--ash)]">
+          <p className="mt-2 text-center text-xs leading-relaxed text-ink-disabled">
             Nothing is charged until it works. A failed job is refunded automatically.
           </p>
         </div>
@@ -191,7 +191,7 @@ export default function VoiceStudio() {
       <div className="custom-scrollbar flex-1 overflow-y-auto">
         <div className="mx-auto max-w-3xl px-6 py-10">
           {error && (
-            <div className="mb-6 rounded border-l-[3px] border-l-destructive bg-card px-4 py-3 text-sm">
+            <div className="mb-6 rounded-xl border border-danger/30 border-l-[3px] border-l-danger bg-surface-raised px-4 py-3 text-sm text-ink-primary shadow-embossed">
               {error}
             </div>
           )}
@@ -218,11 +218,11 @@ export default function VoiceStudio() {
 function Result({ result, onNew }: { result: SpokenAudio; onNew: () => void }) {
   return (
     <section>
-      <p className="mb-3 text-[10.5px] font-medium uppercase tracking-[.14em] text-[var(--lilac)]">Ready</p>
-      <h1 className="display text-[28px] leading-tight">Here it is</h1>
-      <div className="mt-6 rounded bg-card p-5">
+      <p className="mb-3 section-title text-mint">Ready</p>
+      <h1 className="display text-[28px] leading-tight text-ink-primary">Here it is</h1>
+      <div className="mt-6 rounded-xl border border-edge bg-surface-raised p-5 shadow-embossed">
         <audio controls src={result.url} className="w-full" />
-        <p className="mt-3 text-[12.5px] text-[var(--fog)]">
+        <p className="mt-3 text-[12.5px] text-ink-tertiary">
           {result.characters.toLocaleString()} characters · {result.credits} credit
           {result.credits === 1 ? '' : 's'} · ₦{result.naira.toLocaleString()}
         </p>
@@ -305,16 +305,16 @@ function CloneVoice({ language, onCloned }: { language: string; onCloned: (voice
 
   return (
     <section>
-      <p className="mb-3 text-[10.5px] font-medium uppercase tracking-[.14em] text-[var(--lilac)]">
+      <p className="mb-3 section-title text-mint">
         Free, and only once
       </p>
       <h1 className="display text-[28px] leading-tight">Record your voice</h1>
-      <p className="mt-2.5 max-w-[46ch] text-[15px] leading-relaxed text-[var(--iron)]">
+      <p className="mt-2.5 max-w-[46ch] text-[15px] leading-relaxed text-[var(--ink-secondary)]">
         Speak for five seconds and MyVoice can read anything you write in your own voice.
         Registering costs nothing — you are only charged for what it says.
       </p>
 
-      <div className="mt-7 rounded bg-card p-5">
+      <div className="mt-7 rounded-xl border border-edge bg-surface-raised p-5 shadow-embossed">
         <div className="flex items-center gap-4">
           <Button size="lg" variant={recording ? 'destructive' : 'default'}
             onClick={() => (recording ? stop() : void start())}>
@@ -322,7 +322,7 @@ function CloneVoice({ language, onCloned }: { language: string; onCloned: (voice
             {recording ? 'Stop' : blob ? 'Record again' : 'Start recording'}
           </Button>
           {recording && (
-            <span className="tabular-nums text-sm text-[var(--fog)]">
+            <span className="tabular-nums text-sm text-ink-tertiary">
               {seconds}s {seconds < 5 ? '— keep going' : '— that is enough'}
             </span>
           )}
@@ -337,19 +337,19 @@ function CloneVoice({ language, onCloned }: { language: string; onCloned: (voice
               <Label htmlFor="voice-name" className="mb-2 block">Name this voice</Label>
               <input id="voice-name" value={name} onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. My voice, or Ada reading adverts"
-                className="w-full rounded border border-[var(--line-soft)] bg-background px-3 py-2.5 text-sm
-                           text-[var(--paper-ink)] placeholder:text-[var(--ash)]
-                           focus-visible:border-ring focus-visible:outline-none" />
+                className="w-full rounded-md border border-edge bg-surface-inset px-3 py-2.5 text-sm
+                           text-ink-primary placeholder:text-ink-disabled shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.45)]
+                           focus-visible:border-mint focus-visible:outline-none" />
             </div>
 
             {/* Not a formality. The server refuses without it, and the reason
                 is here rather than in terms nobody reads. */}
-            <label className="flex cursor-pointer items-start gap-3 rounded bg-background p-3.5">
+            <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-edge bg-surface-inset p-3.5">
               <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)}
-                className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--indigo)]" />
-              <span className="text-[12.5px] leading-relaxed text-[var(--paper-ink)]">
+                className="mt-0.5 h-4 w-4 shrink-0 accent-mint" />
+              <span className="text-[12.5px] leading-relaxed text-ink-primary">
                 This is my own voice, or I have the speaker&rsquo;s permission to use it.
-                <span className="mt-1 block text-[var(--fog)]">
+                <span className="mt-1 block text-ink-tertiary">
                   A cloned voice can be used to impersonate someone. We record this against
                   the voice, and accounts that clone without permission are closed.
                 </span>
@@ -368,7 +368,7 @@ function CloneVoice({ language, onCloned }: { language: string; onCloned: (voice
         {!blob && !recording && error && <p className="mt-4 text-[13px] text-destructive">{error}</p>}
       </div>
 
-      <p className="mt-6 max-w-[52ch] text-[12px] leading-relaxed text-[var(--fog)]">
+      <p className="mt-6 max-w-[52ch] text-[12px] leading-relaxed text-[var(--ink-tertiary)]">
         Prefer not to? Leave &ldquo;Whose voice&rdquo; switched off and a preset voice reads your
         script instead. Everything else works the same.
       </p>
@@ -377,7 +377,7 @@ function CloneVoice({ language, onCloned }: { language: string; onCloned: (voice
           affordance, so these sit under it as context rather than replacing
           it — the same call as Patch Up's drop zone. */}
       <div className="mt-8">
-        <p className="mb-3 text-[10.5px] font-medium uppercase tracking-[.14em] text-[var(--fog)]">
+        <p className="mb-3 section-title">
           What people make with it
         </p>
         <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
@@ -386,7 +386,7 @@ function CloneVoice({ language, onCloned }: { language: string; onCloned: (voice
               <img src={exampleImage('myvoice', i + 1)} alt={caption}
                 width={640} height={360} loading="lazy" decoding="async"
                 className="aspect-video w-full rounded object-cover" />
-              <figcaption className="mt-1.5 text-[11.5px] leading-snug text-[var(--fog)]">
+              <figcaption className="mt-1.5 text-xs leading-snug text-[var(--ink-tertiary)]">
                 {caption}
               </figcaption>
             </figure>
@@ -402,11 +402,11 @@ function Unavailable() {
   return (
     <div className="grid h-full w-full place-items-center bg-background px-6">
       <div className="max-w-[46ch] text-center">
-        <p className="mb-3 text-[10.5px] font-medium uppercase tracking-[.14em] text-[var(--lilac)]">
+        <p className="mb-3 section-title text-mint">
           Not switched on yet
         </p>
         <h1 className="display text-[28px] leading-tight">MyVoice is coming</h1>
-        <p className="mt-3 text-[15px] leading-relaxed text-[var(--iron)]">
+        <p className="mt-3 text-[15px] leading-relaxed text-[var(--ink-secondary)]">
           The Nigerian-language voices are not connected on this account yet. SoundTrack can
           make you a voiceover in the meantime.
         </p>

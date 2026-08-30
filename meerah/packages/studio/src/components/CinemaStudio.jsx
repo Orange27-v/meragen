@@ -339,7 +339,7 @@ function ScrollColumn({ title, items, columnKey, value, onChange }) {
           ref={listRef}
           role="listbox"
           aria-label={title}
-          className="relative z-10 h-full cursor-grab snap-y snap-mandatory overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="relative z-10 h-full cursor-grab snap-y snap-mandatory overflow-y-auto"
           onMouseDown={handleMouseDown}
           onMouseLeave={stopDragging}
           onMouseUp={stopDragging}
@@ -865,7 +865,7 @@ export default function CinemaStudio({
         onChange={handleTierSelect}
         kind="video"
       />
-      <RailSection label="Your scene">
+      <RailSection label="Your scene" variant="card">
           {/* Upper Row: Image Upload & Textarea */}
           <div className="flex items-start gap-4 w-full px-1">
             {/* Image Upload Button */}
@@ -1041,7 +1041,7 @@ export default function CinemaStudio({
       <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
       
       {/* ── CENTRAL GALLERY AREA ── */}
-      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-8 px-2">
+      <div className="flex-1 min-h-0 w-full">
         <WorkTabs
           toolId="shotdirect"
           hasResults={history.length > 0}

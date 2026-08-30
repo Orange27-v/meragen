@@ -19,23 +19,50 @@ import { audioModels, getAudioModelById } from "../models.js";
  * wants a song. The ids underneath are untouched.
  */
 const AUDIO_LABELS = {
-  "suno-create-music":            { name: "Make a song",        blurb: "A full track with vocals and instruments from a description." },
-  "suno-remix-music":             { name: "Remix a song",       blurb: "Rework a track you already have into a new style." },
-  "suno-extend-music":            { name: "Make it longer",     blurb: "Continue an existing track past where it ends." },
-  "suno-generate-sounds":         { name: "Sound effects",      blurb: "Short effects and background noise." },
-  "suno-add-vocals":              { name: "Add singing",        blurb: "Put a vocal line over an instrumental." },
-  "suno-generate-mashup":         { name: "Mash two together",  blurb: "Blend two tracks into one." },
-  "suno-add-instrumental":        { name: "Add backing",        blurb: "Build instruments around a vocal." },
-  "suno-voice-clone":             { name: "Copy a singing voice", blurb: "Reuse a singing voice on a new track." },
-  "minimax-voice-clone":          { name: "Copy a speaking voice", blurb: "Reuse a speaking voice on new lines." },
-  "minimax-speech-2.6-hd":        { name: "Voiceover, best quality", blurb: "Clear narration. Slower to make." },
-  "minimax-speech-2.6-turbo":     { name: "Voiceover, quick",   blurb: "Fast narration for drafts." },
-  "mmaudio-v2-text-to-audio":     { name: "Audio from words",   blurb: "General audio from a description." },
-  "elevenlabs-text-to-dialogue-v3": { name: "Two people talking", blurb: "A scripted conversation between voices." },
-  "suno-convert-to-wav":          { name: "Convert to WAV",     blurb: "Studio-quality file for editing." },
-  "gemini-3-1-flash-tts":         { name: "Read this out, quick", blurb: "Fast text to speech." },
-  "gemini-2-5-pro-tts":           { name: "Read this out, best", blurb: "Higher-quality text to speech." },
-  "elevenlabs-tts-turbo-2-5":     { name: "Narration, fastest", blurb: "The quickest voiceover option." },
+  "suno-create-music": {
+    name: "Make a song",
+    blurb: "A full track with vocals and instruments from a description.",
+  },
+  "suno-remix-music": {
+    name: "Remix a song",
+    blurb: "Rework a track you already have into a new style.",
+  },
+  "suno-extend-music": {
+    name: "Make it longer",
+    blurb: "Continue an existing track past where it ends.",
+  },
+  "suno-generate-sounds": { name: "Sound effects", blurb: "Short effects and background noise." },
+  "suno-add-vocals": { name: "Add singing", blurb: "Put a vocal line over an instrumental." },
+  "suno-generate-mashup": { name: "Mash two together", blurb: "Blend two tracks into one." },
+  "suno-add-instrumental": { name: "Add backing", blurb: "Build instruments around a vocal." },
+  "suno-voice-clone": {
+    name: "Copy a singing voice",
+    blurb: "Reuse a singing voice on a new track.",
+  },
+  "minimax-voice-clone": {
+    name: "Copy a speaking voice",
+    blurb: "Reuse a speaking voice on new lines.",
+  },
+  "minimax-speech-2.6-hd": {
+    name: "Voiceover, best quality",
+    blurb: "Clear narration. Slower to make.",
+  },
+  "minimax-speech-2.6-turbo": { name: "Voiceover, quick", blurb: "Fast narration for drafts." },
+  "mmaudio-v2-text-to-audio": {
+    name: "Audio from words",
+    blurb: "General audio from a description.",
+  },
+  "elevenlabs-text-to-dialogue-v3": {
+    name: "Two people talking",
+    blurb: "A scripted conversation between voices.",
+  },
+  "suno-convert-to-wav": { name: "Convert to WAV", blurb: "Studio-quality file for editing." },
+  "gemini-3-1-flash-tts": { name: "Read this out, quick", blurb: "Fast text to speech." },
+  "gemini-2-5-pro-tts": { name: "Read this out, best", blurb: "Higher-quality text to speech." },
+  "elevenlabs-tts-turbo-2-5": {
+    name: "Narration, fastest",
+    blurb: "The quickest voiceover option.",
+  },
 };
 
 const audioLabel = (model) =>
@@ -66,7 +93,16 @@ const PauseIcon = () => (
 );
 
 const VolumeIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
     <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
     <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
@@ -74,15 +110,34 @@ const VolumeIcon = () => (
 );
 
 const VolumeMuteIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
     <line x1="23" y1="9" x2="17" y2="15" />
     <line x1="17" y1="9" x2="23" y2="15" />
   </svg>
 );
 
-const MusicIcon = ({ className = "text-[var(--chalk)]" }) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+const MusicIcon = ({ className = "text-nova-text" }) => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
     <path d="M9 18V5l12-2v13" />
     <circle cx="6" cy="18" r="3" />
     <circle cx="18" cy="16" r="3" />
@@ -90,7 +145,14 @@ const MusicIcon = ({ className = "text-[var(--chalk)]" }) => (
 );
 
 const TrashIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+  >
     <polyline points="3 6 5 6 21 6" />
     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
     <line x1="10" y1="11" x2="10" y2="17" />
@@ -104,7 +166,7 @@ const TrashIcon = () => (
 function AudioFileUploader({ label, value, onChange, apiKey }) {
   const [uploadState, setUploadState] = useState(value ? UPLOAD_STATE.READY : UPLOAD_STATE.IDLE);
   const [progress, setProgress] = useState(0);
-  const [fileName, setFileName] = useState(value ? value.split('/').pop().slice(-30) : "");
+  const [fileName, setFileName] = useState(value ? value.split("/").pop().slice(-30) : "");
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -114,7 +176,7 @@ function AudioFileUploader({ label, value, onChange, apiKey }) {
       setProgress(0);
     } else if (uploadState !== UPLOAD_STATE.READY) {
       setUploadState(UPLOAD_STATE.READY);
-      setFileName(value.split('/').pop().slice(-30));
+      setFileName(value.split("/").pop().slice(-30));
     }
   }, [value]);
 
@@ -153,9 +215,7 @@ function AudioFileUploader({ label, value, onChange, apiKey }) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-bold text-[var(--chalk)] uppercase tracking-wider">
-          {label}
-        </label>
+        <label className="text-xs font-bold text-nova-text uppercase tracking-wider">{label}</label>
         {uploadState === UPLOAD_STATE.READY && (
           <button
             type="button"
@@ -167,32 +227,41 @@ function AudioFileUploader({ label, value, onChange, apiKey }) {
         )}
       </div>
 
-      <div 
+      <div
         onClick={() => uploadState === UPLOAD_STATE.IDLE && fileInputRef.current?.click()}
         className={`relative border rounded p-4 transition-all duration-300 flex items-center gap-3.5 cursor-pointer ${
-          uploadState === UPLOAD_STATE.READY 
-            ? "border-[var(--line)] bg-[var(--slab-hi)] shadow-[0_0_15px_rgba(34,211,238,0.05)]" 
-            : "border-[var(--line)] bg-[var(--sunk)] hover:bg-[var(--night)] hover:border-[var(--line-hi)]"
+          uploadState === UPLOAD_STATE.READY
+            ? "border-nova-border bg-nova-elevated shadow-[0_0_15px_rgba(34,211,238,0.05)]"
+            : "border-nova-border bg-nova-bg hover:bg-nova-surface hover:border-nova-borderLight"
         }`}
       >
-        <input 
-          ref={fileInputRef} 
-          type="file" 
-          accept="audio/*" 
-          className="hidden" 
-          onChange={handleUpload} 
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="audio/*"
+          className="hidden"
+          onChange={handleUpload}
         />
 
         {uploadState === UPLOAD_STATE.IDLE && (
           <>
-            <div className="w-10 h-10 rounded bg-[var(--night)] flex items-center justify-center text-[var(--chalk)] border border-[var(--line)]">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+            <div className="w-10 h-10 rounded bg-nova-surface flex items-center justify-center text-nova-text">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
               </svg>
             </div>
             <div className="text-left">
-              <div className="text-xs font-bold text-[var(--chalk)]">Upload audio track</div>
-              <div className="text-[11px] text-[var(--iron)] font-medium mt-0.5">MP3, WAV, M4A up to 20MB</div>
+              <div className="text-xs font-bold text-nova-text">Upload audio track</div>
+              <div className="text-[11px] text-nova-muted font-medium mt-0.5">
+                MP3, WAV, M4A up to 20MB
+              </div>
             </div>
           </>
         )}
@@ -204,8 +273,11 @@ function AudioFileUploader({ label, value, onChange, apiKey }) {
                 <span>Uploading...</span>
                 <span>{progress}%</span>
               </div>
-              <div className="h-1.5 bg-[var(--night)] rounded-full overflow-hidden">
-                <div className="h-full bg-[var(--slab-hi)] transition-all duration-300" style={{ width: `${progress}%` }} />
+              <div className="h-1.5 bg-nova-surface rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-nova-elevated transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                />
               </div>
             </div>
           </div>
@@ -213,12 +285,12 @@ function AudioFileUploader({ label, value, onChange, apiKey }) {
 
         {uploadState === UPLOAD_STATE.READY && (
           <>
-            <div className="w-10 h-10 rounded bg-[var(--slab-hi)] flex items-center justify-center text-[var(--lilac)] border border-[var(--line)]">
-              <MusicIcon className="text-[var(--lilac)]" />
+            <div className="w-10 h-10 rounded bg-nova-elevated flex items-center justify-center text-nova-accent">
+              <MusicIcon className="text-nova-accent" />
             </div>
             <div className="text-left flex-1 min-w-0">
-              <div className="text-xs font-bold text-[var(--chalk)] truncate">{fileName}</div>
-              <div className="text-[11px] text-[var(--lilac)] font-bold mt-0.5">Ready to generate</div>
+              <div className="text-xs font-bold text-nova-text truncate">{fileName}</div>
+              <div className="text-[11px] text-nova-accent font-bold mt-0.5">Ready to generate</div>
             </div>
           </>
         )}
@@ -243,7 +315,7 @@ function AudioListUploader({ label, value = [], onChange, apiKey, maxItems = 2 }
 
   return (
     <div className="space-y-4">
-      <label className="block text-xs font-bold text-[var(--chalk)] uppercase tracking-wider">
+      <label className="block text-xs font-bold text-nova-text uppercase tracking-wider">
         {label} (Max {maxItems})
       </label>
       <div className="space-y-3">
@@ -310,11 +382,14 @@ function PremiumAudioPlayer({ url, title }) {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      audioRef.current.play().then(() => {
-        setIsPlaying(true);
-      }).catch(err => {
-        console.error("Audio playback error:", err);
-      });
+      audioRef.current
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+        })
+        .catch((err) => {
+          console.error("Audio playback error:", err);
+        });
     }
   };
 
@@ -323,7 +398,9 @@ function PremiumAudioPlayer({ url, title }) {
     if (isPlaying) {
       visualizerIntervalRef.current = setInterval(() => {
         setVisualizerHeights(
-          Array(18).fill(0).map(() => Math.floor(Math.random() * 32) + 6)
+          Array(18)
+            .fill(0)
+            .map(() => Math.floor(Math.random() * 32) + 6),
         );
       }, 100);
     } else {
@@ -387,7 +464,7 @@ function PremiumAudioPlayer({ url, title }) {
       const blobUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = blobUrl;
-      a.download = title ? `${title.replace(/\s+/g, '_')}.mp3` : "generated_audio.mp3";
+      a.download = title ? `${title.replace(/\s+/g, "_")}.mp3` : "generated_audio.mp3";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -398,7 +475,7 @@ function PremiumAudioPlayer({ url, title }) {
   };
 
   return (
-    <div className="w-full bg-[var(--sunk)] border border-[var(--line)] rounded p-6 shadow-3xl space-y-6 backdrop-blur-md">
+    <div className="w-full bg-nova-bg rounded p-6 shadow-3xl space-y-6 backdrop-blur-md">
       <audio
         ref={audioRef}
         src={url}
@@ -409,7 +486,7 @@ function PremiumAudioPlayer({ url, title }) {
       />
 
       {/* Visualizer and Track Details */}
-      <div className="flex flex-col items-center justify-center py-6 relative rounded bg-[var(--surface)] overflow-hidden border border-[var(--line)]">
+      <div className="flex flex-col items-center justify-center py-6 relative rounded bg-nova-surface overflow-hidden">
         <div className="flex items-center gap-1.5 h-12 mb-4 justify-center">
           {visualizerHeights.map((h, i) => (
             <div
@@ -420,10 +497,12 @@ function PremiumAudioPlayer({ url, title }) {
           ))}
         </div>
         <div className="text-center px-4 max-w-full relative z-10">
-          <span className="text-xs font-black text-[var(--lilac)] uppercase tracking-[0.2em] block mb-1">
+          <span className="text-xs font-black text-nova-accent uppercase tracking-[0.2em] block mb-1">
             Now Playing
           </span>
-          <p className="text-[var(--chalk)] font-bold text-base truncate max-w-xs">{title || "Generated Track"}</p>
+          <p className="text-nova-text font-bold text-base truncate max-w-xs">
+            {title || "Generated Track"}
+          </p>
         </div>
       </div>
 
@@ -431,26 +510,26 @@ function PremiumAudioPlayer({ url, title }) {
       <div className="space-y-4">
         {/* Progress bar */}
         <div className="flex items-center gap-3">
-          <span className="text-xs font-bold text-[var(--chalk)] w-10 text-right">
+          <span className="text-xs font-bold text-nova-text w-10 text-right">
             {formatTime(currentTime)}
           </span>
-          
+
           <div
             ref={progressBarRef}
             onClick={handleScrub}
-            className="flex-1 h-2 bg-[var(--slab)] hover:bg-[var(--slab)] rounded-full cursor-pointer relative group transition-colors"
+            className="flex-1 h-2 bg-nova-card hover:bg-nova-card rounded-full cursor-pointer relative group transition-colors"
           >
-            <div 
-              className="absolute left-0 top-0 bottom-0 bg-[var(--slab-hi)] rounded-full group-hover:bg-[var(--slab-hi)]/95 transition-all"
+            <div
+              className="absolute left-0 top-0 bottom-0 bg-nova-elevated rounded-full group-hover:bg-nova-elevated/95 transition-all"
               style={{ width: `${(currentTime / (duration || 1)) * 100}%` }}
             />
-            <div 
-              className="absolute w-3.5 h-3.5 bg-[var(--surface)] rounded-full -top-[3px] shadow-black/40 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+            <div
+              className="absolute w-3.5 h-3.5 bg-nova-surface rounded-full -top-[3px] shadow-black/40 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
               style={{ left: `calc(${(currentTime / (duration || 1)) * 100}% - 7px)` }}
             />
           </div>
 
-          <span className="text-xs font-bold text-[var(--chalk)] w-10 text-left">
+          <span className="text-xs font-bold text-nova-text w-10 text-left">
             {formatTime(duration)}
           </span>
         </div>
@@ -461,7 +540,7 @@ function PremiumAudioPlayer({ url, title }) {
           <div className="flex items-center gap-2 group/volume w-24">
             <button
               onClick={toggleMute}
-              className="p-2 bg-[var(--night)] border border-[var(--line)] hover:bg-[var(--slab)] rounded text-[var(--chalk)] hover:text-[var(--chalk)] transition-all"
+              className="p-2 bg-nova-surface hover:bg-nova-card rounded text-nova-text hover:text-nova-text transition-all"
               title="Mute/Unmute"
               type="button"
             >
@@ -474,14 +553,14 @@ function PremiumAudioPlayer({ url, title }) {
               step="0.05"
               value={isMuted ? 0 : volume}
               onChange={handleVolumeChange}
-              className="w-16 h-1 bg-[var(--slab)] rounded appearance-none cursor-pointer accent-primary hover:bg-[var(--slab-hi)] transition-all opacity-0 group-hover/volume:opacity-100"
+              className="w-16 h-1 bg-nova-card rounded appearance-none cursor-pointer accent-primary hover:bg-nova-elevated transition-all opacity-0 group-hover/volume:opacity-100"
             />
           </div>
 
           {/* Main Play/Pause Button */}
           <button
             onClick={togglePlay}
-            className="w-12 h-12 bg-[var(--slab-hi)] hover:bg-white text-[var(--chalk)] rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-black/40"
+            className="w-12 h-12 bg-nova-elevated hover:bg-white text-nova-text rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-black/40"
             title={isPlaying ? "Pause" : "Play"}
             type="button"
           >
@@ -491,11 +570,18 @@ function PremiumAudioPlayer({ url, title }) {
           {/* Download Button */}
           <button
             onClick={downloadAudio}
-            className="px-4 py-2 bg-[var(--night)] hover:bg-[var(--slab)] border border-[var(--line)] rounded text-xs font-bold text-[var(--chalk)] flex items-center gap-2 hover:border-[var(--line-hi)] transition-all"
+            className="px-4 py-2 bg-nova-surface hover:bg-nova-card rounded text-xs font-bold text-nova-text flex items-center gap-2 hover:border-nova-borderLight transition-all"
             title="Download Audio"
             type="button"
           >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
             </svg>
             <span>Save</span>
@@ -617,35 +703,35 @@ export default function AudioStudio({
   // ── Handle Dropped Files ────────────────────────────────────────────────
   useEffect(() => {
     if (droppedFiles && droppedFiles.length > 0) {
-      const audioFiles = droppedFiles.filter(f => f.type.startsWith('audio/'));
+      const audioFiles = droppedFiles.filter((f) => f.type.startsWith("audio/"));
       if (audioFiles.length > 0 && selectedModel) {
         // Find the first audio input field in the current model
         const firstAudioField = Object.entries(selectedModel.inputs || {}).find(
-          ([_, schema]) => schema.field === 'audio'
+          ([_, schema]) => schema.field === "audio",
         );
         const firstAudioListField = Object.entries(selectedModel.inputs || {}).find(
-          ([_, schema]) => schema.field === 'audios_list'
+          ([_, schema]) => schema.field === "audios_list",
         );
 
         if (firstAudioField) {
           const [key] = firstAudioField;
           // Trigger file upload helper
           uploadFile(apiKey, audioFiles[0], () => {})
-            .then(url => {
-              setParams(prev => ({ ...prev, [key]: url }));
+            .then((url) => {
+              setParams((prev) => ({ ...prev, [key]: url }));
             })
-            .catch(err => alert(`Failed to upload dropped file: ${err.message}`));
+            .catch((err) => alert(`Failed to upload dropped file: ${err.message}`));
         } else if (firstAudioListField) {
           const [key] = firstAudioListField;
           uploadFile(apiKey, audioFiles[0], () => {})
-            .then(url => {
-              setParams(prev => {
+            .then((url) => {
+              setParams((prev) => {
                 const currentList = Array.isArray(prev[key]) ? [...prev[key]] : [];
                 if (currentList.length < 2) currentList.push(url);
                 return { ...prev, [key]: currentList };
               });
             })
-            .catch(err => alert(`Failed to upload dropped file: ${err.message}`));
+            .catch((err) => alert(`Failed to upload dropped file: ${err.message}`));
         }
       }
       onFilesHandled?.();
@@ -670,9 +756,13 @@ export default function AudioStudio({
   const handleTierSelect = useCallback((tier) => setSelectedTierId(tier.tierId), []);
 
   const refreshBalance = useCallback(() => {
-    getUserBalance(apiKey).then((r) => setCreditBalance(r.balance)).catch(() => {});
+    getUserBalance(apiKey)
+      .then((r) => setCreditBalance(r.balance))
+      .catch(() => {});
   }, [apiKey]);
-  useEffect(() => { refreshBalance(); }, [refreshBalance]);
+  useEffect(() => {
+    refreshBalance();
+  }, [refreshBalance]);
 
   const openTopUp = useCallback(() => {
     window.dispatchEvent(new CustomEvent("meerah:buy-credits"));
@@ -685,7 +775,9 @@ export default function AudioStudio({
     if (selectedModel.required) {
       for (const field of selectedModel.required) {
         if (!params[field] || (Array.isArray(params[field]) && params[field].length === 0)) {
-          alert(`Please complete the required field: ${selectedModel.inputs?.[field]?.title || field}`);
+          alert(
+            `Please complete the required field: ${selectedModel.inputs?.[field]?.title || field}`,
+          );
           return;
         }
       }
@@ -752,31 +844,40 @@ export default function AudioStudio({
   };
 
   return (
-    <div className="w-full h-full flex bg-app-bg text-[var(--chalk)] overflow-hidden relative">
-      
+    <div className="w-full h-full flex bg-nova-bg text-nova-text overflow-hidden relative">
       {/* ─── LEFT CONFIGURATION SIDEBAR ─── */}
-      <div ref={sidebarRef} className="w-full lg:w-[370px] border-r border-[var(--line)] flex flex-col bg-[var(--surface)] backdrop-blur-lg flex-shrink-0 z-30">
+      <div
+        ref={sidebarRef}
+        className="w-full lg:w-[320px] border-r border-nova-border flex flex-col bg-nova-surface flex-shrink-0 z-30"
+      >
         <div className="p-6 overflow-y-auto flex-1 custom-scrollbar space-y-6 pb-24">
-          
           {/* Model Selector */}
           <div className="space-y-2 relative">
-            <label className="text-xs font-bold text-[var(--iron)] uppercase tracking-wider block">
+            <label className="text-xs font-bold text-nova-muted uppercase tracking-wider block">
               What to make
             </label>
             <button
               ref={modelBtnRef}
               type="button"
               onClick={() => setOpenDropdown(!openDropdown)}
-              className="w-full bg-[var(--sunk)] border border-[var(--line)] rounded px-4 py-3.5 text-sm text-left font-bold text-[var(--chalk)] flex items-center justify-between hover:bg-[var(--night)] hover:border-[var(--line-hi)] transition-all"
+              className="w-full bg-nova-bg rounded px-4 py-3.5 text-sm text-left font-bold text-nova-text flex items-center justify-between hover:bg-nova-surface hover:border-nova-borderLight transition-all"
             >
               <span>{selectedModel ? audioLabel(selectedModel).name : "Choose what to make"}</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={`transition-transform duration-200 ${openDropdown ? 'rotate-180' : ''}`}>
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                className={`transition-transform duration-200 ${openDropdown ? "rotate-180" : ""}`}
+              >
                 <polyline points="6 9 12 15 18 9" />
               </svg>
             </button>
 
             {openDropdown && (
-              <div className="absolute left-0 right-0 mt-2 z-50 bg-[var(--surface)] border border-[var(--line)] rounded shadow-3xl max-h-60 overflow-y-auto custom-scrollbar p-1.5">
+              <div className="absolute left-0 right-0 mt-2 z-50 bg-nova-surface rounded shadow-3xl max-h-60 overflow-y-auto custom-scrollbar p-1.5">
                 {audioModels.map((model) => (
                   <button
                     key={model.id}
@@ -786,12 +887,14 @@ export default function AudioStudio({
                       setOpenDropdown(false);
                     }}
                     className={`w-full text-left px-4 py-2.5 rounded text-xs font-bold transition-all flex flex-col gap-1.5 border ${
-                      model.id === selectedModelId ? "text-[var(--lilac)] bg-[var(--slab-hi)] border-[var(--line)]" : "text-[var(--chalk)] border-transparent hover:bg-[var(--sunk)] hover:text-[var(--chalk)]"
+                      model.id === selectedModelId
+                        ? "text-nova-accent bg-nova-elevated border-nova-border"
+                        : "text-nova-text border-transparent hover:bg-nova-bg hover:text-nova-text"
                     }`}
                   >
                     <span>{audioLabel(model).name}</span>
                     {audioLabel(model).blurb && (
-                      <span className="text-[10px] text-[var(--iron)] truncate max-w-[320px] font-normal">
+                      <span className="text-[10px] text-nova-muted truncate max-w-[320px] font-normal">
                         {audioLabel(model).blurb}
                       </span>
                     )}
@@ -804,219 +907,256 @@ export default function AudioStudio({
           {/* Model Description */}
           {selectedModel && audioLabel(selectedModel).blurb && (
             <div className="">
-              <span className="text-[10px] font-bold text-[var(--lilac)] uppercase tracking-wider block mb-1.5">Description</span>
-              <p className="text-[var(--fog)] text-xs leading-relaxed">{audioLabel(selectedModel).blurb}</p>
+              <span className="text-[10px] font-bold text-nova-accent uppercase tracking-wider block mb-1.5">
+                Description
+              </span>
+              <p className="text-nova-subtle text-xs leading-relaxed">
+                {audioLabel(selectedModel).blurb}
+              </p>
             </div>
           )}
 
           {/* Dynamic Configuration Form */}
           <div className="space-y-5">
-            {selectedModel && Object.entries(selectedModel.inputs || {}).map(([key, schema]) => {
-              // Skip model switcher itself (if it's in schemas)
-              if (key === 'model') return null;
-              // Audio URL file upload (single)
-              if (schema.type === "string" && schema.field === "audio") {
-                return (
-                  <AudioFileUploader
-                    key={key}
-                    label={schema.title || key}
-                    value={params[key] || ""}
-                    onChange={(url) => setParams(prev => ({ ...prev, [key]: url }))}
-                    apiKey={apiKey}
-                  />
-                );
-              }
-              // Audio URLs list file upload (multiple)
-              if (schema.type === "array" && schema.field === "audios_list") {
-                return (
-                  <AudioListUploader
-                    key={key}
-                    label={schema.title || key}
-                    value={params[key] || []}
-                    onChange={(urls) => setParams(prev => ({ ...prev, [key]: urls }))}
-                    apiKey={apiKey}
-                    maxItems={schema.maxItems || 2}
-                  />
-                );
-              }
-              // Boolean Toggles
-              if (schema.type === "boolean") {
-                return (
-                  <div key={key} className="flex items-center justify-between bg-[var(--sunk)] border border-[var(--line)] rounded p-4 transition-all hover:border-[var(--line)]">
-                    <div className="flex-1 pr-4">
-                      <span className="block text-xs font-bold text-[var(--chalk)] tracking-tight">
+            {selectedModel &&
+              Object.entries(selectedModel.inputs || {}).map(([key, schema]) => {
+                // Skip model switcher itself (if it's in schemas)
+                if (key === "model") return null;
+                // Audio URL file upload (single)
+                if (schema.type === "string" && schema.field === "audio") {
+                  return (
+                    <AudioFileUploader
+                      key={key}
+                      label={schema.title || key}
+                      value={params[key] || ""}
+                      onChange={(url) => setParams((prev) => ({ ...prev, [key]: url }))}
+                      apiKey={apiKey}
+                    />
+                  );
+                }
+                // Audio URLs list file upload (multiple)
+                if (schema.type === "array" && schema.field === "audios_list") {
+                  return (
+                    <AudioListUploader
+                      key={key}
+                      label={schema.title || key}
+                      value={params[key] || []}
+                      onChange={(urls) => setParams((prev) => ({ ...prev, [key]: urls }))}
+                      apiKey={apiKey}
+                      maxItems={schema.maxItems || 2}
+                    />
+                  );
+                }
+                // Boolean Toggles
+                if (schema.type === "boolean") {
+                  return (
+                    <div
+                      key={key}
+                      className="flex items-center justify-between bg-nova-bg rounded p-4 transition-all hover:border-nova-border"
+                    >
+                      <div className="flex-1 pr-4">
+                        <span className="block text-xs font-bold text-nova-text tracking-tight">
+                          {schema.title || key}
+                        </span>
+                        {schema.description && (
+                          <span className="block text-[11px] text-nova-muted leading-normal mt-1">
+                            {sanitiseHelp(schema.description)}
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setParams((prev) => ({ ...prev, [key]: !prev[key] }))}
+                        className={`w-11 h-6 rounded-full p-1 transition-all duration-300 relative shrink-0 ${
+                          params[key] ? "bg-nova-elevated" : "bg-nova-surface"
+                        }`}
+                      >
+                        <div
+                          className={`w-4 h-4 rounded-full bg-nova-surface shadow-md transform transition-all duration-300 ${
+                            params[key] ? "translate-x-5 bg-nova-surface" : "translate-x-0"
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  );
+                }
+                // Enum Dropdowns
+                if (schema.enum) {
+                  const isOpen = openParamDropdown === key;
+                  return (
+                    <div key={key} className="space-y-2 relative">
+                      <label className="block text-xs font-bold text-nova-muted uppercase tracking-wider">
                         {schema.title || key}
-                      </span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setOpenDropdown(false);
+                          setOpenParamDropdown(isOpen ? null : key);
+                        }}
+                        className="w-full bg-nova-bg hover:border-nova-border rounded px-4 py-3.5 text-xs text-left font-bold text-nova-text flex items-center justify-between transition-all cursor-pointer"
+                      >
+                        <span>{params[key] || "Select option"}</span>
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          className={`transition-transform duration-200 ${isOpen ? "rotate-185" : ""}`}
+                        >
+                          <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                      </button>
+
+                      {isOpen && (
+                        <div className="absolute left-0 right-0 mt-1 z-50 bg-nova-surface rounded shadow-3xl max-h-60 overflow-y-auto custom-scrollbar p-1">
+                          {schema.enum.map((opt) => {
+                            const optionValue = typeof opt === "object" ? opt.value : opt;
+                            const optionLabel =
+                              typeof opt === "object" ? opt.label || opt.value : opt;
+                            return (
+                              <button
+                                key={optionValue}
+                                type="button"
+                                onClick={() => {
+                                  setParams((prev) => ({ ...prev, [key]: optionValue }));
+                                  setOpenParamDropdown(null);
+                                }}
+                                className={`w-full text-left px-4 py-2.5 rounded text-xs font-bold transition-all border ${
+                                  params[key] === optionValue
+                                    ? "text-nova-accent bg-nova-elevated border-nova-border"
+                                    : "text-nova-text border-transparent hover:bg-nova-bg hover:text-nova-text"
+                                }`}
+                              >
+                                {optionLabel}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
                       {schema.description && (
-                        <span className="block text-[11px] text-[var(--iron)] leading-normal mt-1">
+                        <span className="block text-[11px] text-nova-muted leading-normal">
                           {sanitiseHelp(schema.description)}
                         </span>
                       )}
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setParams(prev => ({ ...prev, [key]: !prev[key] }))}
-                      className={`w-11 h-6 rounded-full p-1 transition-all duration-300 relative shrink-0 ${
-                        params[key] ? "bg-[var(--slab-hi)]" : "bg-[var(--night)]"
-                      }`}
-                    >
-                      <div className={`w-4 h-4 rounded-full bg-[var(--surface)] shadow-md transform transition-all duration-300 ${
-                        params[key] ? "translate-x-5 bg-[var(--surface)]" : "translate-x-0"
-                      }`} />
-                    </button>
-                  </div>
-                );
-              }
-              // Enum Dropdowns
-              if (schema.enum) {
-                const isOpen = openParamDropdown === key;
-                return (
-                  <div key={key} className="space-y-2 relative">
-                    <label className="block text-xs font-bold text-[var(--iron)] uppercase tracking-wider">
-                      {schema.title || key}
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setOpenDropdown(false);
-                        setOpenParamDropdown(isOpen ? null : key);
-                      }}
-                      className="w-full bg-[var(--sunk)] border border-[var(--line)] hover:border-[var(--line)] rounded px-4 py-3.5 text-xs text-left font-bold text-[var(--chalk)] flex items-center justify-between transition-all cursor-pointer"
-                    >
-                      <span>{params[key] || "Select option"}</span>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={`transition-transform duration-200 ${isOpen ? 'rotate-185' : ''}`}>
-                        <polyline points="6 9 12 15 18 9" />
-                      </svg>
-                    </button>
+                  );
+                }
 
-                    {isOpen && (
-                      <div className="absolute left-0 right-0 mt-1 z-50 bg-[var(--surface)] border border-[var(--line)] rounded shadow-3xl max-h-60 overflow-y-auto custom-scrollbar p-1">
-                        {schema.enum.map((opt) => {
-                          const optionValue = typeof opt === "object" ? opt.value : opt;
-                          const optionLabel = typeof opt === "object" ? (opt.label || opt.value) : opt;
-                          return (
-                            <button
-                              key={optionValue}
-                              type="button"
-                              onClick={() => {
-                                setParams(prev => ({ ...prev, [key]: optionValue }));
-                                setOpenParamDropdown(null);
-                              }}
-                              className={`w-full text-left px-4 py-2.5 rounded text-xs font-bold transition-all border ${
-                                params[key] === optionValue
-                                  ? "text-[var(--lilac)] bg-[var(--slab-hi)] border-[var(--line)]"
-                                  : "text-[var(--chalk)] border-transparent hover:bg-[var(--sunk)] hover:text-[var(--chalk)]"
-                              }`}
-                            >
-                              {optionLabel}
-                            </button>
-                          );
-                        })}
+                // Number Sliders & Ranges
+                const isNumber =
+                  schema.type === "int" ||
+                  schema.type === "integer" ||
+                  schema.type === "float" ||
+                  schema.type === "number";
+                const hasMinMax = schema.minValue !== undefined && schema.maxValue !== undefined;
+                if (isNumber && hasMinMax) {
+                  const step = schema.step || (schema.type === "float" ? 0.05 : 1);
+                  return (
+                    <div
+                      key={key}
+                      className="space-y-3 bg-nova-bg rounded p-4 transition-all hover:border-nova-border"
+                    >
+                      <div className="flex items-center justify-between text-xs font-bold">
+                        <span className="text-nova-text tracking-tight">{schema.title || key}</span>
+                        <span className="text-nova-accent font-mono bg-nova-elevated px-2 py-0.5 rounded">
+                          {params[key] !== undefined ? params[key] : schema.default}
+                        </span>
                       </div>
-                    )}
-                    {schema.description && (
-                      <span className="block text-[11px] text-[var(--iron)] leading-normal">
-                        {sanitiseHelp(schema.description)}
-                      </span>
-                    )}
-                  </div>
-                );
-              }
-
-              // Number Sliders & Ranges
-              const isNumber = schema.type === "int" || schema.type === "integer" || schema.type === "float" || schema.type === "number";
-              const hasMinMax = schema.minValue !== undefined && schema.maxValue !== undefined;
-              if (isNumber && hasMinMax) {
-                const step = schema.step || (schema.type === "float" ? 0.05 : 1);
-                return (
-                  <div key={key} className="space-y-3 bg-[var(--sunk)] border border-[var(--line)] rounded p-4 transition-all hover:border-[var(--line)]">
-                    <div className="flex items-center justify-between text-xs font-bold">
-                      <span className="text-[var(--chalk)] tracking-tight">{schema.title || key}</span>
-                      <span className="text-[var(--lilac)] font-mono bg-[var(--slab-hi)] px-2 py-0.5 rounded border border-[var(--line)]">{params[key] !== undefined ? params[key] : schema.default}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-nova-muted font-medium w-6 text-right">
+                          {schema.minValue}
+                        </span>
+                        <input
+                          type="range"
+                          min={schema.minValue}
+                          max={schema.maxValue}
+                          step={step}
+                          value={params[key] !== undefined ? params[key] : schema.default || 0}
+                          onChange={(e) =>
+                            setParams((prev) => ({ ...prev, [key]: parseFloat(e.target.value) }))
+                          }
+                          className="flex-1 h-1.5 bg-nova-surface rounded-full appearance-none cursor-pointer accent-primary hover:bg-nova-card transition-all"
+                        />
+                        <span className="text-[10px] text-nova-muted font-medium w-6 text-left">
+                          {schema.maxValue}
+                        </span>
+                      </div>
+                      {schema.description && (
+                        <span className="block text-[11px] text-nova-muted leading-normal">
+                          {sanitiseHelp(schema.description)}
+                        </span>
+                      )}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-[var(--iron)] font-medium w-6 text-right">{schema.minValue}</span>
-                      <input
-                        type="range"
-                        min={schema.minValue}
-                        max={schema.maxValue}
-                        step={step}
-                        value={params[key] !== undefined ? params[key] : (schema.default || 0)}
-                        onChange={(e) => setParams(prev => ({ ...prev, [key]: parseFloat(e.target.value) }))}
-                        className="flex-1 h-1.5 bg-[var(--night)] rounded-full appearance-none cursor-pointer accent-primary hover:bg-[var(--slab)] transition-all"
+                  );
+                }
+
+                // Prompt / Textarea Input
+                if (key === "prompt") {
+                  return (
+                    <div key={key} className="space-y-2">
+                      <label className="block text-xs font-bold text-nova-text uppercase tracking-wider">
+                        {schema.title || "Lyrics / Prompt"}
+                      </label>
+                      <textarea
+                        value={params[key] || ""}
+                        onChange={(e) => setParams((prev) => ({ ...prev, [key]: e.target.value }))}
+                        className="w-full bg-nova-bg focus:border-nova-border rounded p-3 text-xs text-nova-text placeholder:text-nova-subtle focus:outline-none transition-all min-h-[100px] resize-none leading-relaxed shadow-inner"
+                        placeholder={schema.description || "Enter what you want generated..."}
                       />
-                      <span className="text-[10px] text-[var(--iron)] font-medium w-6 text-left">{schema.maxValue}</span>
+                      {schema.examples && Array.isArray(schema.examples) && (
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {schema.examples.map((ex, idx) => (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => setParams((prev) => ({ ...prev, [key]: ex }))}
+                              className="text-[11px] px-3 py-1 bg-nova-surface hover:bg-nova-elevated/20 hover:border-nova-borderLight hover:text-nova-text rounded-full transition-all font-semibold text-nova-text"
+                            >
+                              "{ex.slice(0, 35)}..."
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    {schema.description && (
-                      <span className="block text-[11px] text-[var(--iron)] leading-normal">
-                        {sanitiseHelp(schema.description)}
-                      </span>
-                    )}
-                  </div>
-                );
-              }
+                  );
+                }
 
-              // Prompt / Textarea Input
-              if (key === "prompt") {
+                // Standard Text / Input fields
                 return (
                   <div key={key} className="space-y-2">
-                    <label className="block text-xs font-bold text-[var(--chalk)] uppercase tracking-wider">
-                      {schema.title || "Lyrics / Prompt"}
+                    <label className="block text-xs font-bold text-nova-text uppercase tracking-wider">
+                      {schema.title || key}
                     </label>
-                    <textarea
-                      value={params[key] || ""}
-                      onChange={(e) => setParams(prev => ({ ...prev, [key]: e.target.value }))}
-                      className="w-full bg-[var(--sunk)] border border-[var(--line)] focus:border-[var(--line)] rounded p-3 text-xs text-[var(--chalk)] placeholder:text-[var(--fog)] focus:outline-none transition-all min-h-[100px] resize-none leading-relaxed shadow-inner"
-                      placeholder={schema.description || "Enter what you want generated..."}
+                    <input
+                      type={isNumber ? "number" : "text"}
+                      value={params[key] !== undefined ? params[key] : ""}
+                      placeholder={schema.placeholder || schema.description || `Enter ${key}...`}
+                      onChange={(e) => {
+                        const val = isNumber
+                          ? e.target.value === ""
+                            ? ""
+                            : parseFloat(e.target.value)
+                          : e.target.value;
+                        setParams((prev) => ({ ...prev, [key]: val }));
+                      }}
+                      className="w-full bg-nova-bg hover:border-nova-border focus:border-nova-border rounded px-4 py-3.5 text-xs text-nova-text placeholder:text-nova-subtle focus:outline-none transition-all shadow-inner"
                     />
-                    {schema.examples && Array.isArray(schema.examples) && (
-                      <div className="flex flex-wrap gap-1.5 mt-2">
-                        {schema.examples.map((ex, idx) => (
-                          <button
-                            key={idx}
-                            type="button"
-                            onClick={() => setParams(prev => ({ ...prev, [key]: ex }))}
-                            className="text-[11px] px-3 py-1 bg-[var(--night)] border border-[var(--line)] hover:bg-[var(--slab-hi)]/20 hover:border-[var(--line-hi)] hover:text-[var(--chalk)] rounded-full transition-all font-semibold text-[var(--chalk)]"
-                          >
-                            "{ex.slice(0, 35)}..."
-                          </button>
-                        ))}
-                      </div>
+                    {schema.description && (
+                      <span className="block text-[11px] text-nova-muted leading-normal">
+                        {sanitiseHelp(schema.description)}
+                      </span>
                     )}
                   </div>
                 );
-              }
-
-              // Standard Text / Input fields
-              return (
-                <div key={key} className="space-y-2">
-                  <label className="block text-xs font-bold text-[var(--chalk)] uppercase tracking-wider">
-                    {schema.title || key}
-                  </label>
-                  <input
-                    type={isNumber ? "number" : "text"}
-                    value={params[key] !== undefined ? params[key] : ""}
-                    placeholder={schema.placeholder || schema.description || `Enter ${key}...`}
-                    onChange={(e) => {
-                      const val = isNumber ? (e.target.value === "" ? "" : parseFloat(e.target.value)) : e.target.value;
-                      setParams(prev => ({ ...prev, [key]: val }));
-                    }}
-                    className="w-full bg-[var(--sunk)] border border-[var(--line)] hover:border-[var(--line)] focus:border-[var(--line)] rounded px-4 py-3.5 text-xs text-[var(--chalk)] placeholder:text-[var(--fog)] focus:outline-none transition-all shadow-inner"
-                  />
-                  {schema.description && (
-                    <span className="block text-[11px] text-[var(--iron)] leading-normal">
-                      {sanitiseHelp(schema.description)}
-                    </span>
-                  )}
-                </div>
-              );
-            })}
+              })}
           </div>
-
         </div>
 
         {/* Cost and Generate, the same footer every tool uses. */}
-        <div className="p-4 border-t border-[var(--line)] bg-[var(--surface)] absolute bottom-0 left-0 w-full lg:w-[370px] z-40">
+        <div className="p-4 border-t border-nova-border bg-nova-surface absolute bottom-0 left-0 w-full lg:w-[320px] z-40">
           <CostMeter
             tier={selectedTier}
             balance={creditBalance}
@@ -1030,17 +1170,21 @@ export default function AudioStudio({
       </div>
       {/* ─── RIGHT CONTENT AREA ─── */}
       <div className="flex-1 flex flex-col min-w-0 h-full relative z-20">
-        
         {/* Main Display panel */}
         <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-10 flex flex-col justify-between">
-          
           <div className="flex-1 flex items-center justify-center min-h-[400px] mb-8">
-            
             {/* 1. Error Display */}
             {generateError && (
               <div className="w-full max-w-md p-6 bg-red-500/10 border border-red-500/20 rounded flex flex-col items-center gap-4 animate-shake">
                 <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center text-red-500 border border-red-500/30 shadow-lg">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
                     <circle cx="12" cy="12" r="10" />
                     <line x1="12" y1="8" x2="12" y2="12" />
                     <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -1050,7 +1194,7 @@ export default function AudioStudio({
                   <span className="text-xs font-black text-red-500 uppercase tracking-widest block mb-1">
                     Generation Error
                   </span>
-                  <p className="text-[var(--chalk)] font-medium text-sm leading-relaxed">
+                  <p className="text-nova-text font-medium text-sm leading-relaxed">
                     {generateError}
                   </p>
                 </div>
@@ -1061,16 +1205,16 @@ export default function AudioStudio({
             {isGenerating && !generateError && (
               <div className="flex flex-col items-center gap-6 animate-fade-in">
                 <div className="relative">
-                  <div className="w-24 h-24 border-[3px] border-[var(--line)] border-t-primary rounded-full animate-spin shadow-black/40" />
-                  <div className="absolute inset-0 flex items-center justify-center text-[var(--lilac)]">
-                    <MusicIcon className="animate-pulse text-[var(--lilac)]" />
+                  <div className="w-24 h-24 border-[3px] border-nova-border border-t-primary rounded-full animate-spin shadow-black/40" />
+                  <div className="absolute inset-0 flex items-center justify-center text-nova-accent">
+                    <MusicIcon className="animate-pulse text-nova-accent" />
                   </div>
                 </div>
                 <div className="text-center space-y-2">
-                  <div className="text-xs font-black text-[var(--lilac)] uppercase tracking-[0.3em] animate-pulse">
+                  <div className="text-xs font-black text-nova-accent uppercase tracking-[0.3em] animate-pulse">
                     Generating Soundtrack
                   </div>
-                  <div className="text-sm text-[var(--chalk)] font-bold">
+                  <div className="text-sm text-nova-text font-bold">
                     Rendering audio waveforms and vocals...
                   </div>
                 </div>
@@ -1088,10 +1232,17 @@ export default function AudioStudio({
                 <div className="flex items-center justify-between px-1">
                   <button
                     onClick={handleNew}
-                    className="text-xs font-bold text-[var(--chalk)] hover:text-[var(--lilac)] flex items-center gap-2 transition-all bg-[var(--sunk)] border border-[var(--line)] hover:border-[var(--line-hi)] px-4 py-2 rounded-full"
+                    className="text-xs font-bold text-nova-text hover:text-nova-accent flex items-center gap-2 transition-all bg-nova-bg hover:border-nova-borderLight px-4 py-2 rounded-full"
                     type="button"
                   >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                    >
                       <line x1="19" y1="12" x2="5" y2="12" />
                       <polyline points="12 19 5 12 12 5" />
                     </svg>
@@ -1104,13 +1255,12 @@ export default function AudioStudio({
                 <PremiumAudioPlayer url={activeResultUrl} title={activeResultTitle} />
               </div>
             )}
-
           </div>
 
           {/* ─── BOTTOM HISTORY FOOTER ─── */}
           {history.length > 0 && (
-            <div className="border-t border-[var(--line)] pt-6 w-full animate-fade-in-up">
-              <h4 className="text-xs font-bold text-[var(--iron)] uppercase tracking-wider mb-4 px-1">
+            <div className="border-t border-nova-border pt-6 w-full animate-fade-in-up">
+              <h4 className="text-xs font-bold text-nova-muted uppercase tracking-wider mb-4 px-1">
                 Generation History ({history.length})
               </h4>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
@@ -1118,25 +1268,36 @@ export default function AudioStudio({
                   <div
                     key={entry.id || idx}
                     onClick={() => handleSelectHistory(entry, idx)}
-                    className={`p-3.5 bg-[var(--sunk)] border rounded cursor-pointer transition-all flex flex-col justify-between h-28 border-[var(--line)] hover:bg-[var(--night)] hover:border-[var(--line)] ${
+                    className={`p-3.5 bg-nova-bg border rounded cursor-pointer transition-all flex flex-col justify-between h-28 border-nova-border hover:bg-nova-surface hover:border-nova-border ${
                       activeResultUrl === entry.url && view === "result"
-                        ? "border-[var(--chalk)] bg-[var(--slab-hi)] shadow-black/40"
+                        ? "border-[var(--chalk)] bg-nova-elevated shadow-black/40"
                         : ""
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <div className={`w-8 h-8 rounded flex items-center justify-center flex-shrink-0 ${
-                        activeResultUrl === entry.url && view === "result" ? "bg-[var(--slab-hi)] text-[var(--lilac)]" : "bg-[var(--night)] text-[var(--chalk)]"
-                      }`}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <div
+                        className={`w-8 h-8 rounded flex items-center justify-center flex-shrink-0 ${
+                          activeResultUrl === entry.url && view === "result"
+                            ? "bg-nova-elevated text-nova-accent"
+                            : "bg-nova-surface text-nova-text"
+                        }`}
+                      >
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                        >
                           <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
                         </svg>
                       </div>
-                      <span className="text-[10px] font-bold text-[var(--lilac)] uppercase tracking-wider truncate">
-                        {entry.model ? entry.model.split('-').slice(0, 2).join(' ') : 'Audio'}
+                      <span className="text-[10px] font-bold text-nova-accent uppercase tracking-wider truncate">
+                        {entry.model ? entry.model.split("-").slice(0, 2).join(" ") : "Audio"}
                       </span>
                     </div>
-                    <p className="text-[11px] font-semibold text-[var(--chalk)] line-clamp-2 leading-tight">
+                    <p className="text-[11px] font-semibold text-nova-text line-clamp-2 leading-tight">
                       {entry.title || entry.prompt || "Untitled Audio"}
                     </p>
                   </div>
@@ -1144,11 +1305,27 @@ export default function AudioStudio({
               </div>
             </div>
           )}
-
         </div>
-
       </div>
-      <Toaster position="top-right" containerStyle={{ zIndex: 99999 }} toastOptions={{ duration: 5000, style: { background: 'var(--slab-hi)', color: 'var(--surface)', border: '1px solid rgba(255,255,255,0.15)', fontSize: '13px', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.6)', maxWidth: '440px', wordBreak: 'break-word', whiteSpace: 'pre-wrap', padding: '12px 16px' } }} />
+      <Toaster
+        position="top-right"
+        containerStyle={{ zIndex: 99999 }}
+        toastOptions={{
+          duration: 5000,
+          style: {
+            background: "var(--slab-hi)",
+            color: "var(--surface)",
+            border: "1px solid rgba(255,255,255,0.15)",
+            fontSize: "13px",
+            borderRadius: "12px",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.6)",
+            maxWidth: "440px",
+            wordBreak: "break-word",
+            whiteSpace: "pre-wrap",
+            padding: "12px 16px",
+          },
+        }}
+      />
     </div>
   );
 }

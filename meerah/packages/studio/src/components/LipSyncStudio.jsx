@@ -804,7 +804,7 @@ export default function LipSyncStudio({
         kind="lipsync"
         onPickModel={setSelectedModelId}
       />
-      <RailSection label="Face and script">
+      <RailSection label="Face and script" variant="card">
           {/* Mode toggle row */}
           <div className="flex items-center px-1">
             <PromptSegmentedControl>
@@ -973,7 +973,7 @@ export default function LipSyncStudio({
 
   // ── Render ──────────────────────────────────────────────────────────────
   return (
-    <div className="w-full h-full flex flex-col lg:flex-row bg-app-bg relative overflow-hidden">
+    <div className="w-full h-full flex flex-col lg:flex-row bg-nova-bg relative overflow-hidden">
       {/* ── LEFT: SETTINGS RAIL ── */}
       {settingsRail}
 
@@ -981,7 +981,7 @@ export default function LipSyncStudio({
       <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
       
       {/* ── CENTRAL GALLERY AREA ── */}
-      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-8 px-2">
+      <div className="flex-1 min-h-0 w-full">
         <WorkTabs
           toolId="talksync"
           hasResults={history.length > 0}

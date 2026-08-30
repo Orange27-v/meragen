@@ -1,10 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import {
+  CalendarDays, ChevronLeft, ChevronRight, Download, AlertCircle, Plus,
+} from 'lucide-react';
 import { api, ApiError, type PlannedPost, type PlannerPlan, type Tier } from '@/lib/api';
 import { useSession } from '@/lib/useSession';
 import DashboardShell from '@/components/DashboardShell';
 import MonthGrid from '@/components/MonthGrid';
+import { Page, PageHeader, EmptyState, SkeletonRows } from '@/components/ui/page';
 
 /**
  * `/calendar` — Post Planner.
@@ -18,17 +22,21 @@ import MonthGrid from '@/components/MonthGrid';
  *
  * Gated on the monthly add-on: 60 credits (₦3,000), charged from the customer's
  * existing balance rather than a recurring card mandate.
+ *
+ * The design pass: status was a coloured word and nothing else, so "Failed" and
+ * "Ready to post" were told apart by hue alone — invisible to anyone who cannot
+ * separate red from green. Status is a badge with its own shape and fill now.
+ * The month stepper was three ghost buttons with a hand-tuned padding override;
+ * it is a proper icon group.
  */
 
-/** The tiers that produce a video, which is all a planned post can be. */
-
-const STATUS: Record<PlannedPost['status'], { label: string; colour: string }> = {
-  planned:   { label: 'Planned',   colour: 'var(--muted)' },
-  generating:{ label: 'Making it', colour: 'var(--marigold)' },
-  ready:     { label: 'Ready to post', colour: 'var(--ok)' },
-  published: { label: 'Posted',    colour: 'var(--ok)' },
-  failed:    { label: 'Failed',    colour: 'var(--danger)' },
-  cancelled: { label: 'Cancelled', colour: 'var(--muted)' },
+const STATUS: Record<PlannedPost['status'], { label: string; className: string; dot: string }> = {
+  planned:    { label: 'Planned',    className: 'badge',              dot: 'var(--ink-tertiary)' },
+  generating: { label: 'Making it',  className: 'badge badge-warn',   dot: 'var(--warn)' },
+  ready:      { label: 'Ready',      className: 'badge badge-accent', dot: 'var(--accent)' },
+  published:  { label: 'Posted',     className: 'badge badge-accent', dot: 'var(--accent)' },
+  failed:     { label: 'Failed',     className: 'badge badge-danger', dot: 'var(--danger)' },
+  cancelled:  { label: 'Cancelled',  className: 'badge',              dot: 'var(--ink-disabled)' },
 };
 
 /** Local datetime string for the input's default: tomorrow, 9am. */
@@ -40,12 +48,6 @@ function tomorrowMorning(): string {
   return `${when.getFullYear()}-${pad(when.getMonth() + 1)}-${pad(when.getDate())}T${pad(when.getHours())}:${pad(when.getMinutes())}`;
 }
 
-/**
- * The content calendar.
- *
- * Plan the week once; the platform makes each post shortly before it is due, so
- * the customer wakes up to finished work instead of a queue.
- */
 export default function CalendarPage() {
   const { user, loading: authLoading, refresh, signOut } = useSession();
   const [posts, setPosts] = useState<PlannedPost[]>([]);
@@ -74,7 +76,6 @@ export default function CalendarPage() {
       // server's, and nothing tests a description for "5s".
       setTiers(pricing.tiers.filter((t) => t.kind === 'video'));
     } catch (err) {
-      // The shell's session hook owns the sign-out path.
       if (!(err instanceof ApiError && err.status === 401)) setError((err as Error).message);
     } finally {
       setLoading(false);
@@ -111,49 +112,69 @@ export default function CalendarPage() {
 
   return (
     <DashboardShell user={user} onSignOut={signOut} refreshUser={refresh}>
-      <div style={{ display: 'grid', gap: '1.5rem' }}>
-        <div>
-          <h1 className="display" style={{ fontSize: '1.8rem', marginBottom: '.4rem' }}>Post Planner</h1>
-          <p className="muted">
-            Plan the week once. Each post is made automatically before it is due — no login, no button
-            press — and waits in your library. You download it and post it yourself.
-          </p>
-        </div>
+      <Page>
+        <PageHeader
+          title="Post Planner"
+          description="Plan the week once. Each post is made automatically before it is due — no login, no button press — and waits in your library to download and post."
+        />
 
-        {error && <div className="alert">{error}</div>}
-        {plan?.note && <div className="alert">{plan.note}</div>}
+        {error && (
+          <div className="alert mb-4">
+            <AlertCircle className="mt-px size-4 shrink-0 text-danger" aria-hidden />
+            <span>{error}</span>
+          </div>
+        )}
+        {plan?.note && <div className="alert alert-warn mb-4">{plan.note}</div>}
 
         {loading ? (
-          <p className="muted">Loading…</p>
+          <SkeletonRows count={4} />
         ) : !plan?.active ? (
-          <section className="card">
-            <h2 className="display" style={{ fontSize: '1.3rem', marginBottom: '.5rem' }}>Switch it on</h2>
-            <p className="muted" style={{ marginBottom: '1rem' }}>
-              {plan?.monthlyCredits} credits a month (₦{plan?.monthlyNaira.toLocaleString()}), taken from your
-              balance. No card kept on file. Turn it off any time and it stops immediately — generations
-              are still charged normally when each post is made.
+          <section className="card max-w-xl">
+            <h2 className="text-lg font-semibold text-ink-primary">Switch on the Planner</h2>
+            <p className="mt-2 text-base text-ink-secondary">
+              {plan?.monthlyCredits} credits a month (₦{plan?.monthlyNaira.toLocaleString()}), taken
+              from your balance. No card kept on file. Turn it off any time and it stops immediately —
+              generations are still charged normally when each post is made.
             </p>
-            <button className="btn btn-primary" type="button" disabled={busy}
-              onClick={() => void act(() => api.planner.subscribe())}>
+            <button
+              className="btn btn-primary mt-5"
+              type="button"
+              disabled={busy}
+              onClick={() => void act(() => api.planner.subscribe())}
+            >
               {busy ? 'Switching on…' : `Switch on for ${plan?.monthlyCredits} credits`}
             </button>
           </section>
         ) : (
-          <>
-            <section className="card">
-              <h2 className="display" style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>Plan a post</h2>
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:items-start">
+            {/* --- Plan a post. A form belongs in one column, not the full
+                    width of a 1320px page where the fields stretch to nothing
+                    useful. --- */}
+            <section className="card lg:sticky lg:top-[calc(var(--nav-h)+1.25rem)]">
+              <h2 className="text-lg font-semibold text-ink-primary">Plan a post</h2>
 
-              <div className="field">
-                <label htmlFor="prompt">What should it show?</label>
-                <textarea id="prompt" rows={2} value={prompt} onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Friday jollof special, steam rising, warm evening light" />
-              </div>
+              <div className="mt-4">
+                <div className="field">
+                  <label htmlFor="prompt">What should it show?</label>
+                  <textarea
+                    id="prompt"
+                    rows={3}
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    placeholder="Friday jollof special, steam rising, warm evening light"
+                  />
+                </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
                 <div className="field">
                   <label htmlFor="when">When</label>
-                  <input id="when" type="datetime-local" value={when} onChange={(e) => setWhen(e.target.value)} />
+                  <input
+                    id="when"
+                    type="datetime-local"
+                    value={when}
+                    onChange={(e) => setWhen(e.target.value)}
+                  />
                 </div>
+
                 <div className="field">
                   <label htmlFor="tier">Quality</label>
                   <select id="tier" value={tierId} onChange={(e) => setTierId(e.target.value)}>
@@ -164,118 +185,198 @@ export default function CalendarPage() {
                     ))}
                   </select>
                 </div>
+
+                <div className="field">
+                  <label htmlFor="caption">
+                    Caption <span className="font-normal text-ink-tertiary">(optional)</span>
+                  </label>
+                  <input
+                    id="caption"
+                    value={caption}
+                    onChange={(e) => setCaption(e.target.value)}
+                    placeholder="New stock landed. Ankara sets, 15k. DM to reserve."
+                  />
+                </div>
               </div>
 
-              <div className="field">
-                <label htmlFor="caption">Caption <span style={{ textTransform: 'none', letterSpacing: 0 }}>(optional)</span></label>
-                <input id="caption" value={caption} onChange={(e) => setCaption(e.target.value)}
-                  placeholder="New stock landed. Ankara sets, 15k. DM to reserve." />
-              </div>
-
-              <button className="btn btn-primary" type="button"
+              <button
+                className="btn btn-primary btn-block mt-1"
+                type="button"
                 disabled={busy || !prompt.trim()}
                 onClick={() => void act(async () => {
                   await api.planner.schedule({
-                    scheduledFor: new Date(when).toISOString(), tierId, prompt, caption: caption || undefined,
+                    scheduledFor: new Date(when).toISOString(),
+                    tierId,
+                    prompt,
+                    caption: caption || undefined,
                   });
                   setPrompt('');
                   setCaption('');
-                })}>
-                {busy ? 'Adding…' : selected ? `Add to calendar · ${selected.credits} credits when made` : 'Add to calendar'}
+                })}
+              >
+                <Plus aria-hidden />
+                {busy ? 'Adding…' : 'Add to calendar'}
               </button>
 
-              <p className="muted" style={{ fontSize: '.8rem', marginTop: '.7rem' }}>
-                Credits are taken when the post is made, not now. Posting to Instagram, TikTok or
-                WhatsApp is still done by you — download it and upload.
+              <p className="field-hint">
+                {selected
+                  ? `${selected.credits} credits are taken when the post is made, not now. `
+                  : 'Credits are taken when the post is made, not now. '}
+                Posting to Instagram, TikTok or WhatsApp is still done by you.
               </p>
             </section>
 
-            <section className="card">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '1rem' }}>
-                <h2 className="display" style={{ fontSize: '1.2rem' }}>
-                  {month.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
-                </h2>
-                <div style={{ marginLeft: 'auto', display: 'flex', gap: '.35rem' }}>
-                  <button type="button" className="btn btn-ghost" style={monthStep}
-                    aria-label="Previous month"
-                    onClick={() => setMonth((m) => new Date(m.getFullYear(), m.getMonth() - 1, 1))}>‹</button>
-                  <button type="button" className="btn btn-ghost" style={monthStep}
-                    onClick={() => { setMonth(new Date()); setPickedDay(null); }}>Today</button>
-                  <button type="button" className="btn btn-ghost" style={monthStep}
-                    aria-label="Next month"
-                    onClick={() => setMonth((m) => new Date(m.getFullYear(), m.getMonth() + 1, 1))}>›</button>
+            {/* --- The month, and what is in it. --- */}
+            <div className="grid gap-5">
+              <section className="card">
+                <div className="mb-4 flex items-center gap-3">
+                  <h2 className="text-lg font-semibold text-ink-primary">
+                    {month.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
+                  </h2>
+                  <div className="ml-auto flex items-center gap-1">
+                    <button
+                      type="button"
+                      className="icon-btn icon-btn-bordered size-8"
+                      aria-label="Previous month"
+                      onClick={() => setMonth((m) => new Date(m.getFullYear(), m.getMonth() - 1, 1))}
+                    >
+                      <ChevronLeft className="size-4" aria-hidden />
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => { setMonth(new Date()); setPickedDay(null); }}
+                    >
+                      Today
+                    </button>
+                    <button
+                      type="button"
+                      className="icon-btn icon-btn-bordered size-8"
+                      aria-label="Next month"
+                      onClick={() => setMonth((m) => new Date(m.getFullYear(), m.getMonth() + 1, 1))}
+                    >
+                      <ChevronRight className="size-4" aria-hidden />
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              <MonthGrid month={month} posts={posts} selected={pickedDay}
-                onPickDay={setPickedDay}
-                statusColour={(status) => STATUS[status].colour} />
-            </section>
+                <MonthGrid
+                  month={month}
+                  posts={posts}
+                  selected={pickedDay}
+                  onPickDay={setPickedDay}
+                  statusColour={(status) => STATUS[status].dot}
+                />
 
-            <section>
-              <h2 className="display" style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>
-                {pickedDay
-                  ? pickedDay.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })
-                  : 'Coming up'}
-              </h2>
-              {visiblePosts.length === 0 ? (
-                <div className="card">
-                  <p className="muted">
-                    {pickedDay ? 'Nothing planned for this day.' : 'Nothing planned yet.'}
-                  </p>
-                </div>
-              ) : (
-                <div style={{ display: 'grid', gap: '.6rem' }}>
-                  {visiblePosts.map((post) => (
-                    <div key={post.id} className="card" style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                      <div style={{ minWidth: 150 }}>
-                        <div style={{ fontWeight: 700, fontSize: '.9rem' }}>
-                          {new Date(post.scheduledFor).toLocaleString(undefined, {
-                            weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
-                          })}
-                        </div>
-                        <div style={{ fontSize: '.78rem', fontWeight: 700, color: STATUS[post.status].colour }}>
-                          {STATUS[post.status].label}
-                        </div>
-                      </div>
-
-                      <div style={{ flex: '1 1 220px', minWidth: 0 }}>
-                        <div style={{ fontSize: '.9rem' }}>{post.prompt}</div>
-                        {post.errorMessage && (
-                          <div style={{ fontSize: '.8rem', color: 'var(--danger)' }}>{post.errorMessage}</div>
-                        )}
-                      </div>
-
-                      <div style={{ display: 'flex', gap: '.5rem' }}>
-                        {post.outputUrl && (
-                          <a className="btn btn-ghost" href={post.outputUrl} download>Download</a>
-                        )}
-                        {post.status !== 'published' && post.status !== 'cancelled' && (
-                          <button className="btn btn-ghost" type="button" disabled={busy}
-                            onClick={() => void act(() => api.planner.cancel(post.id))}>
-                            Cancel
-                          </button>
-                        )}
-                      </div>
-                    </div>
+                {/* A key, because a coloured dot means nothing on its own. */}
+                <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 border-t border-edge-subtle pt-3">
+                  {(['planned', 'generating', 'ready', 'failed'] as const).map((status) => (
+                    <li key={status} className="flex items-center gap-1.5 text-xs text-ink-tertiary">
+                      <span
+                        className="size-1.5 rounded-full"
+                        style={{ background: STATUS[status].dot }}
+                        aria-hidden
+                      />
+                      {STATUS[status].label}
+                    </li>
                   ))}
-                </div>
-              )}
-            </section>
+                </ul>
+              </section>
 
-            <p className="muted" style={{ fontSize: '.85rem' }}>
-              Post Planner renews {plan.renewsAt ? new Date(plan.renewsAt).toLocaleDateString() : 'monthly'} for{' '}
-              {plan.monthlyCredits} credits.{' '}
-              <button type="button" onClick={() => void act(() => api.planner.unsubscribe())}
-                style={{ background: 'none', border: 0, padding: 0, font: 'inherit', color: 'var(--chalk)', cursor: 'pointer', textDecoration: 'underline' }}>
-                Turn it off
-              </button>
-            </p>
-          </>
+              <section>
+                <div className="mb-3 flex items-center gap-3">
+                  <h2 className="text-lg font-semibold text-ink-primary">
+                    {pickedDay
+                      ? pickedDay.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })
+                      : 'Coming up'}
+                  </h2>
+                  {pickedDay && (
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-sm"
+                      onClick={() => setPickedDay(null)}
+                    >
+                      Show all
+                    </button>
+                  )}
+                </div>
+
+                {visiblePosts.length === 0 ? (
+                  <EmptyState
+                    icon={<CalendarDays className="size-5" aria-hidden />}
+                    title={pickedDay ? 'Nothing planned for this day' : 'Nothing planned yet'}
+                    body={
+                      pickedDay
+                        ? 'Pick another day on the calendar, or plan something for this one.'
+                        : 'Add your first post on the left. A week planned on Sunday makes itself over the following days.'
+                    }
+                  />
+                ) : (
+                  <ul className="grid gap-2">
+                    {visiblePosts.map((post) => (
+                      <li
+                        key={post.id}
+                        className="card card-tight flex flex-wrap items-center gap-x-4 gap-y-3"
+                      >
+                        <div className="min-w-[9rem]">
+                          <p className="text-sm font-medium tabular-nums text-ink-primary">
+                            {new Date(post.scheduledFor).toLocaleString(undefined, {
+                              weekday: 'short', day: 'numeric', month: 'short',
+                              hour: '2-digit', minute: '2-digit',
+                            })}
+                          </p>
+                          <span className={`${STATUS[post.status].className} mt-1.5`}>
+                            {STATUS[post.status].label}
+                          </span>
+                        </div>
+
+                        <div className="min-w-[14rem] flex-1">
+                          <p className="text-base text-ink-primary">{post.prompt}</p>
+                          {post.errorMessage && (
+                            <p className="mt-1 text-xs text-danger">{post.errorMessage}</p>
+                          )}
+                        </div>
+
+                        <div className="flex shrink-0 items-center gap-2">
+                          {post.outputUrl && (
+                            <a className="btn btn-secondary btn-sm" href={post.outputUrl} download>
+                              <Download aria-hidden />
+                              Download
+                            </a>
+                          )}
+                          {post.status !== 'published' && post.status !== 'cancelled' && (
+                            <button
+                              className="btn btn-ghost btn-sm"
+                              type="button"
+                              disabled={busy}
+                              onClick={() => void act(() => api.planner.cancel(post.id))}
+                            >
+                              Cancel
+                            </button>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+
+              <p className="text-xs text-ink-tertiary">
+                Post Planner renews{' '}
+                {plan.renewsAt ? new Date(plan.renewsAt).toLocaleDateString() : 'monthly'} for{' '}
+                {plan.monthlyCredits} credits.{' '}
+                <button
+                  type="button"
+                  onClick={() => void act(() => api.planner.unsubscribe())}
+                  className="text-ink-secondary underline underline-offset-2 hover:text-ink-primary"
+                >
+                  Turn it off
+                </button>
+              </p>
+            </div>
+          </div>
         )}
-      </div>
+      </Page>
     </DashboardShell>
   );
 }
-
-const monthStep = { padding: '.3rem .6rem', fontSize: '.85rem' } as const;

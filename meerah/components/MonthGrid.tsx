@@ -12,7 +12,9 @@ import type { PlannedPost } from '@/lib/api';
  * visible before you read a single word.
  *
  * Days carry a dot per post, coloured by state, so an empty Thursday and a
- * Thursday with a failed post read differently at a glance.
+ * Thursday with a failed post read differently at a glance. The colours are
+ * never the only signal — the list beneath carries the same states as labelled
+ * badges, and the legend under the grid names each dot.
  */
 export default function MonthGrid({
   month, posts, statusColour, onPickDay, selected,
@@ -48,52 +50,58 @@ export default function MonthGrid({
 
   return (
     <div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginBottom: 6 }}>
+      <div className="mb-1.5 grid grid-cols-7 gap-1">
         {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
-          <div key={day} className="muted" style={{
-            fontSize: 10.5, letterSpacing: '.1em', textTransform: 'uppercase',
-            textAlign: 'center', fontWeight: 500,
-          }}>{day}</div>
+          <div key={day} className="section-title text-center">
+            <span className="sm:hidden">{day[0]}</span>
+            <span className="hidden sm:inline">{day}</span>
+          </div>
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
+      <div className="grid grid-cols-7 gap-1">
         {cells.map((day, i) => {
           if (!day) return <div key={`pad-${i}`} />;
+
           const dayPosts = byDay.get(day.toDateString()) ?? [];
           const isToday = day.toDateString() === today;
           const isSelected = selected?.toDateString() === day.toDateString();
 
           return (
-            <button key={day.toISOString()} type="button"
+            <button
+              key={day.toISOString()}
+              type="button"
               onClick={() => onPickDay(isSelected ? null : day)}
               aria-pressed={isSelected}
               aria-label={`${day.toDateString()}, ${dayPosts.length} post${dayPosts.length === 1 ? '' : 's'}`}
-              style={{
-                minHeight: 58, display: 'flex', flexDirection: 'column', alignItems: 'center',
-                justifyContent: 'flex-start', gap: 3, padding: '6px 2px', font: 'inherit',
-                cursor: 'pointer', borderRadius: 'var(--radius-tag)',
-                border: `1px solid ${isSelected ? 'var(--obsidian)' : 'var(--line)'}`,
-                background: isSelected ? 'var(--ink-deep)' : 'var(--snow)',
-              }}>
-              <span className="tabular" style={{
-                fontSize: 12.5,
-                fontWeight: isToday ? 700 : 400,
-                // Today is marked by weight and an underline rather than a
-                // second colour — the palette carries one accent only.
-                borderBottom: isToday ? '1.5px solid var(--chalk)' : '1.5px solid transparent',
-                lineHeight: 1.3,
-              }}>{day.getDate()}</span>
+              className={`flex min-h-[3.25rem] flex-col items-center gap-1 rounded-md border px-1 py-1.5
+                          transition
+                          ${isSelected
+                            ? 'border-mint bg-mint-wash'
+                            : 'border-edge-subtle bg-surface-inset hover:border-edge-strong hover:bg-surface-hover'}`}
+            >
+              <span
+                className={`flex size-5 items-center justify-center rounded-full text-xs tabular-nums
+                            ${isToday
+                              ? 'bg-ink-primary font-semibold text-surface-base'
+                              : isSelected ? 'font-medium text-mint' : 'text-ink-secondary'}`}
+              >
+                {day.getDate()}
+              </span>
 
-              <span style={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center' }}>
+              <span className="flex flex-wrap justify-center gap-[3px]">
                 {dayPosts.slice(0, 4).map((post) => (
-                  <span key={post.id} aria-hidden style={{
-                    width: 5, height: 5, borderRadius: '50%',
-                    background: statusColour(post.status),
-                  }} />
+                  <span
+                    key={post.id}
+                    aria-hidden
+                    className="size-[5px] rounded-full"
+                    style={{ background: statusColour(post.status) }}
+                  />
                 ))}
                 {dayPosts.length > 4 && (
-                  <span className="muted" style={{ fontSize: 9 }}>+{dayPosts.length - 4}</span>
+                  <span className="text-badge leading-none text-ink-tertiary">
+                    +{dayPosts.length - 4}
+                  </span>
                 )}
               </span>
             </button>

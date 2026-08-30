@@ -30,22 +30,6 @@ import {
   promptMediaButtonClassName,
 } from "./prompt/PromptComposer.jsx";
 
-const SCROLLBAR_STYLE = `
-  .custom-scrollbar-thin::-webkit-scrollbar {
-    height: 4px;
-  }
-  .custom-scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .custom-scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-  }
-  .custom-scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: rgba(34, 211, 238, 0.3);
-  }
-`;
-
 // ── Icons ────────────────────────────────────────────────────────────────────
 
 const CheckSvg = () => (
@@ -473,7 +457,7 @@ export default function MarketingStudio({
         onChange={handleTierSelect}
         kind="video"
       />
-      <RailSection label="Your product">
+      <RailSection label="Your product" variant="card">
           {additionalImages.length > 0 && (
             <div className="flex items-center gap-1.5">
               {additionalImages.map((img, idx) => (
@@ -670,16 +654,15 @@ export default function MarketingStudio({
   // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <div className="w-full h-full flex flex-col lg:flex-row bg-app-bg relative overflow-hidden">
+    <div className="w-full h-full flex flex-col lg:flex-row bg-nova-bg relative overflow-hidden">
       {/* ── LEFT: SETTINGS RAIL ── */}
       {settingsRail}
 
       {/* ── RIGHT: THE WORK ── */}
       <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
-      <style>{SCROLLBAR_STYLE}</style>
       
       {/* ── MAIN CONTENT AREA ── */}
-      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-8 px-2">
+      <div className="flex-1 min-h-0 w-full">
         <WorkTabs
           toolId="salesreel"
           hasResults={history.length > 0}

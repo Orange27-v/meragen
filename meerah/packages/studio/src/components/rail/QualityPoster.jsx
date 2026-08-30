@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { QualityPicker } from "./QualityPicker";
+import { PencilIcon } from "./SettingsRail";
 
 /**
  * What you are making, and what it costs — as the first thing in the rail.
@@ -12,17 +13,17 @@ import { QualityPicker } from "./QualityPicker";
  * product whose whole argument is that you see the Naira before you spend it.
  *
  * A poster instead: a still of the kind of thing this tool makes, the tier name
- * over it, the spec and the price beneath. Changing it opens the full list,
- * which is where a five-row comparison belongs — you make that choice once and
- * then want it out of the way.
+ * over it in the accent, the model and the price beneath. Changing it opens the
+ * full list, which is where a five-row comparison belongs — you make that
+ * choice once and then want it out of the way.
  */
 export function QualityPoster({ toolId, tiers, value, onChange, kind = "video", onPickModel }) {
   const [open, setOpen] = useState(false);
   const tier = tiers.find((t) => t.tierId === value) ?? tiers[0];
 
   return (
-    <section className="space-y-2">
-      <div className="relative overflow-hidden rounded bg-[var(--slab-hi)]">
+    <section>
+      <div className="relative h-[132px] overflow-hidden rounded-nova-card bg-nova-card">
         <img
           src={`/examples/${toolId}-1.jpg`}
           alt=""
@@ -31,41 +32,42 @@ export function QualityPoster({ toolId, tiers, value, onChange, kind = "video", 
           height={360}
           loading="lazy"
           decoding="async"
-          className="h-[132px] w-full object-cover"
+          className="h-full w-full object-cover"
         />
 
         {/* The gradient is what makes the label readable over an arbitrary
-            photograph. Without it the tier name lands on whatever the image
+          photograph. Without it the tier name lands on whatever the image
             happens to be, and half the time that is a bright sky. */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/10" />
 
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="absolute right-2 top-2 rounded bg-black/55 px-2.5 py-1 text-[11.5px]
-                     font-medium text-white backdrop-blur-sm transition-colors
-                     hover:bg-black/75 focus-visible:outline-none focus-visible:ring-2
-                     focus-visible:ring-[var(--ring-solid)]"
+          className="absolute right-2.5 top-2.5 flex items-center gap-1.5 rounded-full bg-black/35 px-3 py-1.5
+                     text-[14px] font-medium text-nova-text backdrop-blur-md
+                       transition-colors hover:bg-black/55 focus-visible:outline-none
+                         focus-visible:ring-2 focus-visible:ring-nova-accent"
         >
+          <PencilIcon />
           Change
         </button>
 
-        <div className="absolute inset-x-0 bottom-0 p-3">
+        <div className="absolute inset-x-0 bottom-0 p-4">
           {tier ? (
             <>
-              <p className="text-[19px] font-semibold leading-none tracking-tight text-white">
+              <p className="truncate text-[22px] font-semibold uppercase leading-none tracking-[-0.02em] text-nova-accent">
                 {tier.label}
               </p>
-              <p className="mt-1.5 text-[12px] text-white/70">
+              <p className="mt-2 truncate text-[14px] leading-none text-nova-muted">
                 {tier.spec}
-                <span className="mx-1.5 text-white/40">·</span>
-                <b className="tabular-nums font-semibold text-white">
+                <span className="mx-2 text-nova-subtle">·</span>
+                <b className="font-medium tabular-nums text-nova-text">
                   ₦{tier.naira.toLocaleString()}
                 </b>
               </p>
             </>
           ) : (
-            <p className="text-[13px] text-white/70">Loading prices…</p>
+            <p className="text-[15px] text-nova-muted">Loading prices…</p>
           )}
         </div>
       </div>
@@ -125,7 +127,7 @@ function QualityDialog({ children, onClose }) {
             aria-label="Close"
             className="ml-auto grid h-7 w-7 place-items-center rounded bg-[var(--slab-hi)]
                        text-[var(--iron)] transition-colors hover:text-[var(--chalk)]
-                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-solid)]"
+                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-solid)]"
           >
             ×
           </button>

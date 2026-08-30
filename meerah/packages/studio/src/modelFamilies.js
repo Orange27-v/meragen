@@ -118,7 +118,22 @@ const PREFERRED_IMAGE_VARIANTS = {
   "google-imagen4": { t2i: "google-imagen4" },
   gpt4o: { i2i: "gpt4o-image-to-image" },
   "midjourney-v7": { i2i: "midjourney-v7-image-to-image" },
-  "nano-banana": { i2i: "nano-banana-edit" },
+  "nano-banana": {
+    t2i: "nano-banana",
+    i2i: "nano-banana-edit",
+  },
+  "nano-banana-pro": {
+    t2i: "nano-banana-pro",
+    i2i: "nano-banana-pro-edit",
+  },
+  "nano-banana-2": {
+    t2i: "nano-banana-2",
+    i2i: "nano-banana-2-edit",
+  },
+  "nano-banana-2-lite": {
+    t2i: "nano-banana-2-lite",
+    i2i: "nano-banana-2-lite-edit",
+  },
   "qwen-image-2.0": {
     t2i: "qwen-image-2.0",
     i2i: "qwen-image-2.0-edit",
@@ -143,6 +158,30 @@ const PREFERRED_VIDEO_VARIANTS = {
     t2v: "kling-v3.0-standard-text-to-video",
     i2v: "kling-v3.0-standard-image-to-video",
     v2v: "kling-v3.0-std-motion-control",
+  },
+  "seedance-2": {
+    t2v: "seedance-2-t2v",
+    i2v: "seedance-2-t2v",
+  },
+  "seedance-2.0": {
+    t2v: "seedance-v2.0-t2v",
+    i2v: "seedance-v2.0-t2v",
+  },
+  "seedance-2.5": {
+    t2v: "seedance-2.5-text-to-video",
+    i2v: "seedance-2.5-text-to-video",
+  },
+  "seedance-v1.5": {
+    t2v: "seedance-v1.5-pro-t2v",
+    i2v: "seedance-v1.5-pro-t2v",
+  },
+  "seedance-lite": {
+    t2v: "seedance-lite-t2v",
+    i2v: "seedance-lite-t2v",
+  },
+  "seedance-pro": {
+    t2v: "seedance-pro-t2v",
+    i2v: "seedance-pro-t2v",
   },
 };
 

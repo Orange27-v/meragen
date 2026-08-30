@@ -4,31 +4,35 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 /**
- * shadcn's variants, with one change: `default` keeps Meerah's indigo rather
- * than shadcn's near-white primary, because the indigo is the brand and a white
- * button on this ground reads as a system dialog.
+ * shadcn's variants, rewritten against Meerah's tokens so this and the plain
+ * `.btn` classes in globals.css produce the same control. Two changes from
+ * stock: `default` is the mint accent rather than shadcn's near-white primary,
+ * and `destructive` is outlined rather than filled — a filled red button is the
+ * loudest thing on a dark ground, and deleting a saved character does not
+ * deserve to be louder than generating a video.
  */
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded font-medium ' +
-    'transition-[background-color,color,transform] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] ' +
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ' +
-    'focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-45 ' +
-    'active:scale-[0.98] [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+  'inline-flex items-center justify-center gap-[7px] whitespace-nowrap rounded-md font-medium ' +
+    'leading-none transition-[background-color,border-color,color,box-shadow,transform] ' +
+    'duration-200 ease-ease ' +
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint focus-visible:ring-offset-2 ' +
+    'focus-visible:ring-offset-surface-base disabled:pointer-events-none disabled:opacity-40 ' +
+    'active:translate-y-px [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
-        default:     'bg-primary text-primary-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,0.22)] hover:bg-[var(--indigo-hi)]',
-        secondary:   'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        outline:     'border border-input bg-transparent hover:bg-accent hover:text-accent-foreground',
-        ghost:       'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
-        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        link:        'text-[var(--lilac)] underline-offset-4 hover:underline',
+        default:     'bg-mint text-mint-ink font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_6px_rgba(0,0,0,0.35)] hover:bg-mint-hover active:bg-mint-press',
+        secondary:   'border border-edge bg-surface-raised text-ink-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] hover:border-edge-strong hover:bg-surface-hover',
+        outline:     'border border-edge bg-transparent text-ink-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] hover:border-edge-strong hover:bg-surface-hover',
+        ghost:       'text-ink-secondary hover:bg-surface-hover hover:text-ink-primary',
+        destructive: 'border border-edge bg-transparent text-danger hover:border-danger hover:bg-danger-wash',
+        link:        'text-mint underline-offset-4 hover:underline',
       },
       size: {
-        default: 'h-10 px-4 text-sm',
-        sm:      'h-8 px-3 text-[13px]',
-        lg:      'h-12 px-6 text-base',
-        icon:    'h-9 w-9',
+        default: 'h-9 px-3.5 text-base',
+        sm:      'h-[30px] px-[11px] text-sm',
+        lg:      'h-11 px-5 text-md',
+        icon:    'h-9 w-9 p-0',
       },
     },
     defaultVariants: { variant: 'default', size: 'default' },

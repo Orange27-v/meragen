@@ -581,7 +581,7 @@ export default function ClippingStudio({
         onChange={handleTierSelect}
         kind="video"
       />
-      <RailSection label="Your video">
+      <RailSection label="Your video" variant="card">
           
           {/* Inline list of uploaded media files */}
           {videoUrl && (
@@ -786,7 +786,7 @@ export default function ClippingStudio({
       <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
       
       {/* ─── CENTRAL AREA ─── */}
-      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-8 px-2">
+      <div className="flex-1 min-h-0 w-full">
         
         {/* Error Message */}
         {generateError && (
@@ -1113,26 +1113,6 @@ export default function ClippingStudio({
       {/* ─── FLOATING BOTTOM PROMPT BAR ─── */}
       </div>
 
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-          height: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.08);
-          border-radius: 99px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.15);
-        }
-        .custom-scrollbar {
-          scrollbar-width: thin;
-          scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
-        }
-      `}</style>
       <Toaster
         toasterId={CLIPPING_TOASTER_ID}
         position="bottom-right"
